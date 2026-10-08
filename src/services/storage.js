@@ -11,7 +11,8 @@ const STORAGE_KEYS = {
   REWARDS: 'banco_colegual_rewards_v1',
   TRANSACTIONS: 'banco_colegual_transactions_v1',
   ACTIVE_STAFF: 'banco_colegual_active_staff_v2',
-  ACTIVE_TEACHER: 'banco_colegual_active_staff_v2' // Compatibilidad
+  ACTIVE_TEACHER: 'banco_colegual_active_staff_v2', // Compatibilidad
+  PENDING_SYNC: 'banco_colegual_pending_sync_v2'
 };
 
 class StorageService {
@@ -20,13 +21,74 @@ class StorageService {
     this.eventSource = null;
     this.lastSyncedTimestamp = null;
     this.pollingTimer = null;
+    this.isFlushingQueue = false;
     this.init();
     this.syncWithServer();
+  }
+
+  getPendingSyncQueue() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEYS.PENDING_SYNC);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  savePendingSyncQueue(queue) {
+    try {
+      localStorage.setItem(STORAGE_KEYS.PENDING_SYNC, JSON.stringify(queue));
+    } catch {}
+  }
+
+  addToPendingSync(type, payload) {
+    const queue = this.getPendingSyncQueue();
+    // Evitar duplicados por tx_id si aplica
+    if (payload.tx_id && queue.some(item => item.payload && item.payload.tx_id === payload.tx_id)) {
+      return;
+    }
+    queue.push({
+      id: `sync_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
+      type,
+      payload
+    });
+    this.savePendingSyncQueue(queue);
+  }
+
+  async flushPendingSyncQueue() {
+    if (typeof window === 'undefined' || !window.fetch || this.isFlushingQueue) return;
+    const queue = this.getPendingSyncQueue();
+    if (queue.length === 0) return;
+
+    this.isFlushingQueue = true;
+    const remaining = [];
+
+    for (const item of queue) {
+      try {
+        const url = item.type === 'BATCH' ? '/api/batch' : '/api/transactions';
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(item.payload)
+        });
+        if (!res.ok) {
+          remaining.push(item);
+        }
+      } catch {
+        remaining.push(item);
+      }
+    }
+
+    this.savePendingSyncQueue(remaining);
+    this.isFlushingQueue = false;
   }
 
   async fetchAndApplyServerData() {
     if (typeof window === 'undefined' || !window.fetch) return;
     try {
+      // 1. Vaciar cualquier transacción pendiente antes de descargar el estado global
+      await this.flushPendingSyncQueue();
+
       const res = await fetch('/api/data');
       if (res.ok) {
         const db = await res.json();
@@ -280,23 +342,31 @@ class StorageService {
 
     // Sincronizar inmediatamente con el servidor central para que todos los dispositivos se actualicen
     if (typeof window !== 'undefined' && window.fetch) {
+      const payload = {
+        estudiante_id: st.id,
+        monto: numMonto,
+        motivo,
+        profesor: staffDisplay,
+        tipo,
+        categoria_id,
+        tx_id: tx.id,
+        timestamp: tx.timestamp
+      };
       fetch('/api/transactions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          estudiante_id: st.id,
-          monto: numMonto,
-          motivo,
-          profesor: staffDisplay,
-          tipo,
-          categoria_id,
-          tx_id: tx.id,
-          timestamp: tx.timestamp
-        })
-      }).then(res => res.json()).then(data => {
+        body: JSON.stringify(payload)
+      }).then(res => {
+        if (!res.ok) {
+          this.addToPendingSync('TRANSACTION', payload);
+          return null;
+        }
+        return res.json();
+      }).then(data => {
         if (data && data.lastUpdated) this.lastSyncedTimestamp = data.lastUpdated;
       }).catch(err => {
-        console.warn('[Sync] Transacción guardada localmente, reintentando sincronización:', err);
+        console.warn('[Sync] Transacción en cola para reintento automático:', err);
+        this.addToPendingSync('TRANSACTION', payload);
       });
     }
 
@@ -344,20 +414,28 @@ class StorageService {
 
     // Sincronizar inmediatamente con el servidor central
     if (typeof window !== 'undefined' && window.fetch) {
+      const payload = {
+        curso_codigo,
+        monto,
+        motivo,
+        profesor: staffDisplay,
+        categoria_id
+      };
       fetch('/api/batch', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          curso_codigo,
-          monto,
-          motivo,
-          profesor: staffDisplay,
-          categoria_id
-        })
-      }).then(res => res.json()).then(data => {
+        body: JSON.stringify(payload)
+      }).then(res => {
+        if (!res.ok) {
+          this.addToPendingSync('BATCH', payload);
+          return null;
+        }
+        return res.json();
+      }).then(data => {
         if (data && data.lastUpdated) this.lastSyncedTimestamp = data.lastUpdated;
       }).catch(err => {
-        console.warn('[Sync] Bono de curso guardado localmente:', err);
+        console.warn('[Sync] Bono de curso en cola para reintento automático:', err);
+        this.addToPendingSync('BATCH', payload);
       });
     }
 

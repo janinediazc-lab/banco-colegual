@@ -185,7 +185,7 @@ export async function handleApiRequest(req, res) {
           req.on('close', () => {
             sseClients.delete(res);
           });
-          return;
+          return true;
         }
 
         // Endpoint GET /api/version (verificar si hay cambios para sincronización rápida)
@@ -198,7 +198,7 @@ export async function handleApiRequest(req, res) {
             txCount: db.transactions ? db.transactions.length : 0,
             studentCount: db.students ? db.students.length : 0
           }));
-          return;
+          return true;
         }
 
         // Endpoint GET /api/data (obtener estado central)
@@ -207,7 +207,7 @@ export async function handleApiRequest(req, res) {
           res.setHeader('Content-Type', 'application/json');
           const db = loadDatabase();
           res.end(JSON.stringify(db));
-          return;
+          return true;
         }
 
         // Endpoint POST /api/transactions (abonar o canjear puntos)
@@ -224,7 +224,7 @@ export async function handleApiRequest(req, res) {
               res.statusCode = 404;
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify({ error: 'Estudiante no encontrado' }));
-              return;
+              return true;
             }
 
             const st = db.students[idx];
@@ -276,7 +276,7 @@ export async function handleApiRequest(req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ error: err.message }));
           }
-          return;
+          return true;
         }
 
         // Endpoint POST /api/batch (bono de curso)
@@ -333,7 +333,7 @@ export async function handleApiRequest(req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ error: err.message }));
           }
-          return;
+          return true;
         }
 
         // Endpoint POST /api/students (crear nuevo estudiante)
@@ -358,7 +358,7 @@ export async function handleApiRequest(req, res) {
               res.statusCode = 400;
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify({ error: 'RUN, nombre y curso son obligatorios.' }));
-              return;
+              return true;
             }
 
             const db = loadDatabase();
@@ -368,7 +368,7 @@ export async function handleApiRequest(req, res) {
               res.statusCode = 400;
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify({ error: 'Ya existe un estudiante con ese RUN.' }));
-              return;
+              return true;
             }
 
             const cleanId = 'est_' + cleanRun.replace(/[^a-zA-Z0-9]/g, '');
@@ -430,7 +430,7 @@ export async function handleApiRequest(req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ error: err.message }));
           }
-          return;
+          return true;
         }
 
         // Endpoint POST /api/students/update (editar estudiante existente)
@@ -446,7 +446,7 @@ export async function handleApiRequest(req, res) {
               res.statusCode = 404;
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify({ error: 'Estudiante no encontrado.' }));
-              return;
+              return true;
             }
 
             const current = db.students[idx];
@@ -480,7 +480,7 @@ export async function handleApiRequest(req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ error: err.message }));
           }
-          return;
+          return true;
         }
 
         // Endpoint POST /api/students/delete (eliminar estudiante)
@@ -496,7 +496,7 @@ export async function handleApiRequest(req, res) {
               res.statusCode = 404;
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify({ error: 'Estudiante no encontrado.' }));
-              return;
+              return true;
             }
 
             const removed = db.students.splice(idx, 1)[0];
@@ -516,7 +516,7 @@ export async function handleApiRequest(req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ error: err.message }));
           }
-          return;
+          return true;
         }
 
         // Endpoint POST /api/students/promote-year (avanzar año escolar para todos los cursos)
@@ -528,7 +528,7 @@ export async function handleApiRequest(req, res) {
               res.statusCode = 403;
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify({ error: 'PIN incorrecto. Se requiere el PIN 3834 para avanzar el año escolar.' }));
-              return;
+              return true;
             }
 
             const db = loadDatabase();
@@ -601,7 +601,7 @@ export async function handleApiRequest(req, res) {
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ error: err.message }));
           }
-          return;
+          return true;
         }
 
         // Endpoint POST /api/reset (reinicio de fábrica con PIN 3834)
@@ -613,7 +613,7 @@ export async function handleApiRequest(req, res) {
               res.statusCode = 403;
               res.setHeader('Content-Type', 'application/json');
               res.end(JSON.stringify({ error: 'PIN incorrecto. Ingresa el PIN 3834 para autorizar el reinicio.' }));
-              return;
+              return true;
             }
 
             const initDb = getInitialDb();

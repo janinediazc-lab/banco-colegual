@@ -29,9 +29,11 @@ const server = http.createServer(async (req, res) => {
   try {
     // 1. Delegar llamadas API al backend central
     if (req.url && req.url.startsWith('/api/')) {
-      const handled = await handleApiRequest(req, res);
-      if (handled) return;
+      await handleApiRequest(req, res);
+      return;
     }
+
+    if (res.headersSent) return;
 
     // 2. Servir archivos estáticos generados en dist/
     let reqPath;
@@ -46,25 +48,29 @@ const server = http.createServer(async (req, res) => {
 
     // Seguridad: prevenir directory traversal
     if (!filePath.startsWith(DIST_DIR)) {
-      res.statusCode = 403;
-      res.end('Acceso denegado');
+      if (!res.headersSent) {
+        res.statusCode = 403;
+        res.end('Acceso denegado');
+      }
       return;
     }
 
     if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
-      const ext = path.extname(filePath).toLowerCase();
-      const contentType = MIME_TYPES[ext] || 'application/octet-stream';
-      res.writeHead(200, {
-        'Content-Type': contentType,
-        'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=31536000, immutable'
-      });
-      fs.createReadStream(filePath).pipe(res);
+      if (!res.headersSent) {
+        const ext = path.extname(filePath).toLowerCase();
+        const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+        res.writeHead(200, {
+          'Content-Type': contentType,
+          'Cache-Control': ext === '.html' ? 'no-cache' : 'public, max-age=31536000, immutable'
+        });
+        fs.createReadStream(filePath).pipe(res);
+      }
       return;
     }
 
     // Fallback SPA (Single Page Application)
     const indexPath = path.join(DIST_DIR, 'index.html');
-    if (fs.existsSync(indexPath)) {
+    if (fs.existsSync(indexPath) && !res.headersSent) {
       res.writeHead(200, {
         'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'no-cache'
@@ -73,12 +79,16 @@ const server = http.createServer(async (req, res) => {
       return;
     }
 
-    res.statusCode = 404;
-    res.end('Archivo no encontrado');
+    if (!res.headersSent) {
+      res.statusCode = 404;
+      res.end('Archivo no encontrado');
+    }
   } catch (err) {
     console.error('[Server Error]', err);
-    res.statusCode = 500;
-    res.end('Error interno del servidor');
+    if (!res.headersSent) {
+      res.statusCode = 500;
+      res.end('Error interno del servidor');
+    }
   }
 });
 
