@@ -34,10 +34,15 @@ const server = http.createServer(async (req, res) => {
     }
 
     // 2. Servir archivos estáticos generados en dist/
-    let reqPath = req.url.split('?')[0];
+    let reqPath;
+    try {
+      reqPath = decodeURIComponent(req.url.split('?')[0]);
+    } catch {
+      reqPath = req.url.split('?')[0];
+    }
     if (reqPath === '/' || reqPath === '') reqPath = '/index.html';
 
-    let filePath = path.join(DIST_DIR, reqPath);
+    let filePath = path.normalize(path.join(DIST_DIR, reqPath));
 
     // Seguridad: prevenir directory traversal
     if (!filePath.startsWith(DIST_DIR)) {

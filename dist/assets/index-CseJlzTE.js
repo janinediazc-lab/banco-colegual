@@ -876,7 +876,7 @@ Minimum version required to store current data is: `+c+`.
         `,o.disabled=!0))}),o.onclick=()=>{let e=i.value,n=h.getStudentById(e);if(!n||n.saldo<t.puntos)return;let r=h.getActiveTeacher();h.addTransaction({estudiante_id:n.id,monto:-t.puntos,motivo:`🎁 Canje de Recompensa: ${t.nombre}`,profesor:r.nombre,tipo:`CANJE`,categoria_id:`canje`}),g.playRedeem(),ye({particleCount:70,spread:80,origin:{y:.6}}),alert(`🎉 ¡Canje exitoso para ${n.nombre_display}! Se descontaron ${t.puntos} puntos.`),this.container.querySelector(`#modal-redeem`).classList.remove(`open`)},this.container.querySelector(`#modal-redeem`).classList.add(`open`)}},W=class{constructor(e){this.container=document.getElementById(e),this.currentStudent=null}init(){this.render()}render(){this.container.innerHTML=`
       <div class="kiosk-wrapper">
         <div style="text-align: center; margin-bottom: 1.5rem;">
-          <img src="/Logo Colegual.png" alt="Logo Colegual" style="height: 52px; margin-bottom: 0.5rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));" />
+          <img src="/logo-colegual.png" alt="Logo Colegual" style="height: 52px; margin-bottom: 0.5rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));" />
           <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: #fef08a;">
             🏧 Cajero Automático Banco Colegual
           </h2>

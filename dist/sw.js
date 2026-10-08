@@ -1,9 +1,11 @@
 // Service Worker para Banco Escolar Colegual
-const CACHE_NAME = 'banco-colegual-v1';
+const CACHE_NAME = 'banco-colegual-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './favicon.svg',
+  './logo-colegual.png',
+  './logo-colegual-dark.png',
   './Logo Colegual.png',
   './Logo Colegual_dark.png',
   './fondo_colegual.jpg'

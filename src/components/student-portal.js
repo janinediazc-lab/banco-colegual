@@ -16,7 +16,7 @@ export class StudentPortalComponent {
     this.container.innerHTML = `
       <div class="kiosk-wrapper">
         <div style="text-align: center; margin-bottom: 1.5rem;">
-          <img src="/Logo Colegual.png" alt="Logo Colegual" style="height: 52px; margin-bottom: 0.5rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));" />
+          <img src="/logo-colegual.png" alt="Logo Colegual" style="height: 52px; margin-bottom: 0.5rem; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.5));" />
           <h2 style="font-family: var(--font-heading); font-size: 1.8rem; font-weight: 800; color: #fef08a;">
             🏧 Cajero Automático Banco Colegual
           </h2>
