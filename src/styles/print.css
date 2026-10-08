@@ -1,0 +1,253 @@
+/**
+ * Hoja de Estilos para Impresión de Carnets Bancarios con QR
+ * Optimizado para papel Carta (Letter) o A4
+ */
+
+@media print {
+  /* Ocultar elementos de la interfaz de la aplicación */
+  header,
+  nav,
+  .app-header,
+  .app-nav,
+  .hero-banner,
+  .cards-gallery-controls,
+  .course-filter-bar,
+  .course-action-header,
+  .modal-overlay,
+  .toast-container,
+  .card-actions-bar,
+  .no-print,
+  button {
+    display: none !important;
+  }
+
+  body {
+    background: #ffffff !important;
+    color: #000000 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    font-size: 10pt;
+  }
+
+  .main-content {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .tab-pane {
+    display: none !important;
+  }
+
+  #tab-cards {
+    display: block !important;
+  }
+
+  @page {
+    size: letter portrait;
+    margin: 8mm 6mm;
+  }
+
+  .cards-print-header {
+    display: block !important;
+    text-align: center;
+    margin-bottom: 8mm;
+    border-bottom: 1.5pt solid #064e3b;
+    padding-bottom: 3mm;
+  }
+
+  .cards-print-header h2 {
+    font-size: 15pt;
+    color: #064e3b;
+    margin: 0;
+  }
+
+  .cards-print-header p {
+    font-size: 9pt;
+    color: #475569;
+    margin: 2px 0 0 0;
+  }
+
+  /* Contenedor de impresión en grilla de 2 columnas */
+  .cards-grid-container {
+    display: grid !important;
+    grid-template-columns: repeat(2, 85.6mm) !important;
+    gap: 6mm 8mm !important;
+    justify-content: center !important;
+    page-break-inside: auto;
+  }
+
+  .bank-card-item {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    border: 1px dashed #94a3b8 !important; /* Guía de corte para tijera o guillotina */
+    padding: 2mm !important;
+    border-radius: 4mm;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .bank-card {
+    width: 85.6mm !important;
+    height: 53.98mm !important;
+    min-height: 53.98mm !important;
+    max-height: 53.98mm !important;
+    box-shadow: none !important;
+    border: 1px solid #064e3b !important;
+    border-radius: 3.5mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  .bank-card-front {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    background-image: url('/fondo_colegual.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    color: #ffffff !important;
+    padding: 3mm 4mm !important;
+    position: relative !important;
+  }
+
+  .bank-card-front::before {
+    content: '' !important;
+    position: absolute !important;
+    inset: 0 !important;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.6) 0%, rgba(15, 23, 42, 0.05) 30%, rgba(15, 23, 42, 0.1) 65%, rgba(15, 23, 42, 0.85) 100%) !important;
+    border-radius: 3.5mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .card-brand-pill {
+    background: rgba(15, 23, 42, 0.85) !important;
+    padding: 1mm 2.5mm !important;
+    border-radius: 99px !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .card-bank-title {
+    font-size: 6pt !important;
+    color: #ffffff !important;
+  }
+
+  .card-currency-tag {
+    font-size: 5pt !important;
+    color: #fef08a !important;
+  }
+
+  .card-badge-course {
+    font-size: 5.5pt !important;
+    padding: 1.5px 5px !important;
+    background: #d97706 !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .card-qr-box {
+    padding: 1mm !important;
+    background: #ffffff !important;
+    border-radius: 2mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .card-qr-canvas {
+    width: 20mm !important;
+    height: 20mm !important;
+  }
+
+  .card-qr-label {
+    font-size: 4pt !important;
+  }
+
+  .card-bottom-row {
+    background: rgba(15, 23, 42, 0.85) !important;
+    padding: 1.5mm 2.5mm !important;
+    border-radius: 2mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .card-student-name {
+    font-size: 7.5pt !important;
+    color: #ffffff !important;
+  }
+
+  .card-account-number {
+    font-size: 6pt !important;
+    color: #fef08a !important;
+  }
+
+  .card-footer-meta {
+    font-size: 5.5pt !important;
+  }
+
+  /* ESTILOS DE IMPRESIÓN PARA EL DORSO */
+  .bank-card-back {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    color: #ffffff !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    padding: 2.5mm 3.5mm !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  }
+
+  .card-magstripe {
+    width: 100% !important;
+    height: 7.5mm !important;
+    background: #020617 !important;
+    margin: 1.5mm 0 !important;
+    border-radius: 1mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .card-signature-strip {
+    background: #f8fafc !important;
+    height: 5.8mm !important;
+    border-radius: 1.2mm !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 0 2.5mm !important;
+    border: 1px solid #cbd5e1 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .card-signature-text {
+    font-size: 7.5pt !important;
+    color: #334155 !important;
+    font-family: 'Brush Script MT', 'Apple Chancery', cursive, sans-serif !important;
+  }
+
+  .card-cvv {
+    font-family: monospace !important;
+    font-size: 5.8pt !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
+    background: #ffffff !important;
+    padding: 1px 4px !important;
+    border-radius: 1mm !important;
+    border: 1px solid #94a3b8 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .card-terms-text {
+    font-size: 4.8pt !important;
+    color: #94a3b8 !important;
+    line-height: 1.25 !important;
+  }
+}

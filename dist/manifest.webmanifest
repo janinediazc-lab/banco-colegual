@@ -1,0 +1,24 @@
+{
+  "name": "Banco Escolar Colegual",
+  "short_name": "BancoColegual",
+  "description": "Sistema de Banco de Recompensas y ColegualCoins para la Escuela Rural Colegual",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#064e3b",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "./favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./Logo Colegual_dark.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

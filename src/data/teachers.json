@@ -1,0 +1,39 @@
+[
+  {
+    "id": "prof_fuentesbol",
+    "nombre_oficial": "FUENTES BOLLA NICOLE ANDREA",
+    "nombre": "Fuentes Bolla Nicole Andrea",
+    "cursos": [
+      "Pre-Kínder (NT1)",
+      "Kínder (NT2)"
+    ]
+  },
+
+  {
+    "id": "prof_henrquezfi",
+    "nombre_oficial": "HENRÍQUEZ FIGUEROA KARLA DANIELA",
+    "nombre": "Henríquez Figueroa Karla Daniela",
+    "cursos": [
+      "3° Básico",
+      "4° Básico"
+    ]
+  },
+  {
+    "id": "prof_melndezman",
+    "nombre_oficial": "MELÉNDEZ MANSILLA PAOLA SOLEDAD",
+    "nombre": "Meléndez Mansilla Paola Soledad",
+    "cursos": [
+      "5° Básico",
+      "6° Básico"
+    ]
+  },
+  {
+    "id": "prof_altamirano",
+    "nombre_oficial": "ALTAMIRANO TOELG EDUARDO JAVIER",
+    "nombre": "Altamirano Toelg Eduardo Javier",
+    "cursos": [
+      "7° Básico",
+      "8° Básico"
+    ]
+  }
+]

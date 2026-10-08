@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="bankGrad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#065f46"/>
+      <stop offset="1" stop-color="#047857"/>
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fde047"/>
+      <stop offset="1" stop-color="#d97706"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bankGrad)"/>
+  <rect x="6" y="6" width="52" height="52" rx="12" stroke="#34d399" stroke-width="2" stroke-opacity="0.4"/>
+  <!-- Columnas del banco / Escudo -->
+  <path d="M32 14L48 22H16L32 14Z" fill="url(#goldGrad)"/>
+  <rect x="20" y="24" width="4" height="18" rx="1" fill="#ecfdf5"/>
+  <rect x="27" y="24" width="4" height="18" rx="1" fill="#ecfdf5"/>
+  <rect x="34" y="24" width="4" height="18" rx="1" fill="#ecfdf5"/>
+  <rect x="41" y="24" width="4" height="18" rx="1" fill="#ecfdf5"/>
+  <rect x="16" y="42" width="32" height="4" rx="1" fill="url(#goldGrad)"/>
+  <!-- Estrella / Moneda -->
+  <circle cx="32" cy="51" r="5" fill="url(#goldGrad)"/>
+</svg>

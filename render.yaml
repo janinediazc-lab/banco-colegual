@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: banco-colegual
+    env: node
+    plan: free
+    region: oregon
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/version
+    envVars:
+      - key: NODE_ENV
+        value: production

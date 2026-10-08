@@ -1,0 +1,293 @@
+[
+  {
+    "run": "12872339-0",
+    "nombre_oficial": "RODRÍGUEZ URIBE JUAN BAUTISTA",
+    "nombre": "Juan Bautista Rodríguez Uribe",
+    "cargo": "Profesor Encargado / Director",
+    "estamento": "Directivo",
+    "tipo": "Docente",
+    "icono": "👑",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_128723390"
+  },
+  {
+    "run": "17528888-0",
+    "nombre_oficial": "DÍAZ CALIXTO JANINE ELENA",
+    "nombre": "Janine Elena Díaz Calixto",
+    "cargo": "Inspectora General",
+    "estamento": "Directivo",
+    "tipo": "Docente",
+    "icono": "📋",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_175288880"
+  },
+  {
+    "run": "15335204-6",
+    "nombre_oficial": "FUENTES BOLLA NICOLE ANDREA",
+    "nombre": "Nicole Andrea Fuentes Bolla",
+    "cargo": "Educadora de Párvulos (Prof. Jefe NT1 y NT2)",
+    "estamento": "Docente",
+    "tipo": "Docente",
+    "icono": "🧸",
+    "cursos": [
+      "Pre-Kínder (NT1)",
+      "Kínder (NT2)"
+    ],
+    "id": "func_153352046"
+  },
+  {
+    "run": "17914051-9",
+    "nombre_oficial": "HENRÍQUEZ FIGUEROA KARLA DANIELA",
+    "nombre": "Karla Daniela Henríquez Figueroa",
+    "cargo": "Docente de Aula (Prof. Jefe 3° y 4° Básico / Matemática)",
+    "estamento": "Docente",
+    "tipo": "Docente",
+    "icono": "📐",
+    "cursos": [
+      "3° Básico",
+      "4° Básico"
+    ],
+    "id": "func_179140519"
+  },
+  {
+    "run": "16115896-8",
+    "nombre_oficial": "MELÉNDEZ MANSILLA PAOLA SOLEDAD",
+    "nombre": "Paola Soledad Meléndez Mansilla",
+    "cargo": "Docente de Aula (Prof. Jefe 5° y 6° Básico)",
+    "estamento": "Docente",
+    "tipo": "Docente",
+    "icono": "📚",
+    "cursos": [
+      "5° Básico",
+      "6° Básico"
+    ],
+    "id": "func_161158968"
+  },
+  {
+    "run": "16994625-6",
+    "nombre_oficial": "ALTAMIRANO TOELG EDUARDO JAVIER",
+    "nombre": "Eduardo Javier Altamirano Toelg",
+    "cargo": "Docente de Aula (Prof. Jefe 7° y 8° Básico / Ed. Física)",
+    "estamento": "Docente",
+    "tipo": "Docente",
+    "icono": "🏃",
+    "cursos": [
+      "7° Básico",
+      "8° Básico"
+    ],
+    "id": "func_169946256"
+  },
+  {
+    "run": "15796806-8",
+    "nombre_oficial": "CÁRDENAS PALMA BONNY DANIELA",
+    "nombre": "Bonny Daniela Cárdenas Palma",
+    "cargo": "Docente de Aula",
+    "estamento": "Docente",
+    "tipo": "Docente",
+    "icono": "👩‍🏫",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_157968068"
+  },
+  {
+    "run": "15280155-6",
+    "nombre_oficial": "CÁRDENAS VILLACURA JUDITH SOLEDAD",
+    "nombre": "Judith Soledad Cárdenas Villacura",
+    "cargo": "Docente de Inglés",
+    "estamento": "Docente",
+    "tipo": "Docente",
+    "icono": "🌍",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_152801556"
+  },
+  {
+    "run": "13930165-K",
+    "nombre_oficial": "HENRÍQUEZ LAGOS JEANNETTE ANDREA",
+    "nombre": "Jeannette Andrea Henríquez Lagos",
+    "cargo": "Docente de Educación Diferencial (PIE)",
+    "estamento": "Docente",
+    "tipo": "Docente",
+    "icono": "🧩",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_13930165K"
+  },
+  {
+    "run": "18697940-0",
+    "nombre_oficial": "RODRÍGUEZ JARA NICOLE",
+    "nombre": "Nicole Rodríguez Jara",
+    "cargo": "Docente de Educación Diferencial (PIE)",
+    "estamento": "Docente",
+    "tipo": "Docente",
+    "icono": "🎨",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_186979400"
+  },
+  {
+    "run": "18295329-6",
+    "nombre_oficial": "OYARZÚN MUÑOZ PAZ YANIRA",
+    "nombre": "Paz Yanira Oyarzún Muñoz",
+    "cargo": "Docente de Lenguaje y Comunicación",
+    "estamento": "Docente",
+    "tipo": "Docente",
+    "icono": "📖",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_182953296"
+  },
+  {
+    "run": "14040892-1",
+    "nombre_oficial": "NANCUANTE CARRILLO TATIANA DENISSE",
+    "nombre": "Tatiana Denisse Nancuante Carrillo",
+    "cargo": "Educadora Tradicional Intercultural",
+    "estamento": "Docente",
+    "tipo": "Docente",
+    "icono": "🌿",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_140408921"
+  },
+  {
+    "run": "18820332-9",
+    "nombre_oficial": "BERNARDA SOLEDAD ANGEL OYARZÚN",
+    "nombre": "Bernarda Soledad Angel Oyarzún",
+    "cargo": "Inspectora Paradocente",
+    "estamento": "Asistente",
+    "tipo": "Asistente de la Educación",
+    "icono": "🔍",
+    "cursos": [
+      "Patio y Convivencia Escolar"
+    ],
+    "id": "func_188203329"
+  },
+  {
+    "run": "17528837-6",
+    "nombre_oficial": "CARLA MAGALY BUSTAMANTE VARGAS",
+    "nombre": "Carla Magaly Bustamante Vargas",
+    "cargo": "Auxiliar de Apoyo y Aseo",
+    "estamento": "Asistente",
+    "tipo": "Asistente de la Educación",
+    "icono": "🧹",
+    "cursos": [
+      "Entorno y Espacios Escolares"
+    ],
+    "id": "func_175288376"
+  },
+  {
+    "run": "18204041-K",
+    "nombre_oficial": "DANIELA DE LOURDES GUTIÉRREZ CAULLE",
+    "nombre": "Daniela De Lourdes Gutiérrez Caulle",
+    "cargo": "Fonoaudióloga (PIE)",
+    "estamento": "Profesional",
+    "tipo": "Asistente de la Educación",
+    "icono": "🗣️",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_18204041K"
+  },
+  {
+    "run": "17157782-9",
+    "nombre_oficial": "YASMÍN SOLEDAD INAY MANSILLA",
+    "nombre": "Yasmín Soledad Inay Mansilla",
+    "cargo": "Asistente Técnico de Párvulos",
+    "estamento": "Asistente",
+    "tipo": "Asistente de la Educación",
+    "icono": "🎈",
+    "cursos": [
+      "Pre-Kínder (NT1)",
+      "Kínder (NT2)"
+    ],
+    "id": "func_171577829"
+  },
+  {
+    "run": "17585718-4",
+    "nombre_oficial": "EUNICE MARISELA PARDO ALTAMIRANO",
+    "nombre": "Eunice Marisela Pardo Altamirano",
+    "cargo": "Asistente Social (Dupla Psicosocial)",
+    "estamento": "Profesional",
+    "tipo": "Asistente de la Educación",
+    "icono": "🤝",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_175857184"
+  },
+  {
+    "run": "17888996-6",
+    "nombre_oficial": "FERNANDO SEBASTIÁN PAREDES OJEDA",
+    "nombre": "Fernando Sebastián Paredes Ojeda",
+    "cargo": "Paradocente de Apoyo",
+    "estamento": "Asistente",
+    "tipo": "Asistente de la Educación",
+    "icono": "⚽",
+    "cursos": [
+      "Patio y Recreos"
+    ],
+    "id": "func_178889966"
+  },
+  {
+    "run": "10472113-3",
+    "nombre_oficial": "MARÍA NELLY SALGADO CARRILLANCA",
+    "nombre": "María Nelly Salgado Carrillanca",
+    "cargo": "Auxiliar de Apoyo y Aseo",
+    "estamento": "Asistente",
+    "tipo": "Asistente de la Educación",
+    "icono": "✨",
+    "cursos": [
+      "Entorno y Espacios Escolares"
+    ],
+    "id": "func_104721133"
+  },
+  {
+    "run": "12344180-K",
+    "nombre_oficial": "MARÍA ANGÉLICA SANTIBÁÑEZ OJEDA",
+    "nombre": "María Angélica Santibáñez Ojeda",
+    "cargo": "Inspectora Administrativa",
+    "estamento": "Asistente",
+    "tipo": "Asistente de la Educación",
+    "icono": "📁",
+    "cursos": [
+      "Administración y Convivencia"
+    ],
+    "id": "func_12344180K"
+  },
+  {
+    "run": "12080880-K",
+    "nombre_oficial": "NADIA DE LOURDES SOTO SOTO",
+    "nombre": "Nadia De Lourdes Soto Soto",
+    "cargo": "Bibliotecaria / Encargada CRA",
+    "estamento": "Asistente",
+    "tipo": "Asistente de la Educación",
+    "icono": "📖",
+    "cursos": [
+      "Biblioteca CRA"
+    ],
+    "id": "func_12080880K"
+  },
+  {
+    "run": "19765601-8",
+    "nombre_oficial": "CATALINA ANDREA ULLOA CARRILLO",
+    "nombre": "Catalina Andrea Ulloa Carrillo",
+    "cargo": "Psicóloga (Dupla Psicosocial)",
+    "estamento": "Profesional",
+    "tipo": "Asistente de la Educación",
+    "icono": "🧠",
+    "cursos": [
+      "Todos los cursos"
+    ],
+    "id": "func_197656018"
+  }
+]

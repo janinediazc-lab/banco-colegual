@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banco Escolar Colegual - Sistema de Recompensas y Ahorro</title>
+  <meta name="description" content="Sistema de recompensas y banco escolar de ColegualCoins para estudiantes de la Escuela Rural Colegual con tarjetas con códigos QR." />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <meta name="theme-color" content="#064e3b" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Banco Colegual" />
+  <link rel="apple-touch-icon" href="./Logo Colegual_dark.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script type="module" crossorigin src="./assets/index-CMUaNcMC.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-LHlqbvt0.css">
+</head>
+<body>
+  <!-- Encabezado Principal -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-section">
+        <img src="./Logo Colegual.png" alt="Escuela Rural Colegual" class="brand-logo-img" />
+        <div class="brand-text">
+          <h1>BANCO ESCOLAR COLEGUAL</h1>
+          <div class="subtitle">
+            <span>🏛️</span>
+            <span>Escuela Rural Colegual • Llanquihue • Sistema de Mérito y Convivencia</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <!-- Perfil Docente Activo -->
+        <div class="teacher-profile-badge" id="btn-switch-teacher" title="Clic para cambiar de docente o curso">
+          <div class="teacher-avatar" id="header-teacher-avatar">P</div>
+          <div class="teacher-info">
+            <span class="teacher-name" id="header-teacher-name">Docente</span>
+            <span class="teacher-role" id="header-teacher-role">Cambiar perfil</span>
+          </div>
+          <span style="font-size: 0.75rem; color: #a7f3d0; margin-left: 2px;">▼</span>
+        </div>
+
+        <!-- Botón Modo Web y Red Escolar -->
+        <button id="btn-share-network" class="btn-icon" title="🌐 Conectar celulares de profesores y ver enlaces web">
+          🌐
+        </button>
+
+        <!-- Botón Instalar App PWA -->
+        <button id="btn-install-pwa" class="btn btn-gold btn-sm" style="display: none; padding: 0.35rem 0.65rem; font-size: 0.8rem; font-weight: 700;">
+          📲 Instalar App
+        </button>
+
+        <!-- Botón de Sonido -->
+        <button id="btn-toggle-sound" class="btn-icon" title="Silenciar / Activar Sonido">
+          🔊
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Barra de Navegación -->
+  <nav class="app-nav">
+    <div class="nav-container">
+      <button class="nav-tab-btn active" data-tab="teacher">
+        <span>👨‍🏫</span>
+        <span>Gestión Funcionarios (ColegualCoins)</span>
+      </button>
+
+      <button class="nav-tab-btn" data-tab="scanner">
+        <span>📷</span>
+        <span>Escanear Tarjeta QR</span>
+      </button>
+
+      <button class="nav-tab-btn" data-tab="cards">
+        <span>🪪</span>
+        <span>Tarjetas Bancarias QR (Carnets)</span>
+        <span class="tab-badge">68</span>
+      </button>
+
+      <button class="nav-tab-btn" data-tab="store">
+        <span>🎁</span>
+        <span>Tienda de Recompensas</span>
+      </button>
+
+      <button class="nav-tab-btn" data-tab="kiosk">
+        <span>🏧</span>
+        <span>Kiosco ATM (Consulta Alumno)</span>
+      </button>
+
+      <button class="nav-tab-btn" data-tab="admin">
+        <span>📊</span>
+        <span>Panel y Auditoría</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Contenido de las Pestañas -->
+  <main class="main-content">
+    <section id="tab-teacher" class="tab-pane active"></section>
+    <section id="tab-scanner" class="tab-pane"></section>
+    <section id="tab-cards" class="tab-pane"></section>
+    <section id="tab-store" class="tab-pane"></section>
+    <section id="tab-kiosk" class="tab-pane"></section>
+    <section id="tab-admin" class="tab-pane"></section>
+  </main>
+
+  <!-- Pie de Página Institucional -->
+  <footer class="app-footer" style="text-align: center; padding: 1.75rem 1rem 2.5rem; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-light); margin-top: 2.5rem; background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(8px);">
+    <div style="display: flex; align-items: center; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.35rem; font-weight: 700; color: var(--color-primary-dark);">
+      <span>🏛️ Escuela Rural Colegual</span>
+      <span>•</span>
+      <span>Llanquihue (RBD 7967)</span>
+      <span>•</span>
+      <span>Banco Escolar ColegualCoins (CC)</span>
+    </div>
+    <div style="font-size: 0.88rem; color: #334155; font-weight: 600; margin-top: 0.25rem;">
+      🌟 Recurso realizado por la <strong>Coordinadora de Vida Escolar Janine Díaz Calixto</strong>
+    </div>
+  </footer>
+
+  <!-- Modal Selección de Funcionario (Docentes y Asistentes) -->
+  <!-- Modal Selección de Funcionario -->
+  <div class="modal-overlay" id="modal-teacher-select">
+    <div class="modal-container" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3>👤 Seleccionar Funcionario</h3>
+        <button class="modal-close" id="btn-close-teacher-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.75rem;">
+          Selecciona tu nombre e ingresa tu contraseña para activar tu perfil y autorizar la asignación de ColegualCoins:
+        </p>
+
+        <div class="search-input-wrapper" style="min-width: 100%; margin-bottom: 0.75rem;">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="staff-search-input" class="search-input" placeholder="Buscar funcionario por nombre..." />
+        </div>
+
+        <div id="teacher-options-list" style="display: flex; flex-direction: column; gap: 0.5rem; max-height: 380px; overflow-y: auto; padding-right: 4px;">
+          <!-- Lista inyectada por JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Autenticación con Contraseña de Funcionario -->
+  <div class="modal-overlay" id="modal-staff-auth">
+    <div class="modal-container" style="max-width: 440px; text-align: center;">
+      <div class="modal-header">
+        <h3>🔐 Validación de Contraseña</h3>
+        <button class="modal-close" id="btn-close-auth-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 1.25rem 1rem;">
+        <div id="auth-staff-avatar" class="teacher-avatar" style="width: 56px; height: 56px; font-size: 1.8rem; margin: 0 auto 0.75rem; background: linear-gradient(135deg, var(--color-gold), var(--color-primary));">
+          👤
+        </div>
+        <h4 id="auth-staff-name" style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800; color: var(--text-main); margin-bottom: 0.25rem;">
+          Funcionario
+        </h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Ingresa tu contraseña personal para activar tu cuenta y poder asignar puntos:
+        </p>
+
+        <div class="form-group" style="text-align: left;">
+          <label class="form-label" style="font-size: 0.85rem; font-weight: 700;">Contraseña:</label>
+          <div style="position: relative;">
+            <input type="password" id="input-staff-password" class="form-input" placeholder="Ingresa tu contraseña..." autocomplete="off" style="font-size: 1rem; padding-right: 42px;" />
+            <button type="button" id="btn-toggle-pwd-vis" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 1.1rem; padding: 2px;" title="Mostrar / Ocultar">👁️</button>
+          </div>
+          <div id="auth-error-msg" style="color: #ef4444; font-size: 0.82rem; font-weight: 700; margin-top: 0.45rem; display: none;"></div>
+        </div>
+      </div>
+      <div class="modal-footer" style="display: flex; gap: 0.5rem;">
+        <button class="btn btn-secondary" id="btn-cancel-auth-modal" style="flex: 1;">Cancelar</button>
+        <button class="btn btn-primary" id="btn-submit-auth-modal" style="flex: 1;">🔓 Activar Sesión</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Modo Web y Red Escolar (Celulares y Tablets) -->
+  <div class="modal-overlay" id="modal-network-share">
+    <div class="modal-container" style="max-width: 540px;">
+      <div class="modal-header">
+        <h3>🌐 Conectar como Página Web (Móvil y Red)</h3>
+        <button class="modal-close" id="btn-close-network-modal">&times;</button>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+          Puedes abrir y trabajar en esta plataforma desde cualquier celular, tablet o computador conectado al Wi-Fi de la escuela.
+        </p>
+
+        <!-- QR Code para escanear con celulares -->
+        <div style="background: white; padding: 1rem; border-radius: var(--radius-lg); display: inline-block; box-shadow: var(--shadow-md); margin-bottom: 1rem;">
+          <canvas id="network-qr-canvas" width="180" height="180"></canvas>
+          <div style="font-size: 0.75rem; color: #475569; font-weight: 700; margin-top: 0.4rem;">
+            📱 Escanea con la cámara de tu celular
+          </div>
+        </div>
+
+        <!-- Enlaces directos -->
+        <div style="background: #f8fafc; border: 1px solid var(--border-light); border-radius: var(--radius-md); padding: 0.85rem; margin-bottom: 1rem; text-align: left;">
+          <div style="font-size: 0.78rem; font-weight: 700; color: var(--color-primary-dark); margin-bottom: 0.25rem;">
+            🔗 Enlace para Celulares en el Wi-Fi Escolar:
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <input type="text" id="network-url-input" class="form-input" readonly style="font-family: monospace; font-size: 0.85rem; background: white;" />
+            <button id="btn-copy-network-url" class="btn btn-secondary btn-sm" style="white-space: nowrap;">
+              📋 Copiar
+            </button>
+          </div>
+        </div>
+
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--radius-md); padding: 0.75rem; font-size: 0.82rem; color: #065f46; text-align: left; line-height: 1.4;">
+          <strong>💡 Consejos para trabajar como Web App:</strong>
+          <ul style="margin: 0.35rem 0 0 1.2rem; padding: 0;">
+            <li>En <strong>Chrome o Safari</strong> (celular o computador), selecciona <em>"Agregar a la pantalla de inicio"</em> o el botón <em>"Instalar App"</em>.</li>
+            <li>No requiere internet externo en la escuela si están en la misma red local.</li>
+            <li>Todos los cambios, puntos y canjes se sincronizan inmediatamente.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btn-done-network-modal" style="width: 100%;">
+          Entendido 👍
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor Toast para Notificaciones -->
+  <div id="toast-box" class="toast-container"></div>
+
+</body>
+</html>

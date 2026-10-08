@@ -1,0 +1,66 @@
+[
+  {
+    "id": "part",
+    "nombre": "Participación Activa",
+    "puntos": 10,
+    "icono": "🌟",
+    "descripcion": "Participa en clases, responde y hace preguntas interesantes",
+    "color": "#10b981"
+  },
+  {
+    "id": "comp",
+    "nombre": "Compañerismo y Empatía",
+    "puntos": 15,
+    "icono": "🤝",
+    "descripcion": "Ayuda a sus compañeros y promueve un ambiente de respeto",
+    "color": "#3b82f6"
+  },
+  {
+    "id": "resp",
+    "nombre": "Responsabilidad y Deberes",
+    "puntos": 15,
+    "icono": "📚",
+    "descripcion": "Cumple con tareas, cuadernos y materiales solicitados",
+    "color": "#8b5cf6"
+  },
+  {
+    "id": "cuid",
+    "nombre": "Cuidado del Entorno",
+    "puntos": 10,
+    "icono": "🧹",
+    "descripcion": "Mantiene limpia la sala, cuida los recursos y el medioambiente",
+    "color": "#059669"
+  },
+  {
+    "id": "punt",
+    "nombre": "Puntualidad y Asistencia",
+    "puntos": 10,
+    "icono": "⏱️",
+    "descripcion": "Llega a tiempo y listo para comenzar la jornada",
+    "color": "#0284c7"
+  },
+  {
+    "id": "esf",
+    "nombre": "Esfuerzo y Superación",
+    "puntos": 20,
+    "icono": "💡",
+    "descripcion": "Demuestra perseverancia y superación en sus aprendizajes",
+    "color": "#f59e0b"
+  },
+  {
+    "id": "resp_norm",
+    "nombre": "Respeto de Normas",
+    "puntos": 15,
+    "icono": "👂",
+    "descripcion": "Escucha atenta, pide la palabra y respeta los turnos",
+    "color": "#ec4899"
+  },
+  {
+    "id": "dest",
+    "nombre": "Mérito Destacado",
+    "puntos": 25,
+    "icono": "🏆",
+    "descripcion": "Acción ejemplar o rendimiento sobresaliente en la escuela",
+    "color": "#eab308"
+  }
+]

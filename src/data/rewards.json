@@ -1,0 +1,82 @@
+[
+  {
+    "id": "rew_1",
+    "nombre": "Ayudante del Profesor por 1 Día",
+    "puntos": 40,
+    "icono": "👑",
+    "descripcion": "Asistir al profesor en la entrega de materiales y tareas del día",
+    "categoria": "Privilegio de Clase"
+  },
+  {
+    "id": "rew_2",
+    "nombre": "Elegir su Puesto en la Sala (1 Semana)",
+    "puntos": 60,
+    "icono": "🪑",
+    "descripcion": "Elegir el lugar de asiento preferido en la sala durante una semana",
+    "categoria": "Privilegio de Clase"
+  },
+  {
+    "id": "rew_3",
+    "nombre": "15 Minutos de Actividad Libre",
+    "puntos": 35,
+    "icono": "📖",
+    "descripcion": "Tiempo para dibujar, leer historietas o modelar plastilina",
+    "categoria": "Recreativo"
+  },
+  {
+    "id": "rew_4",
+    "nombre": "Elegir Canción para la Clase",
+    "puntos": 30,
+    "icono": "🎵",
+    "descripcion": "Elegir una canción educativa o animada para el inicio/cierre de la clase",
+    "categoria": "Recreativo"
+  },
+  {
+    "id": "rew_5",
+    "nombre": "Lápiz o Sticker Especial Colegual",
+    "puntos": 25,
+    "icono": "✏️",
+    "descripcion": "Un útil escolar con sello y felicitaciones de la escuela",
+    "categoria": "Premio Físico"
+  },
+  {
+    "id": "rew_6",
+    "nombre": "Capitán de Juegos del Recreo",
+    "puntos": 30,
+    "icono": "⚽",
+    "descripcion": "Liderar el juego o balón oficial durante el recreo",
+    "categoria": "Recreativo"
+  },
+  {
+    "id": "rew_7",
+    "nombre": "Diploma de Honor Banco Colegual",
+    "puntos": 80,
+    "icono": "📜",
+    "descripcion": "Reconocimiento impreso firmado por la dirección y profesor jefe",
+    "categoria": "Reconocimiento"
+  },
+  {
+    "id": "rew_8",
+    "nombre": "Préstamo de Juego de Mesa Especial",
+    "puntos": 45,
+    "icono": "🧩",
+    "descripcion": "Acceso al juego de mesa o ajedrez durante el recreo",
+    "categoria": "Recreativo"
+  },
+  {
+    "id": "rew_9",
+    "nombre": "Pase 'Almorzar en Mesa de Honor'",
+    "puntos": 50,
+    "icono": "🍎",
+    "descripcion": "Elegir compañeros especiales para una mesa ambientada en el casino",
+    "categoria": "Social"
+  },
+  {
+    "id": "rew_10",
+    "nombre": "Insignia Dorada de Gran Ahorrista",
+    "puntos": 100,
+    "icono": "🏅",
+    "descripcion": "Medalla de honor escolar al esfuerzo y buena convivencia",
+    "categoria": "Reconocimiento"
+  }
+]
