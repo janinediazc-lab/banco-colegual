@@ -343,16 +343,6 @@ export class TeacherPortalComponent {
     const student = storage.getStudentById(studentId);
     if (!student) return;
 
-    const activeStaff = storage.getActiveStaff();
-    if (!storage.isStaffAuthenticated(activeStaff.id)) {
-      if (typeof window.promptStaffAuth === 'function') {
-        window.promptStaffAuth(activeStaff, () => {
-          this.openDepositModal(studentId, initialMode);
-        });
-        return;
-      }
-    }
-
     this.selectedStudentForPoints = student;
     const addCategories = storage.getCategories();
     const deductCategories = storage.getDeductionCategories();
@@ -749,16 +739,6 @@ export class TeacherPortalComponent {
     if (this.selectedCourse === 'ALL') {
       alert('Por favor selecciona un curso específico en la barra de arriba antes de otorgar un bono grupal.');
       return;
-    }
-
-    const activeStaff = storage.getActiveStaff();
-    if (!storage.isStaffAuthenticated(activeStaff.id)) {
-      if (typeof window.promptStaffAuth === 'function') {
-        window.promptStaffAuth(activeStaff, () => {
-          this.openBatchCourseModal();
-        });
-        return;
-      }
     }
 
     const students = storage.getStudents().filter(s => s.curso_codigo === this.selectedCourse && !s.retirado);

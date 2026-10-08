@@ -508,33 +508,19 @@ class StorageService {
   }
 
   verifyStaffPassword(staff, inputPwd) {
-    if (!staff || !inputPwd) return false;
-    const firstName = this.getStaffFirstName(staff.nombre);
-    const normalize = (str) => str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
-    const expected = normalize(firstName) + '7967';
-    const input = normalize(inputPwd);
-    return expected === input;
+    return true;
   }
 
   isStaffAuthenticated(staffId) {
     const activeStaff = this.getActiveStaff();
     const targetId = staffId || (activeStaff ? activeStaff.id : null);
-    if (!targetId) return false;
-    const authStaffId = sessionStorage.getItem('banco_colegual_auth_staff') || localStorage.getItem('banco_colegual_auth_staff');
-    return authStaffId === targetId;
+    return !!targetId;
   }
 
   authenticateStaff(staffId, inputPwd) {
     const staff = this.getStaff().find(s => s.id === staffId);
     if (!staff) {
       return { success: false, error: 'Funcionario no encontrado.' };
-    }
-
-    if (!this.verifyStaffPassword(staff, inputPwd)) {
-      return {
-        success: false,
-        error: 'Contraseña incorrecta. Inténtalo nuevamente.'
-      };
     }
 
     localStorage.setItem('banco_colegual_auth_staff', staff.id);

@@ -59,8 +59,8 @@ async function main() {
     const qr = studentQrs[st.id];
     return `
       <div class="card-container">
-        <div class="bank-card bank-card-front" style="background-image: url('${bgBase64}');">
-          <div class="front-overlay"></div>
+        <div class="bank-card bank-card-front">
+          <div class="card-watermark"></div>
 
           <!-- Cabecera -->
           <div class="card-header-row">
@@ -71,8 +71,9 @@ async function main() {
             <div class="card-badge-course">${st.curso}</div>
           </div>
 
-          <!-- Centro: QR a la derecha -->
+          <!-- Centro: Chip inteligente a la izquierda + QR a la derecha -->
           <div class="card-middle-row">
+            <div class="card-chip-sim"></div>
             <div class="card-qr-box">
               <img src="${qr}" class="card-qr-img" alt="QR" />
               <span class="card-qr-label">ESCANEAR</span>
@@ -219,25 +220,48 @@ async function main() {
 
     /* ESTILOS DEL ANVERSO (FRENTE) */
     .bank-card-front {
-      background-size: cover;
-      background-position: center;
+      background: 
+        radial-gradient(circle at 18% 22%, rgba(16, 185, 129, 0.35) 0%, transparent 45%),
+        radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.22) 0%, transparent 50%),
+        linear-gradient(135deg, #064e3b 0%, #047857 45%, #0f172a 100%);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: 3mm 4mm;
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      position: relative;
+      overflow: hidden;
     }
-    .front-overlay {
+    .bank-card-front::before {
+      content: '';
       position: absolute;
       inset: 0;
-      background: linear-gradient(180deg, 
-        rgba(15, 23, 42, 0.65) 0%, 
-        rgba(15, 23, 42, 0.05) 30%, 
-        rgba(15, 23, 42, 0.08) 65%, 
-        rgba(15, 23, 42, 0.88) 100%);
+      background-image: repeating-linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.025) 0px,
+        rgba(255, 255, 255, 0.025) 1px,
+        transparent 1px,
+        transparent 6px
+      );
       border-radius: 4mm;
+      pointer-events: none;
       z-index: 1;
+    }
+    .card-watermark {
+      position: absolute;
+      top: 50%;
+      left: 28%;
+      transform: translate(-50%, -50%);
+      width: 25mm;
+      height: 25mm;
+      opacity: 0.14;
+      pointer-events: none;
+      z-index: 1;
+      background-image: url('${logoBase64}');
+      background-size: contain;
+      background-position: center;
+      background-repeat: no-repeat;
     }
     .card-header-row {
       display: flex;
@@ -267,23 +291,59 @@ async function main() {
       color: #fef08a;
     }
     .card-badge-course {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       background: linear-gradient(135deg, #f59e0b, #d97706);
       color: #ffffff;
       padding: 1.5px 7px;
       border-radius: 99px;
-      font-size: 5.8pt;
+      font-size: 5.4pt;
       font-weight: 800;
-      letter-spacing: 0.03em;
+      letter-spacing: 0.02em;
       border: 1px solid rgba(255, 255, 255, 0.4);
       text-transform: uppercase;
+      white-space: nowrap;
+      line-height: 1.1;
     }
     .card-middle-row {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
       align-items: center;
       position: relative;
       z-index: 2;
       margin: auto 0;
+      padding: 0 1mm;
+    }
+    .card-chip-sim {
+      width: 9.5mm;
+      height: 7.2mm;
+      background: linear-gradient(135deg, #fde68a 0%, #f59e0b 50%, #b45309 100%);
+      border: 0.8px solid rgba(180, 83, 9, 0.8);
+      border-radius: 1.5mm;
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+    .card-chip-sim::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 0.5px;
+      background: rgba(120, 53, 15, 0.5);
+      transform: translateY(-50%);
+    }
+    .card-chip-sim::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 0.5px;
+      background: rgba(120, 53, 15, 0.5);
+      transform: translateX(-50%);
     }
     .card-qr-box {
       background: #ffffff;
@@ -594,6 +654,11 @@ async function main() {
           height: 52.98mm;
           border-left: 1.5px dotted #d97706;
           margin: 0 1mm;
+        }
+        .foldable-unit .card-container {
+          border: none !important;
+          padding: 0 !important;
+          width: 84.6mm !important;
         }
       </style>
     </head>

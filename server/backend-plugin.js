@@ -160,8 +160,11 @@ const COURSE_PROGRESSION = {
 };
 
 export async function handleApiRequest(req, res) {
+  const reqUrl = req.url || '';
+  const parsedPath = reqUrl.split('?')[0];
+
   // Manejar preflight CORS
-  if (req.method === 'OPTIONS' && req.url.startsWith('/api/')) {
+  if (req.method === 'OPTIONS' && parsedPath.startsWith('/api/')) {
     setCorsHeaders(res);
     res.statusCode = 204;
     res.end();
@@ -169,7 +172,7 @@ export async function handleApiRequest(req, res) {
   }
 
         // Endpoint SSE para sincronización en tiempo real entre computador y celulares
-        if (req.url === '/api/events') {
+        if (parsedPath === '/api/events') {
           setCorsHeaders(res);
           res.writeHead(200, {
             'Content-Type': 'text/event-stream',
@@ -189,7 +192,7 @@ export async function handleApiRequest(req, res) {
         }
 
         // Endpoint GET /api/version (verificar si hay cambios para sincronización rápida)
-        if (req.method === 'GET' && req.url === '/api/version') {
+        if (req.method === 'GET' && parsedPath === '/api/version') {
           setCorsHeaders(res);
           res.setHeader('Content-Type', 'application/json');
           const db = loadDatabase();
@@ -202,7 +205,7 @@ export async function handleApiRequest(req, res) {
         }
 
         // Endpoint GET /api/data (obtener estado central)
-        if (req.method === 'GET' && req.url === '/api/data') {
+        if (req.method === 'GET' && parsedPath === '/api/data') {
           setCorsHeaders(res);
           res.setHeader('Content-Type', 'application/json');
           const db = loadDatabase();
@@ -211,7 +214,7 @@ export async function handleApiRequest(req, res) {
         }
 
         // Endpoint POST /api/transactions (abonar o canjear puntos)
-        if (req.method === 'POST' && req.url === '/api/transactions') {
+        if (req.method === 'POST' && parsedPath === '/api/transactions') {
           setCorsHeaders(res);
           try {
             const body = await parseJsonBody(req);
@@ -280,7 +283,7 @@ export async function handleApiRequest(req, res) {
         }
 
         // Endpoint POST /api/batch (bono de curso)
-        if (req.method === 'POST' && req.url === '/api/batch') {
+        if (req.method === 'POST' && parsedPath === '/api/batch') {
           setCorsHeaders(res);
           try {
             const body = await parseJsonBody(req);
@@ -337,7 +340,7 @@ export async function handleApiRequest(req, res) {
         }
 
         // Endpoint POST /api/students (crear nuevo estudiante)
-        if (req.method === 'POST' && req.url === '/api/students') {
+        if (req.method === 'POST' && parsedPath === '/api/students') {
           setCorsHeaders(res);
           try {
             const body = await parseJsonBody(req);
@@ -441,7 +444,7 @@ export async function handleApiRequest(req, res) {
         }
 
         // Endpoint POST /api/students/update (editar estudiante existente)
-        if (req.method === 'POST' && req.url === '/api/students/update') {
+        if (req.method === 'POST' && parsedPath === '/api/students/update') {
           setCorsHeaders(res);
           try {
             const body = await parseJsonBody(req);
@@ -498,7 +501,7 @@ export async function handleApiRequest(req, res) {
         }
 
         // Endpoint POST /api/students/delete (eliminar estudiante)
-        if (req.method === 'POST' && req.url === '/api/students/delete') {
+        if (req.method === 'POST' && parsedPath === '/api/students/delete') {
           setCorsHeaders(res);
           try {
             const body = await parseJsonBody(req);
@@ -541,7 +544,7 @@ export async function handleApiRequest(req, res) {
         }
 
         // Endpoint POST /api/students/promote-year (avanzar año escolar para todos los cursos)
-        if (req.method === 'POST' && req.url === '/api/students/promote-year') {
+        if (req.method === 'POST' && parsedPath === '/api/students/promote-year') {
           setCorsHeaders(res);
           try {
             const body = await parseJsonBody(req);
@@ -626,7 +629,7 @@ export async function handleApiRequest(req, res) {
         }
 
         // Endpoint POST /api/reset (reinicio de fábrica con PIN 3834)
-        if (req.method === 'POST' && req.url === '/api/reset') {
+        if (req.method === 'POST' && parsedPath === '/api/reset') {
           setCorsHeaders(res);
           try {
             const body = await parseJsonBody(req);
@@ -652,7 +655,7 @@ export async function handleApiRequest(req, res) {
           return true;
         }
 
-  if (req.url && req.url.startsWith('/api/')) {
+  if (parsedPath && parsedPath.startsWith('/api/')) {
     setCorsHeaders(res);
     res.statusCode = 404;
     res.setHeader('Content-Type', 'application/json');

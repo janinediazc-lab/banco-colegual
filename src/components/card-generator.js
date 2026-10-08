@@ -145,6 +145,8 @@ export class CardGeneratorComponent {
         ${showFront ? `
           <div class="bank-card" id="card-elem-${student.id}">
             <div class="bank-card-front">
+              <div class="card-watermark"></div>
+
               <!-- Encabezado Limpio con Marca y Curso -->
               <div class="card-header-row">
                 <div class="card-brand-pill">
@@ -154,8 +156,9 @@ export class CardGeneratorComponent {
                 <div class="card-badge-course">${student.curso}</div>
               </div>
 
-              <!-- Fila Media: Código QR nítido a la derecha -->
+              <!-- Fila Media: Chip Inteligente a la izquierda y Código QR a la derecha -->
               <div class="card-middle-row">
+                <div class="card-chip-sim"></div>
                 <div class="card-qr-box">
                   <canvas id="qr-canvas-${student.id}" class="card-qr-canvas"></canvas>
                   <span class="card-qr-label">ESCANEAR</span>
@@ -182,7 +185,7 @@ export class CardGeneratorComponent {
             <div class="card-back-body">
               <div class="card-signature-strip">
                 <span class="card-signature-text">${student.nombre_display.split(' ')[0]} (Firma)</span>
-                <span class="card-cvv">CVV 796</span>
+                <span class="card-cvv">CVV 7967</span>
               </div>
               <p class="card-terms-text">
                 Tarjeta de ahorro <strong>ColegualCoins</strong> • Escuela Rural Colegual. Reconoce el esfuerzo, la responsabilidad y la buena convivencia escolar. Código SIGE: 7967.
@@ -236,6 +239,7 @@ export class CardGeneratorComponent {
       <body>
         <div class="bank-card">
           <div class="bank-card-front">
+            <div class="card-watermark"></div>
             <div class="card-header-row">
               <div class="card-brand-pill">
                 <span class="card-bank-title">🏛️ BANCO COLEGUAL</span>
@@ -244,6 +248,7 @@ export class CardGeneratorComponent {
               <div class="card-badge-course">${student.curso}</div>
             </div>
             <div class="card-middle-row">
+              <div class="card-chip-sim"></div>
               <div class="card-qr-box">
                 <canvas id="single-qr" class="card-qr-canvas"></canvas>
                 <span class="card-qr-label">ESCANEAR</span>
