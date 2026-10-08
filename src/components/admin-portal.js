@@ -253,6 +253,15 @@ export class AdminPortalComponent {
                   <input type="checkbox" id="sf-retirado" /> Marcar como Alumno Retirado / Inactivo
                 </label>
               </div>
+              <div class="form-group" id="sf-pin-group" style="background: #fefce8; border: 1.5px solid #fde047; padding: 0.75rem; border-radius: var(--radius-md); margin-top: 0.5rem;">
+                <label class="form-label" style="font-weight: 800; color: #854d0e; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem; font-size: 0.85rem;">
+                  🔒 PIN de Seguridad Requerido (Código 3834):
+                </label>
+                <input type="password" id="sf-pin" class="form-input" maxlength="4" placeholder="••••" style="letter-spacing: 0.25em; font-weight: 800; text-align: center; font-size: 1.25rem; width: 140px; margin: 0 auto; display: block;" />
+                <div style="font-size: 0.76rem; color: #713f12; text-align: center; margin-top: 4px;">
+                  Solo personal autorizado con el código 3834 puede guardar cambios en la nómina.
+                </div>
+              </div>
               <div id="sf-error-msg" style="color: #ef4444; font-size: 0.85rem; font-weight: 700; display: none;"></div>
             </form>
           </div>
@@ -460,6 +469,7 @@ export class AdminPortalComponent {
     const sfSaldoGroup = this.container.querySelector('#sf-saldo-group');
     const sfRetirado = this.container.querySelector('#sf-retirado');
     const sfRetiradoGroup = this.container.querySelector('#sf-retirado-group');
+    const sfPin = this.container.querySelector('#sf-pin');
     const sfErrorMsg = this.container.querySelector('#sf-error-msg');
 
     // Autocompletar profesor al cambiar curso
@@ -487,6 +497,7 @@ export class AdminPortalComponent {
       sfSaldo.value = '10';
       sfSaldoGroup.style.display = 'block';
       sfRetiradoGroup.style.display = 'none';
+      if (sfPin) sfPin.value = '';
       sfErrorMsg.style.display = 'none';
       formModal.classList.add('open');
       setTimeout(() => sfRun.focus(), 150);
@@ -502,10 +513,19 @@ export class AdminPortalComponent {
       const profesor = sfProfesor.value.trim() || (cursoDef ? cursoDef.teacher : '');
       const lista = parseInt(sfLista.value, 10) || 1;
       const edad = parseInt(sfEdad.value, 10) || 6;
+      const pin = sfPin ? sfPin.value.trim() : '';
 
       if (!run || !nombre) {
         sfErrorMsg.textContent = 'Por favor completa el RUN y Nombre del estudiante.';
         sfErrorMsg.style.display = 'block';
+        return;
+      }
+
+      if (pin !== '3834') {
+        sound.playError();
+        sfErrorMsg.textContent = '🔒 PIN incorrecto. Debes ingresar el código de seguridad 3834 para autorizar cambios en la nómina.';
+        sfErrorMsg.style.display = 'block';
+        if (sfPin) sfPin.focus();
         return;
       }
 
@@ -523,7 +543,7 @@ export class AdminPortalComponent {
             nro_lista: lista,
             edad,
             retirado: sfRetirado.checked
-          });
+          }, pin);
           sound.playSuccess();
         } else {
           // Creación
@@ -538,7 +558,7 @@ export class AdminPortalComponent {
             nro_lista: lista,
             edad,
             saldo_inicial: saldo
-          });
+          }, pin);
           sound.playCoin();
           confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
         }
@@ -660,19 +680,26 @@ export class AdminPortalComponent {
       });
     });
 
-    // Eventos de eliminación
+    // Eventos de eliminación con PIN 3834
     tbody.querySelectorAll('.btn-delete-student').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         const sid = e.currentTarget.dataset.sid;
         const sname = e.currentTarget.dataset.sname;
-        if (confirm(`⚠️ ¿Estás seguro de que deseas eliminar permanentemente a ${sname}? Esta acción se actualizará en todo el sitio.`)) {
-          try {
-            await storage.deleteStudent(sid);
-            sound.playSuccess();
-            this.renderStudentTable();
-          } catch (err) {
-            alert('Error eliminando estudiante: ' + err.message);
-          }
+        const enteredPin = prompt(`🔒 ACCIÓN PROTEGIDA:\nPara eliminar permanentemente a "${sname}" de la nómina escolar, ingresa el código PIN de autorización (3834):`);
+        if (enteredPin === null) return;
+        if (enteredPin.trim() !== '3834') {
+          sound.playError();
+          alert('❌ PIN incorrecto. Se requiere el código 3834 para eliminar estudiantes de la nómina escolar.');
+          return;
+        }
+        try {
+          await storage.deleteStudent(sid, enteredPin.trim());
+          sound.playSuccess();
+          alert(`✅ Estudiante "${sname}" eliminado permanentemente.`);
+          this.renderStudentTable();
+        } catch (err) {
+          sound.playError();
+          alert('Error eliminando estudiante: ' + err.message);
         }
       });
     });
@@ -706,6 +733,8 @@ export class AdminPortalComponent {
     sfSaldoGroup.style.display = 'none'; // Saldo se gestiona por transacciones
     sfRetiradoGroup.style.display = 'block';
     sfRetirado.checked = Boolean(student.retirado);
+    const sfPin = this.container.querySelector('#sf-pin');
+    if (sfPin) sfPin.value = '';
     sfErrorMsg.style.display = 'none';
 
     formModal.classList.add('open');

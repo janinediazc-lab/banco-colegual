@@ -1,5 +1,5 @@
 // Service Worker para Banco Escolar Colegual
-const CACHE_NAME = 'banco-colegual-v2';
+const CACHE_NAME = 'banco-colegual-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -40,6 +40,10 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
   // Solo interceptar peticiones GET
   if (event.request.method !== 'GET') return;
+
+  const url = new URL(event.request.url);
+  // NUNCA interceptar llamadas /api/ ni SSE (deben ir siempre en vivo al servidor)
+  if (url.pathname.startsWith('/api/')) return;
 
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {

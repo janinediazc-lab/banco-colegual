@@ -89,7 +89,7 @@ class StorageService {
       // 1. Vaciar cualquier transacción pendiente antes de descargar el estado global
       await this.flushPendingSyncQueue();
 
-      const res = await fetch('/api/data');
+      const res = await fetch(`/api/data?_t=${Date.now()}`, { cache: 'no-store' });
       if (res.ok) {
         const db = await res.json();
         if (db && Array.isArray(db.students)) {
@@ -104,6 +104,7 @@ class StorageService {
             localStorage.setItem(STORAGE_KEYS.REWARDS, JSON.stringify(db.rewards));
           }
           this.lastSyncedTimestamp = db.lastUpdated || new Date().toISOString();
+          this.lastTxCount = db.transactions ? db.transactions.length : 0;
           this.notify('STUDENTS_UPDATED', db.students);
           this.notify('TRANSACTION_ADDED', db.transactions ? db.transactions[0] : null);
           return db;
@@ -148,10 +149,10 @@ class StorageService {
     this.pollingTimer = setInterval(async () => {
       try {
         if (!window.fetch) return;
-        const res = await fetch('/api/version');
+        const res = await fetch(`/api/version?_t=${Date.now()}`, { cache: 'no-store' });
         if (res.ok) {
           const ver = await res.json();
-          if (ver && ver.lastUpdated && ver.lastUpdated !== this.lastSyncedTimestamp) {
+          if (ver && (ver.lastUpdated !== this.lastSyncedTimestamp || (ver.txCount !== undefined && ver.txCount !== this.lastTxCount))) {
             await this.fetchAndApplyServerData();
           }
         }
@@ -647,13 +648,13 @@ class StorageService {
   }
 
   // --- GESTIÓN DE ESTUDIANTES Y MATRÍCULA ---
-  async addStudent(studentData) {
+  async addStudent(studentData, pin = '') {
     if (typeof window !== 'undefined' && window.fetch) {
       try {
         const res = await fetch('/api/students', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(studentData)
+          body: JSON.stringify({ ...studentData, pin })
         });
         const result = await res.json();
         if (!res.ok) throw new Error(result.error || 'Error al agregar estudiante');
@@ -666,13 +667,13 @@ class StorageService {
     }
   }
 
-  async updateStudentServer(studentData) {
+  async updateStudentServer(studentData, pin = '') {
     if (typeof window !== 'undefined' && window.fetch) {
       try {
         const res = await fetch('/api/students/update', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(studentData)
+          body: JSON.stringify({ ...studentData, pin })
         });
         const result = await res.json();
         if (!res.ok) throw new Error(result.error || 'Error al actualizar estudiante');
@@ -685,13 +686,13 @@ class StorageService {
     }
   }
 
-  async deleteStudent(studentId) {
+  async deleteStudent(studentId, pin = '') {
     if (typeof window !== 'undefined' && window.fetch) {
       try {
         const res = await fetch('/api/students/delete', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: studentId })
+          body: JSON.stringify({ id: studentId, pin })
         });
         const result = await res.json();
         if (!res.ok) throw new Error(result.error || 'Error al eliminar estudiante');

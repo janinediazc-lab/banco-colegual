@@ -341,6 +341,13 @@ export async function handleApiRequest(req, res) {
           setCorsHeaders(res);
           try {
             const body = await parseJsonBody(req);
+            if (String(body.pin).trim() !== '3834') {
+              res.statusCode = 403;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: 'PIN incorrecto. Se requiere el PIN 3834 para agregar estudiantes a la nómina.' }));
+              return true;
+            }
+
             const {
               run,
               nombre_completo,
@@ -438,6 +445,13 @@ export async function handleApiRequest(req, res) {
           setCorsHeaders(res);
           try {
             const body = await parseJsonBody(req);
+            if (String(body.pin).trim() !== '3834') {
+              res.statusCode = 403;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: 'PIN incorrecto. Se requiere el PIN 3834 para modificar datos de estudiantes.' }));
+              return true;
+            }
+
             const { id, run, nombre_completo, nombre_display, curso_codigo, curso, profesor_jefe, nro_lista, edad, retirado } = body;
 
             const db = loadDatabase();
@@ -488,6 +502,13 @@ export async function handleApiRequest(req, res) {
           setCorsHeaders(res);
           try {
             const body = await parseJsonBody(req);
+            if (String(body.pin).trim() !== '3834') {
+              res.statusCode = 403;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: 'PIN incorrecto. Se requiere el PIN 3834 para eliminar un estudiante de la nómina escolar.' }));
+              return true;
+            }
+
             const { id } = body;
 
             const db = loadDatabase();
