@@ -255,11 +255,11 @@ export class AdminPortalComponent {
               </div>
               <div class="form-group" id="sf-pin-group" style="background: #fefce8; border: 1.5px solid #fde047; padding: 0.75rem; border-radius: var(--radius-md); margin-top: 0.5rem;">
                 <label class="form-label" style="font-weight: 800; color: #854d0e; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem; font-size: 0.85rem;">
-                  🔒 PIN de Seguridad Requerido (Código 3834):
+                  🔒 Clave de Seguridad de Administrador:
                 </label>
                 <input type="password" id="sf-pin" class="form-input" maxlength="4" placeholder="••••" style="letter-spacing: 0.25em; font-weight: 800; text-align: center; font-size: 1.25rem; width: 140px; margin: 0 auto; display: block;" />
                 <div style="font-size: 0.76rem; color: #713f12; text-align: center; margin-top: 4px;">
-                  Solo personal autorizado con el código 3834 puede guardar cambios en la nómina.
+                  Acción restringida. Solo el personal directivo puede modificar la nómina escolar.
                 </div>
               </div>
               <div id="sf-error-msg" style="color: #ef4444; font-size: 0.85rem; font-weight: 700; display: none;"></div>
@@ -289,7 +289,7 @@ export class AdminPortalComponent {
             </p>
             <div style="background: #f8fafc; border: 1.5px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
               <label class="form-label" style="font-weight: 700; margin-bottom: 0.5rem; display: block;">
-                Ingresa el PIN de autorización para confirmar:
+                Ingresa la clave de administrador para autorizar la promoción:
               </label>
               <input type="password" id="input-promote-pin" maxlength="4" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.3em; width: 140px; margin: 0 auto;" class="form-input" />
               <div id="promote-pin-error" style="color: #ef4444; font-size: 0.82rem; font-weight: 700; margin-top: 0.4rem; display: none;"></div>
@@ -413,7 +413,7 @@ export class AdminPortalComponent {
       const pin = pinInput.value.trim();
       if (pin !== '3834') {
         sound.playError();
-        pinError.textContent = 'PIN incorrecto. Ingresa el PIN 3834 para autorizar el reinicio.';
+        pinError.textContent = 'Clave incorrecta. Solo el administrador puede autorizar el reinicio.';
         pinError.style.display = 'block';
         pinInput.focus();
         return;
@@ -523,7 +523,7 @@ export class AdminPortalComponent {
 
       if (pin !== '3834') {
         sound.playError();
-        sfErrorMsg.textContent = '🔒 PIN incorrecto. Debes ingresar el código de seguridad 3834 para autorizar cambios en la nómina.';
+        sfErrorMsg.textContent = '🔒 Clave incorrecta. No tienes permisos de administrador para modificar la nómina escolar.';
         sfErrorMsg.style.display = 'block';
         if (sfPin) sfPin.focus();
         return;
@@ -591,7 +591,7 @@ export class AdminPortalComponent {
       const pin = promotePin.value.trim();
       if (pin !== '3834') {
         sound.playError();
-        promoteError.textContent = 'PIN incorrecto. Ingresa el PIN 3834.';
+        promoteError.textContent = 'Clave incorrecta. Solo el administrador puede autorizar la promoción.';
         promoteError.style.display = 'block';
         promotePin.focus();
         return;
@@ -685,11 +685,11 @@ export class AdminPortalComponent {
       btn.addEventListener('click', async (e) => {
         const sid = e.currentTarget.dataset.sid;
         const sname = e.currentTarget.dataset.sname;
-        const enteredPin = prompt(`🔒 ACCIÓN PROTEGIDA:\nPara eliminar permanentemente a "${sname}" de la nómina escolar, ingresa el código PIN de autorización (3834):`);
+        const enteredPin = prompt(`🔒 ACCIÓN PROTEGIDA:\nPara eliminar permanentemente a "${sname}" de la nómina escolar, ingresa la clave de seguridad de administrador:`);
         if (enteredPin === null) return;
         if (enteredPin.trim() !== '3834') {
           sound.playError();
-          alert('❌ PIN incorrecto. Se requiere el código 3834 para eliminar estudiantes de la nómina escolar.');
+          alert('❌ Clave incorrecta. Acción cancelada por seguridad.');
           return;
         }
         try {

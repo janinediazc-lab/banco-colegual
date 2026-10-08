@@ -733,7 +733,7 @@ class StorageService {
         body: JSON.stringify({ pin })
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'PIN incorrecto. Ingresa el PIN 3834.');
+      if (!res.ok) throw new Error(result.error || 'Clave de seguridad incorrecta.');
     }
 
     localStorage.removeItem(STORAGE_KEYS.STUDENTS);

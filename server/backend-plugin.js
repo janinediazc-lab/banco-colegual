@@ -344,7 +344,7 @@ export async function handleApiRequest(req, res) {
             if (String(body.pin).trim() !== '3834') {
               res.statusCode = 403;
               res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ error: 'PIN incorrecto. Se requiere el PIN 3834 para agregar estudiantes a la nómina.' }));
+              res.end(JSON.stringify({ error: 'Clave incorrecta. Se requiere autorización de administración para registrar estudiantes.' }));
               return true;
             }
 
@@ -448,7 +448,7 @@ export async function handleApiRequest(req, res) {
             if (String(body.pin).trim() !== '3834') {
               res.statusCode = 403;
               res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ error: 'PIN incorrecto. Se requiere el PIN 3834 para modificar datos de estudiantes.' }));
+              res.end(JSON.stringify({ error: 'Clave incorrecta. Se requiere autorización de administración para modificar datos de la nómina.' }));
               return true;
             }
 
@@ -505,7 +505,7 @@ export async function handleApiRequest(req, res) {
             if (String(body.pin).trim() !== '3834') {
               res.statusCode = 403;
               res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ error: 'PIN incorrecto. Se requiere el PIN 3834 para eliminar un estudiante de la nómina escolar.' }));
+              res.end(JSON.stringify({ error: 'Clave incorrecta. Se requiere autorización de administración para eliminar estudiantes.' }));
               return true;
             }
 
@@ -548,7 +548,7 @@ export async function handleApiRequest(req, res) {
             if (String(body.pin).trim() !== '3834') {
               res.statusCode = 403;
               res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ error: 'PIN incorrecto. Se requiere el PIN 3834 para avanzar el año escolar.' }));
+              res.end(JSON.stringify({ error: 'Clave incorrecta. Solo el administrador puede autorizar el avance de año escolar.' }));
               return true;
             }
 
@@ -633,7 +633,7 @@ export async function handleApiRequest(req, res) {
             if (String(body.pin).trim() !== '3834') {
               res.statusCode = 403;
               res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ error: 'PIN incorrecto. Ingresa el PIN 3834 para autorizar el reinicio.' }));
+              res.end(JSON.stringify({ error: 'Clave incorrecta. Se requiere autorización de administración para autorizar el reinicio.' }));
               return true;
             }
 
