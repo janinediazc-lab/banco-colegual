@@ -26,7 +26,8 @@ function broadcast(eventType, payload) {
 }
 
 // Mantener conexiones SSE vivas contra desconexiones de routers Wi-Fi escolares
-setInterval(() => {
+const pingInterval = setInterval(() => {
+  if (sseClients.size === 0) return;
   for (const client of sseClients) {
     try {
       client.write(': ping\n\n');
@@ -36,6 +37,10 @@ setInterval(() => {
     }
   }
 }, 15000);
+
+if (typeof pingInterval.unref === 'function') {
+  pingInterval.unref();
+}
 
 function formatDate(date) {
   const d = new Date(date);
