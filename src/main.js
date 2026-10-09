@@ -31,13 +31,14 @@ class App {
 
   renderHeaderAndNav() {
     const activeStaff = storage.getActiveStaff();
+    const isAuth = storage.isStaffAuthenticated(activeStaff.id);
     const teacherNameEl = document.getElementById('header-teacher-name');
     const teacherRoleEl = document.getElementById('header-teacher-role');
     const teacherAvatarEl = document.getElementById('header-teacher-avatar');
 
     if (teacherNameEl) teacherNameEl.textContent = activeStaff.nombre;
     if (teacherRoleEl) {
-      teacherRoleEl.textContent = '🟢 Activo (Cambiar)';
+      teacherRoleEl.textContent = isAuth ? '🟢 Activo (Cambiar)' : '🔒 Iniciar con clave';
     }
     if (teacherAvatarEl) {
       teacherAvatarEl.textContent = activeStaff.icono || activeStaff.nombre.charAt(0);
@@ -78,9 +79,9 @@ class App {
       }
 
       listContainer.innerHTML = filtered.map(s => {
-        const isSelected = s.id === active.id;
+        const isSelectedAndAuth = s.id === active.id && storage.isStaffAuthenticated(s.id);
         return `
-          <div class="behavior-category-card ${isSelected ? 'selected' : ''}" data-tid="${s.id}" style="cursor: pointer; padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.85rem;">
+          <div class="behavior-category-card ${s.id === active.id ? 'selected' : ''}" data-tid="${s.id}" style="cursor: pointer; padding: 0.85rem 1rem; display: flex; align-items: center; gap: 0.85rem;">
             <div class="teacher-avatar" style="width: 44px; height: 44px; font-size: 1.35rem; background: linear-gradient(135deg, var(--color-gold), var(--color-primary)); flex-shrink: 0;">
               ${s.icono || '👤'}
             </div>
@@ -89,10 +90,10 @@ class App {
                 ${s.nombre}
               </div>
               <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 3px;">
-                ${isSelected ? '🟢 Seleccionado actualmente' : 'Toca para seleccionar este perfil'}
+                ${isSelectedAndAuth ? '🟢 Sesión activa' : '🔒 Requiere contraseña para activar'}
               </div>
             </div>
-            ${isSelected ? '<span style="color: var(--color-primary-dark); font-weight: 800; font-size: 0.82rem; background: var(--color-primary-subtle); padding: 4px 10px; border-radius: 99px;">✓ Activo</span>' : '<span style="color: var(--color-primary); font-size: 0.82rem; font-weight: 700;">Seleccionar 👉</span>'}
+            ${isSelectedAndAuth ? '<span style="color: var(--color-primary-dark); font-weight: 800; font-size: 0.82rem; background: var(--color-primary-subtle); padding: 4px 10px; border-radius: 99px;">✓ Activo</span>' : '<span style="color: var(--color-primary); font-size: 0.82rem; font-weight: 700;">Ingresar 👉</span>'}
           </div>
         `;
       }).join('');
@@ -103,12 +104,7 @@ class App {
           const targetStaff = storage.getStaff().find(s => s.id === tid);
           modal.classList.remove('open');
           if (targetStaff) {
-            storage.setActiveStaff(targetStaff.id);
-            localStorage.setItem('banco_colegual_auth_staff', targetStaff.id);
-            sessionStorage.setItem('banco_colegual_auth_staff', targetStaff.id);
-            sound.playSuccess();
-            toast.show(`👋 ¡Hola ${targetStaff.nombre}! Perfil activado correctamente.`, 'success');
-            this.renderHeaderAndNav();
+            this.openAuthModal(targetStaff);
           }
         });
       });

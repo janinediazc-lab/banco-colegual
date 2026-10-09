@@ -64,49 +64,29 @@
   flex-direction: column;
   justify-content: space-between;
   position: relative;
-  background: 
-    radial-gradient(circle at 18% 22%, rgba(16, 185, 129, 0.35) 0%, transparent 45%),
-    radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.22) 0%, transparent 50%),
-    linear-gradient(135deg, #064e3b 0%, #047857 45%, #0f172a 100%);
+  background-image: url('/fondo_colegual.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: #ffffff;
   border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.4);
   overflow: hidden;
 }
 
-/* Micro-patrón geométrico de seguridad tipo billete / tarjeta bancaria */
+/* Sombra gradual suave para maxima legibilidad de datos */
 .bank-card-front::before {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: repeating-linear-gradient(
-    45deg,
-    rgba(255, 255, 255, 0.025) 0px,
-    rgba(255, 255, 255, 0.025) 1px,
-    transparent 1px,
-    transparent 6px
-  );
+  background: linear-gradient(180deg, 
+    rgba(15, 23, 42, 0.6) 0%, 
+    rgba(15, 23, 42, 0.05) 30%, 
+    rgba(15, 23, 42, 0.08) 65%, 
+    rgba(15, 23, 42, 0.85) 100%);
   border-radius: 15px;
   pointer-events: none;
   z-index: 1;
-}
-
-/* Marca de agua institucional del emblema Escuela Rural Colegual */
-.card-watermark {
-  position: absolute;
-  top: 50%;
-  left: 28%;
-  transform: translate(-50%, -50%);
-  width: 130px;
-  height: 130px;
-  opacity: 0.12;
-  pointer-events: none;
-  z-index: 1;
-  background-image: url('/logo-colegual.png');
-  background-size: contain;
-  background-position: center;
-  background-repeat: no-repeat;
-  filter: brightness(2.2);
 }
 
 /* Fila Superior: Título Limpio y Curso */

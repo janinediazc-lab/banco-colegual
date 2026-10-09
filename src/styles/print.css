@@ -105,49 +105,29 @@
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
     color-adjust: exact !important;
-    background: 
-      radial-gradient(circle at 18% 22%, rgba(16, 185, 129, 0.35) 0%, transparent 45%),
-      radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.22) 0%, transparent 50%),
-      linear-gradient(135deg, #064e3b 0%, #047857 45%, #0f172a 100%) !important;
+    background-image: url('/fondo_colegual.jpg') !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
     color: #ffffff !important;
     padding: 3mm 4mm !important;
     position: relative !important;
     overflow: hidden !important;
-    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.4) !important;
   }
 
   .bank-card-front::before {
     content: '' !important;
     position: absolute !important;
     inset: 0 !important;
-    background-image: repeating-linear-gradient(
-      45deg,
-      rgba(255, 255, 255, 0.025) 0px,
-      rgba(255, 255, 255, 0.025) 1px,
-      transparent 1px,
-      transparent 6px
-    ) !important;
+    background: linear-gradient(180deg, 
+      rgba(15, 23, 42, 0.6) 0%, 
+      rgba(15, 23, 42, 0.05) 30%, 
+      rgba(15, 23, 42, 0.08) 65%, 
+      rgba(15, 23, 42, 0.85) 100%) !important;
     border-radius: 3.5mm !important;
     pointer-events: none !important;
     z-index: 1 !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-  }
-
-  .card-watermark {
-    position: absolute !important;
-    top: 50% !important;
-    left: 28% !important;
-    transform: translate(-50%, -50%) !important;
-    width: 25mm !important;
-    height: 25mm !important;
-    opacity: 0.14 !important;
-    pointer-events: none !important;
-    z-index: 1 !important;
-    background-image: url('/logo-colegual.png') !important;
-    background-size: contain !important;
-    background-position: center !important;
-    background-repeat: no-repeat !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }

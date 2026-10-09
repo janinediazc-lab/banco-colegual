@@ -508,19 +508,41 @@ class StorageService {
   }
 
   verifyStaffPassword(staff, inputPwd) {
-    return true;
+    if (!staff || !inputPwd) return false;
+    const normalize = (str) => String(str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    const input = normalize(inputPwd);
+    const firstName = normalize(this.getStaffFirstName(staff.nombre));
+    const runDigits = staff.run ? staff.run.replace(/[^0-9kK]/g, '').toLowerCase() : '';
+
+    // Acepta: nombre7967 (ej: juan7967), solo nombre (juan), codigo escolar (7967), pin admin (3834) o RUN
+    if (input === `${firstName}7967`) return true;
+    if (input === firstName) return true;
+    if (input === '7967') return true;
+    if (input === '3834') return true;
+    if (runDigits && (input === runDigits || input === runDigits.slice(0, -1))) return true;
+
+    return false;
   }
 
   isStaffAuthenticated(staffId) {
     const activeStaff = this.getActiveStaff();
     const targetId = staffId || (activeStaff ? activeStaff.id : null);
-    return !!targetId;
+    if (!targetId) return false;
+    const authStaffId = sessionStorage.getItem('banco_colegual_auth_staff') || localStorage.getItem('banco_colegual_auth_staff');
+    return authStaffId === targetId;
   }
 
   authenticateStaff(staffId, inputPwd) {
     const staff = this.getStaff().find(s => s.id === staffId);
     if (!staff) {
       return { success: false, error: 'Funcionario no encontrado.' };
+    }
+
+    if (!this.verifyStaffPassword(staff, inputPwd)) {
+      return {
+        success: false,
+        error: 'Contraseña incorrecta. Inténtalo nuevamente.'
+      };
     }
 
     localStorage.setItem('banco_colegual_auth_staff', staff.id);

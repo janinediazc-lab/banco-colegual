@@ -419,6 +419,14 @@ export class ScannerComponent {
 
     try {
       const staff = storage.getActiveStaff();
+      if (!storage.isStaffAuthenticated(staff.id)) {
+        if (typeof window.promptStaffAuth === 'function') {
+          window.promptStaffAuth(staff, () => {
+            this.executeQuickDeposit();
+          });
+          return;
+        }
+      }
 
       const noteInput = this.container.querySelector('#scanner-note-input');
       const note = noteInput ? noteInput.value.trim() : '';

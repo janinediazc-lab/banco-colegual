@@ -59,9 +59,7 @@ async function main() {
     const qr = studentQrs[st.id];
     return `
       <div class="card-container">
-        <div class="bank-card bank-card-front">
-          <div class="card-watermark"></div>
-
+        <div class="bank-card bank-card-front" style="background-image: url('${bgBase64}');">
           <!-- Cabecera -->
           <div class="card-header-row">
             <div class="card-brand-pill">
@@ -218,18 +216,17 @@ async function main() {
       overflow: hidden;
     }
 
-    /* ESTILOS DEL ANVERSO (FRENTE) */
+    /* ESTILOS DEL ANVERSO (FRENTE CON ACUARELA) */
     .bank-card-front {
-      background: 
-        radial-gradient(circle at 18% 22%, rgba(16, 185, 129, 0.35) 0%, transparent 45%),
-        radial-gradient(circle at 85% 75%, rgba(245, 158, 11, 0.22) 0%, transparent 50%),
-        linear-gradient(135deg, #064e3b 0%, #047857 45%, #0f172a 100%);
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       padding: 3mm 4mm;
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.45);
       position: relative;
       overflow: hidden;
     }
@@ -237,31 +234,14 @@ async function main() {
       content: '';
       position: absolute;
       inset: 0;
-      background-image: repeating-linear-gradient(
-        45deg,
-        rgba(255, 255, 255, 0.025) 0px,
-        rgba(255, 255, 255, 0.025) 1px,
-        transparent 1px,
-        transparent 6px
-      );
+      background: linear-gradient(180deg, 
+        rgba(15, 23, 42, 0.62) 0%, 
+        rgba(15, 23, 42, 0.05) 30%, 
+        rgba(15, 23, 42, 0.08) 65%, 
+        rgba(15, 23, 42, 0.88) 100%);
       border-radius: 4mm;
       pointer-events: none;
       z-index: 1;
-    }
-    .card-watermark {
-      position: absolute;
-      top: 50%;
-      left: 28%;
-      transform: translate(-50%, -50%);
-      width: 25mm;
-      height: 25mm;
-      opacity: 0.14;
-      pointer-events: none;
-      z-index: 1;
-      background-image: url('${logoBase64}');
-      background-size: contain;
-      background-position: center;
-      background-repeat: no-repeat;
     }
     .card-header-row {
       display: flex;

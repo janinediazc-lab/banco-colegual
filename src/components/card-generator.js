@@ -145,8 +145,6 @@ export class CardGeneratorComponent {
         ${showFront ? `
           <div class="bank-card" id="card-elem-${student.id}">
             <div class="bank-card-front">
-              <div class="card-watermark"></div>
-
               <!-- Encabezado Limpio con Marca y Curso -->
               <div class="card-header-row">
                 <div class="card-brand-pill">
