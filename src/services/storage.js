@@ -93,6 +93,24 @@ class StorageService {
       if (res.ok) {
         const db = await res.json();
         if (db && Array.isArray(db.students)) {
+          // Escudo de auto-recuperación: si el servidor se reinició pero este navegador tiene historial previo más completo, restaurar servidor
+          const localTransactions = this.getTransactions();
+          const serverTxCount = Array.isArray(db.transactions) ? db.transactions.length : 0;
+          if (localTransactions.length > serverTxCount && serverTxCount <= 68) {
+            console.log(`[Auto-Restore] 🛡️ Restaurando servidor desde caché local (${localTransactions.length} vs ${serverTxCount} tx)...`);
+            fetch('/api/sync-restore', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                students: this.getStudents(),
+                transactions: localTransactions,
+                staff: this.getStaff(),
+                rewards: this.getRewards()
+              })
+            }).catch(() => {});
+            return db;
+          }
+
           localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(db.students));
           if (Array.isArray(db.transactions)) {
             localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(db.transactions));

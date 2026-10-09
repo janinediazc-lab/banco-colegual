@@ -5,10 +5,29 @@ import { fileURLToPath } from 'url';
 import defaultStudents from '../src/data/students.js';
 import defaultStaff from '../src/data/staff.js';
 import defaultRewards from '../src/data/rewards.js';
+import { sendEmail, formatTransactionEmail, formatBatchEmail } from './services/mailer.js';
+import { isCloudDbConfigured, pullFromCloud, pushToCloud, getCloudStatus } from './services/cloud-db.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const DB_FILE = path.resolve(__dirname, '../data/banco_colegual_db.json');
+
+// Sincronización inicial con Supabase (Cloud DB) al arranque del servidor
+(async () => {
+  if (isCloudDbConfigured()) {
+    try {
+      const cloudData = await pullFromCloud();
+      if (cloudData && Array.isArray(cloudData.students)) {
+        console.log('[CloudDB] Sincronizando datos de Supabase con archivo local...');
+        const dir = path.dirname(DB_FILE);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(DB_FILE, JSON.stringify(cloudData, null, 2), 'utf-8');
+      }
+    } catch (e) {
+      console.warn('[CloudDB] Error al inicializar desde la nube:', e.message);
+    }
+  }
+})();
 
 // Clientes conectados por SSE (Server-Sent Events)
 const sseClients = new Set();
@@ -117,6 +136,10 @@ function saveDatabase(data) {
     }
     data.lastUpdated = new Date().toISOString();
     fs.writeFileSync(DB_FILE, JSON.stringify(data, null, 2), 'utf-8');
+
+    // Sincronización continua en la nube si Supabase está configurado
+    pushToCloud(data).catch(err => console.warn('[CloudDB] Sync error:', err));
+
     return true;
   } catch (err) {
     console.error('[DB] Error guardando base de datos:', err);
@@ -271,6 +294,17 @@ export async function handleApiRequest(req, res) {
               lastUpdated: db.lastUpdated
             });
 
+            // Notificación inmediata al correo institucional (asíncrona)
+            sendEmail(formatTransactionEmail({
+              student: st,
+              teacher: tx.profesor,
+              amount: numMonto,
+              reason: tx.motivo,
+              newBalance: newSaldo,
+              type,
+              dateStr: tx.fecha_display
+            })).catch(err => console.error('[Mailer] Error enviando correo:', err));
+
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ success: true, student: st, transaction: tx, lastUpdated: db.lastUpdated }));
           } catch (err) {
@@ -327,6 +361,16 @@ export async function handleApiRequest(req, res) {
               count: affected.length,
               lastUpdated: db.lastUpdated
             });
+
+            // Notificación inmediata al correo institucional por bono grupal
+            sendEmail(formatBatchEmail({
+              courseName: curso_codigo,
+              teacher: profesor || 'Docente de Curso',
+              amount: numMonto,
+              reason: motivo || `Bono Grupal de Curso: +${numMonto} CC`,
+              studentCount: affected.length,
+              dateStr: formatDate(now)
+            })).catch(err => console.error('[Mailer] Error en bono grupal:', err));
 
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ success: true, count: affected.length, lastUpdated: db.lastUpdated }));
@@ -751,6 +795,49 @@ export async function handleApiRequest(req, res) {
 
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ success: true, lastUpdated: initDb.lastUpdated }));
+          } catch (err) {
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: err.message }));
+          }
+          return true;
+        }
+
+        // Endpoint GET /api/cloud-status (diagnóstico de conexión a Supabase y correo)
+        if (req.method === 'GET' && parsedPath === '/api/cloud-status') {
+          setCorsHeaders(res);
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({
+            cloudDb: getCloudStatus(),
+            mailer: {
+              targetEmail: process.env.NOTIFICATION_EMAIL || 'janine.diaz@slepllanquihue.cl',
+              resendConfigured: !!process.env.RESEND_API_KEY,
+              smtpConfigured: !!(process.env.SMTP_USER || process.env.GMAIL_USER)
+            }
+          }));
+          return true;
+        }
+
+        // Endpoint POST /api/sync-restore (auto-recuperación de emergencia desde el cliente si Render se reinicia)
+        if (req.method === 'POST' && parsedPath === '/api/sync-restore') {
+          setCorsHeaders(res);
+          try {
+            const body = await parseJsonBody(req);
+            const currentDb = loadDatabase();
+            if (body && Array.isArray(body.students) && Array.isArray(body.transactions)) {
+              const currentTxLen = currentDb.transactions?.length || 0;
+              if (body.transactions.length > currentTxLen) {
+                console.log(`[Auto-Restore] 🛡️ Restaurando estado desde el cliente (${body.transactions.length} transacciones vs ${currentTxLen} en servidor)...`);
+                body.lastUpdated = new Date().toISOString();
+                saveDatabase(body);
+                broadcast('DATA_UPDATED', { action: 'DATABASE_RESTORED', lastUpdated: body.lastUpdated });
+                res.setHeader('Content-Type', 'application/json');
+                res.end(JSON.stringify({ success: true, restored: true, txCount: body.transactions.length }));
+                return true;
+              }
+            }
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ success: false, message: 'El servidor ya tiene datos actualizados' }));
           } catch (err) {
             res.statusCode = 500;
             res.setHeader('Content-Type', 'application/json');
