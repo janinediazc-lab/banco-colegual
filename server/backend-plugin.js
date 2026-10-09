@@ -543,6 +543,110 @@ export async function handleApiRequest(req, res) {
           return true;
         }
 
+        // Endpoint POST /api/rewards (guardar o editar recompensa de la tienda)
+        if (req.method === 'POST' && parsedPath === '/api/rewards') {
+          setCorsHeaders(res);
+          try {
+            const body = await parseJsonBody(req);
+            const { id, nombre, puntos, icono = '🎁', descripcion = '', categoria = 'General' } = body;
+
+            if (!nombre || !puntos) {
+              res.statusCode = 400;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: 'Nombre y costo en puntos son obligatorios' }));
+              return true;
+            }
+
+            const db = loadDatabase();
+            if (!Array.isArray(db.rewards)) db.rewards = [];
+
+            let rewardId = id;
+            if (!rewardId) {
+              rewardId = `rew_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
+            }
+
+            const rewardData = {
+              id: rewardId,
+              nombre: String(nombre).trim(),
+              puntos: Math.max(1, parseInt(puntos, 10) || 10),
+              icono: String(icono || '🎁').trim(),
+              descripcion: String(descripcion || '').trim(),
+              categoria: String(categoria || 'General').trim()
+            };
+
+            const existingIdx = db.rewards.findIndex(r => r.id === rewardId);
+            if (existingIdx !== -1) {
+              db.rewards[existingIdx] = rewardData;
+            } else {
+              db.rewards.push(rewardData);
+            }
+
+            db.lastUpdated = new Date().toISOString();
+            saveDatabase(db);
+
+            broadcast('DATA_UPDATED', {
+              action: 'REWARDS_UPDATED',
+              reward: rewardData,
+              rewards: db.rewards,
+              lastUpdated: db.lastUpdated
+            });
+
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ success: true, reward: rewardData, lastUpdated: db.lastUpdated }));
+          } catch (err) {
+            console.error('[API] Error guardando recompensa:', err);
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: err.message }));
+          }
+          return true;
+        }
+
+        // Endpoint POST /api/rewards/delete (eliminar recompensa de la tienda)
+        if (req.method === 'POST' && parsedPath === '/api/rewards/delete') {
+          setCorsHeaders(res);
+          try {
+            const body = await parseJsonBody(req);
+            const { id } = body;
+
+            if (!id) {
+              res.statusCode = 400;
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ error: 'ID de recompensa es requerido' }));
+              return true;
+            }
+
+            const db = loadDatabase();
+            if (!Array.isArray(db.rewards)) db.rewards = [];
+
+            const prevLen = db.rewards.length;
+            db.rewards = db.rewards.filter(r => r.id !== id);
+
+            if (db.rewards.length !== prevLen) {
+              db.lastUpdated = new Date().toISOString();
+              saveDatabase(db);
+
+              broadcast('DATA_UPDATED', {
+                action: 'REWARD_DELETED',
+                deletedId: id,
+                rewards: db.rewards,
+                lastUpdated: db.lastUpdated
+              });
+            }
+
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ success: true, id, lastUpdated: db.lastUpdated }));
+          } catch (err) {
+            console.error('[API] Error eliminando recompensa:', err);
+            res.statusCode = 500;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: err.message }));
+          }
+          return true;
+        }
+
         // Endpoint POST /api/students/promote-year (avanzar año escolar para todos los cursos)
         if (req.method === 'POST' && parsedPath === '/api/students/promote-year') {
           setCorsHeaders(res);

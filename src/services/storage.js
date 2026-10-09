@@ -102,6 +102,7 @@ class StorageService {
           }
           if (Array.isArray(db.rewards)) {
             localStorage.setItem(STORAGE_KEYS.REWARDS, JSON.stringify(db.rewards));
+            this.notify('REWARDS_UPDATED', db.rewards);
           }
           this.lastSyncedTimestamp = db.lastUpdated || new Date().toISOString();
           this.lastTxCount = db.transactions ? db.transactions.length : 0;
@@ -578,7 +579,7 @@ class StorageService {
   saveReward(reward) {
     const rewards = this.getRewards();
     if (!reward.id) {
-      reward.id = `rew_${Date.now()}`;
+      reward.id = `rew_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`;
       rewards.push(reward);
     } else {
       const idx = rewards.findIndex(r => r.id === reward.id);
@@ -587,6 +588,16 @@ class StorageService {
     }
     localStorage.setItem(STORAGE_KEYS.REWARDS, JSON.stringify(rewards));
     this.notify('REWARDS_UPDATED', rewards);
+
+    // Sincronizar inmediatamente con el servidor central para persistencia global
+    fetch('/api/rewards', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(reward)
+    }).catch(err => {
+      console.warn('[Sync] Advertencia guardando recompensa en servidor:', err);
+    });
+
     return reward;
   }
 
@@ -595,6 +606,15 @@ class StorageService {
     rewards = rewards.filter(r => r.id !== id);
     localStorage.setItem(STORAGE_KEYS.REWARDS, JSON.stringify(rewards));
     this.notify('REWARDS_UPDATED', rewards);
+
+    // Sincronizar eliminación con el servidor central
+    fetch('/api/rewards/delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id })
+    }).catch(err => {
+      console.warn('[Sync] Advertencia eliminando recompensa en servidor:', err);
+    });
   }
 
   // --- EXPORTAR / IMPORTAR / RESTABLECER ---
