@@ -542,7 +542,8 @@ export class AdminPortalComponent {
             profesor_jefe: profesor,
             nro_lista: lista,
             edad,
-            retirado: sfRetirado.checked
+            retirado: sfRetirado.checked,
+            saldo: parseInt(sfSaldo.value, 10)
           }, pin);
           sound.playSuccess();
         } else {
@@ -730,7 +731,9 @@ export class AdminPortalComponent {
     sfLista.value = student.nro_lista || 1;
     sfProfesor.value = student.profesor_jefe || '';
     sfEdad.value = student.edad || 6;
-    sfSaldoGroup.style.display = 'none'; // Saldo se gestiona por transacciones
+    sfSaldoGroup.style.display = 'block';
+    const sfSaldo = this.container.querySelector('#sf-saldo');
+    if (sfSaldo) sfSaldo.value = student.saldo !== undefined ? student.saldo : 10;
     sfRetiradoGroup.style.display = 'block';
     sfRetirado.checked = Boolean(student.retirado);
     const sfPin = this.container.querySelector('#sf-pin');

@@ -254,6 +254,22 @@ export async function handleApiRequest(req, res) {
             }
 
             const st = db.students[idx];
+
+            // IDEMPOTENCIA: Si esta transacción ya fue registrada con anterioridad, no volver a aplicar el descuento/abono
+            if (body.tx_id && Array.isArray(db.transactions) && db.transactions.some(t => t.id === body.tx_id)) {
+              console.log(`[API] ℹ️ Transacción ${body.tx_id} ya registrada previamente. Evitando doble descuento.`);
+              const existingTx = db.transactions.find(t => t.id === body.tx_id);
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({
+                success: true,
+                student: st,
+                transaction: existingTx,
+                lastUpdated: db.lastUpdated,
+                alreadyProcessed: true
+              }));
+              return true;
+            }
+
             const numMonto = Number(monto);
             const newSaldo = Math.max(0, (st.saldo || 0) + numMonto);
 
@@ -294,16 +310,21 @@ export async function handleApiRequest(req, res) {
               lastUpdated: db.lastUpdated
             });
 
-            // Notificación inmediata al correo institucional (asíncrona)
-            sendEmail(formatTransactionEmail({
-              student: st,
-              teacher: tx.profesor,
-              amount: numMonto,
-              reason: tx.motivo,
-              newBalance: newSaldo,
-              type,
-              dateStr: tx.fecha_display
-            })).catch(err => console.error('[Mailer] Error enviando correo:', err));
+            // Notificación inmediata al correo institucional (asíncrona y blindada)
+            try {
+              const emailPayload = formatTransactionEmail({
+                student: st,
+                teacher: tx.profesor,
+                amount: numMonto,
+                reason: tx.motivo,
+                newBalance: newSaldo,
+                type: tipo,
+                dateStr: tx.fecha_display
+              });
+              sendEmail(emailPayload).catch(err => console.error('[Mailer] Error enviando correo:', err));
+            } catch (mailErr) {
+              console.error('[Mailer] Error generando plantilla de correo:', mailErr);
+            }
 
             res.setHeader('Content-Type', 'application/json');
             res.end(JSON.stringify({ success: true, student: st, transaction: tx, lastUpdated: db.lastUpdated }));
@@ -499,7 +520,7 @@ export async function handleApiRequest(req, res) {
               return true;
             }
 
-            const { id, run, nombre_completo, nombre_display, curso_codigo, curso, profesor_jefe, nro_lista, edad, retirado } = body;
+            const { id, run, nombre_completo, nombre_display, curso_codigo, curso, profesor_jefe, nro_lista, edad, retirado, saldo } = body;
 
             const db = loadDatabase();
             const idx = db.students.findIndex(s => s.id === id);
@@ -511,6 +532,36 @@ export async function handleApiRequest(req, res) {
             }
 
             const current = db.students[idx];
+
+            // Ajuste administrativo de saldo si fue provisto
+            let saldoVal = current.saldo;
+            if (saldo !== undefined && saldo !== null && !isNaN(Number(saldo))) {
+              const targetSaldo = Math.max(0, Number(saldo));
+              if (targetSaldo !== current.saldo) {
+                const diff = targetSaldo - (current.saldo || 0);
+                saldoVal = targetSaldo;
+                if (diff > 0) {
+                  current.total_ganado = (current.total_ganado || 0) + diff;
+                }
+                const now = new Date();
+                db.transactions.unshift({
+                  id: `tx_${Date.now()}_adj_${Math.random().toString(36).substr(2, 5)}`,
+                  timestamp: now.toISOString(),
+                  fecha_display: formatDate(now),
+                  estudiante_id: current.id,
+                  estudiante_run: current.run,
+                  estudiante_nombre: current.nombre_display,
+                  curso: current.curso,
+                  profesor: 'Administración Colegual (Ajuste)',
+                  tipo: diff >= 0 ? 'BONO' : 'DESCUENTO',
+                  monto: diff,
+                  motivo: `Ajuste Administrativo de Saldo (${current.saldo} CC ➔ ${targetSaldo} CC)`,
+                  categoria_id: 'ajuste_saldo',
+                  saldo_resultante: targetSaldo
+                });
+              }
+            }
+
             db.students[idx] = {
               ...current,
               run: run ? run.trim().replace(/\./g, '') : current.run,
@@ -521,7 +572,8 @@ export async function handleApiRequest(req, res) {
               profesor_jefe: profesor_jefe !== undefined ? profesor_jefe : current.profesor_jefe,
               nro_lista: nro_lista !== undefined ? Number(nro_lista) : current.nro_lista,
               edad: edad !== undefined ? Number(edad) : current.edad,
-              retirado: retirado !== undefined ? Boolean(retirado) : current.retirado
+              retirado: retirado !== undefined ? Boolean(retirado) : current.retirado,
+              saldo: saldoVal
             };
 
             const updatedStudent = db.students[idx];

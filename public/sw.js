@@ -1,5 +1,5 @@
 // Service Worker para Banco Escolar Colegual
-const CACHE_NAME = 'banco-colegual-v7';
+const CACHE_NAME = 'banco-colegual-v8';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

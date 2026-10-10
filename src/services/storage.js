@@ -72,10 +72,18 @@ class StorageService {
           body: JSON.stringify(item.payload)
         });
         if (!res.ok) {
-          remaining.push(item);
+          const attempts = (item.attempts || 0) + 1;
+          if (attempts < 3) {
+            remaining.push({ ...item, attempts });
+          } else {
+            console.warn('[Sync] Descartando elemento de cola pendiente tras 3 intentos fallidos:', item);
+          }
         }
       } catch {
-        remaining.push(item);
+        const attempts = (item.attempts || 0) + 1;
+        if (attempts < 3) {
+          remaining.push({ ...item, attempts });
+        }
       }
     }
 
@@ -244,6 +252,18 @@ class StorageService {
       const janine = defaultStaff.find(s => s.nombre.includes('Janine'));
       localStorage.setItem(STORAGE_KEYS.ACTIVE_STAFF, janine?.id || defaultStaff[0]?.id || 'func_admin');
     }
+
+    // Limpieza de seguridad: Si la cola pendiente tiene transacciones viejas o repetidas, sanearla
+    try {
+      const rawQueue = localStorage.getItem(STORAGE_KEYS.PENDING_SYNC);
+      if (rawQueue) {
+        const parsed = JSON.parse(rawQueue);
+        if (Array.isArray(parsed) && parsed.length > 5) {
+          console.log('[Storage] Saneando cola de sincronización pendiente...');
+          localStorage.removeItem(STORAGE_KEYS.PENDING_SYNC);
+        }
+      }
+    } catch {}
   }
 
   subscribe(listener) {
