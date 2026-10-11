@@ -119,6 +119,13 @@ class StorageService {
             return db;
           }
 
+          // Normalizar siempre profesores jefes en los datos recibidos del servidor
+          db.students.forEach(s => {
+            if (s.curso_codigo === '1°' || s.curso_codigo === '2°' || s.curso_codigo === '1' || s.curso_codigo === '2' || (s.profesor_jefe && s.profesor_jefe.includes('Gallardo'))) {
+              s.profesor_jefe = 'Bonny Cárdenas Palma';
+            }
+          });
+
           localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(db.students));
           if (Array.isArray(db.transactions)) {
             localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(db.transactions));
@@ -264,6 +271,26 @@ class StorageService {
         }
       }
     } catch {}
+    // Auto-migración en caliente de estudiantes y staff en caché local
+    try {
+      const stored = localStorage.getItem(STORAGE_KEYS.STUDENTS);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        let changed = false;
+        parsed.forEach(s => {
+          if (s.curso_codigo === '1°' || s.curso_codigo === '2°' || s.curso_codigo === '1' || s.curso_codigo === '2' || (s.profesor_jefe && s.profesor_jefe.includes('Gallardo'))) {
+            if (s.profesor_jefe !== 'Bonny Cárdenas Palma') {
+              s.profesor_jefe = 'Bonny Cárdenas Palma';
+              changed = true;
+            }
+          }
+        });
+        if (changed) {
+          localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(parsed));
+          setTimeout(() => this.notify('STUDENTS_UPDATED', parsed), 50);
+        }
+      }
+    } catch {}
   }
 
   subscribe(listener) {
@@ -295,7 +322,22 @@ class StorageService {
   getStudents() {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.STUDENTS);
-      return data ? JSON.parse(data) : [];
+      const list = data ? JSON.parse(data) : defaultStudents;
+      let repaired = false;
+      list.forEach(s => {
+        if (s.curso_codigo === '1°' || s.curso_codigo === '2°' || s.curso_codigo === '1' || s.curso_codigo === '2' || (s.profesor_jefe && s.profesor_jefe.includes('Gallardo'))) {
+          if (s.profesor_jefe !== 'Bonny Cárdenas Palma') {
+            s.profesor_jefe = 'Bonny Cárdenas Palma';
+            repaired = true;
+          }
+        }
+      });
+      if (repaired && typeof window !== 'undefined' && window.localStorage) {
+        try {
+          localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(list));
+        } catch {}
+      }
+      return list;
     } catch {
       return defaultStudents;
     }
@@ -504,6 +546,12 @@ class StorageService {
     try {
       const data = localStorage.getItem(STORAGE_KEYS.STAFF);
       const list = data ? JSON.parse(data) : defaultStaff;
+      const bonny = list.find(s => s.id === 'func_157968068' || s.nombre_oficial?.includes('BONNY'));
+      if (bonny && (!bonny.cargo.includes('Prof. Jefe') || bonny.cursos?.length !== 2)) {
+        bonny.cargo = 'Docente de Aula (Prof. Jefe 1° y 2° Básico)';
+        bonny.cursos = ['1° Básico', '2° Básico'];
+        try { localStorage.setItem(STORAGE_KEYS.STAFF, JSON.stringify(list)); } catch {}
+      }
       return list.filter(s => !removedIds.includes(s.id));
     } catch {
       return defaultStaff.filter(s => !removedIds.includes(s.id));

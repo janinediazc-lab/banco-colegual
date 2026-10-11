@@ -189,7 +189,7 @@ export class CardGeneratorComponent {
                 Tarjeta de ahorro <strong>ColegualCoins</strong> • Escuela Rural Colegual. Reconoce el esfuerzo, la responsabilidad y la buena convivencia escolar. Código SIGE: 7967.
               </p>
               <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a7f3d0;">
-                <span>Prof. Jefe: ${student.profesor_jefe}</span>
+                <span>Prof. Jefe: ${(student.curso_codigo === '1°' || student.curso_codigo === '2°' || student.curso_codigo === '1' || student.curso_codigo === '2' || (student.profesor_jefe && student.profesor_jefe.includes('Gallardo'))) ? 'Bonny Cárdenas Palma' : student.profesor_jefe}</span>
                 <span>Llanquihue, Los Lagos</span>
               </div>
             </div>

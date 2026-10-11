@@ -653,7 +653,7 @@ export class AdminPortalComponent {
           <div style="font-size: 0.72rem; color: var(--text-muted);">${s.nro_cuenta}</div>
         </td>
         <td><span class="badge-tx" style="background:#e0f2fe; color:#0369a1; font-weight: 700;">${s.curso}</span></td>
-        <td style="font-size: 0.8rem; color: var(--text-muted);">${s.profesor_jefe || '—'}</td>
+        <td style="font-size: 0.8rem; color: var(--text-muted);">${(s.curso_codigo === '1°' || s.curso_codigo === '2°' || s.curso_codigo === '1' || s.curso_codigo === '2' || (s.profesor_jefe && s.profesor_jefe.includes('Gallardo'))) ? 'Bonny Cárdenas Palma' : (s.profesor_jefe || '—')}</td>
         <td style="text-align: right; font-weight: 800; color: var(--color-primary-dark); font-size: 0.95rem;">
           🪙 ${s.saldo || 0} CC
         </td>

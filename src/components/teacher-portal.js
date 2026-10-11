@@ -244,10 +244,13 @@ export class TeacherPortalComponent {
     if (this.selectedCourse === 'ALL') {
       if (titleEl) titleEl.textContent = 'Todos los Cursos';
       if (profEl) profEl.textContent = 'Toda la Escuela Colegual';
-    } else {
       const firstStudent = filtered[0];
       if (titleEl) titleEl.textContent = firstStudent ? firstStudent.curso : `${this.selectedCourse} Básico`;
-      if (profEl) profEl.textContent = firstStudent ? `Prof. Jefe: ${firstStudent.profesor_jefe}` : 'Docente';
+      let profName = firstStudent ? firstStudent.profesor_jefe : 'Docente';
+      if (this.selectedCourse === '1' || this.selectedCourse === '1°' || this.selectedCourse === '2' || this.selectedCourse === '2°' || (profName && profName.includes('Gallardo'))) {
+        profName = 'Bonny Cárdenas Palma';
+      }
+      if (profEl) profEl.textContent = `Prof. Jefe: ${profName}`;
     }
   }
 

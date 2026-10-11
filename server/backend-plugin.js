@@ -119,6 +119,18 @@ function loadDatabase() {
     if (!parsed.students || !Array.isArray(parsed.students)) {
       throw new Error('Formato inválido');
     }
+    let changed = false;
+    parsed.students.forEach(s => {
+      if (s.curso_codigo === '1°' || s.curso_codigo === '2°' || s.curso_codigo === '1' || s.curso_codigo === '2' || (s.profesor_jefe && s.profesor_jefe.includes('Gallardo'))) {
+        if (s.profesor_jefe !== 'Bonny Cárdenas Palma') {
+          s.profesor_jefe = 'Bonny Cárdenas Palma';
+          changed = true;
+        }
+      }
+    });
+    if (changed) {
+      saveDatabase(parsed);
+    }
     return parsed;
   } catch (err) {
     console.error('[DB] Error cargando base de datos, creando inicial:', err);
@@ -880,6 +892,13 @@ export async function handleApiRequest(req, res) {
               const currentTxLen = currentDb.transactions?.length || 0;
               if (body.transactions.length > currentTxLen) {
                 console.log(`[Auto-Restore] 🛡️ Restaurando estado desde el cliente (${body.transactions.length} transacciones vs ${currentTxLen} en servidor)...`);
+                if (Array.isArray(body.students)) {
+                  body.students.forEach(s => {
+                    if (s.curso_codigo === '1°' || s.curso_codigo === '2°' || s.curso_codigo === '1' || s.curso_codigo === '2' || (s.profesor_jefe && s.profesor_jefe.includes('Gallardo'))) {
+                      s.profesor_jefe = 'Bonny Cárdenas Palma';
+                    }
+                  });
+                }
                 body.lastUpdated = new Date().toISOString();
                 saveDatabase(body);
                 broadcast('DATA_UPDATED', { action: 'DATABASE_RESTORED', lastUpdated: body.lastUpdated });

@@ -128,7 +128,7 @@ async function main() {
 
             <!-- Metadatos inferiores -->
             <div class="back-footer-row">
-              <span>Prof. Jefe: ${st.profesor_jefe}</span>
+              <span>Prof. Jefe: ${(st.curso_codigo === '1°' || st.curso_codigo === '2°' || st.curso_codigo === '1' || st.curso_codigo === '2' || (st.profesor_jefe && st.profesor_jefe.includes('Gallardo'))) ? 'Bonny Cárdenas Palma' : st.profesor_jefe}</span>
               <span>Llanquihue, Los Lagos</span>
               <span>Cuenta N° ${st.nro_cuenta}</span>
             </div>
