@@ -171,8 +171,8 @@ function setCorsHeaders(res) {
 // Mapeo de cursos y profesores jefes para promoción anual
 const COURSE_PROGRESSION = {
   'NT1': { nextCode: 'NT2', nextName: 'Kínder (NT2)', nextTeacher: 'Fuentes Bolla Nicole Andrea' },
-  'NT2': { nextCode: '1', nextName: '1° Básico', nextTeacher: 'Docente de Aula' },
-  '1': { nextCode: '2', nextName: '2° Básico', nextTeacher: 'Docente de Aula' },
+  'NT2': { nextCode: '1', nextName: '1° Básico', nextTeacher: 'Bonny Cárdenas Palma' },
+  '1': { nextCode: '2', nextName: '2° Básico', nextTeacher: 'Bonny Cárdenas Palma' },
   '2': { nextCode: '3', nextName: '3° Básico', nextTeacher: 'Henríquez Figueroa Karla Daniela' },
   '3': { nextCode: '4', nextName: '4° Básico', nextTeacher: 'Henríquez Figueroa Karla Daniela' },
   '4': { nextCode: '5', nextName: '5° Básico', nextTeacher: 'Meléndez Mansilla Paola Soledad' },

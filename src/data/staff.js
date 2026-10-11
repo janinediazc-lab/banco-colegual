@@ -85,12 +85,13 @@ export default [
     "run": "15796806-8",
     "nombre_oficial": "CÁRDENAS PALMA BONNY DANIELA",
     "nombre": "Bonny Daniela Cárdenas Palma",
-    "cargo": "Docente de Aula",
+    "cargo": "Docente de Aula (Prof. Jefe 1° y 2° Básico)",
     "estamento": "Docente",
     "tipo": "Docente",
     "icono": "👩‍🏫",
     "cursos": [
-      "Todos los cursos"
+      "1° Básico",
+      "2° Básico"
     ],
     "id": "func_157968068"
   },

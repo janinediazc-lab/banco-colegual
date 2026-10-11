@@ -5,8 +5,8 @@ import confetti from 'canvas-confetti';
 const COURSE_DEFAULTS = [
   { code: 'NT1', name: 'Pre-Kínder (NT1)', teacher: 'Fuentes Bolla Nicole Andrea' },
   { code: 'NT2', name: 'Kínder (NT2)', teacher: 'Fuentes Bolla Nicole Andrea' },
-  { code: '1', name: '1° Básico', teacher: 'Docente de Aula' },
-  { code: '2', name: '2° Básico', teacher: 'Docente de Aula' },
+  { code: '1', name: '1° Básico', teacher: 'Bonny Cárdenas Palma' },
+  { code: '2', name: '2° Básico', teacher: 'Bonny Cárdenas Palma' },
   { code: '3', name: '3° Básico', teacher: 'Henríquez Figueroa Karla Daniela' },
   { code: '4', name: '4° Básico', teacher: 'Henríquez Figueroa Karla Daniela' },
   { code: '5', name: '5° Básico', teacher: 'Meléndez Mansilla Paola Soledad' },
@@ -492,7 +492,7 @@ export class AdminPortalComponent {
       sfNombre.value = '';
       sfCurso.value = '1';
       sfLista.value = '1';
-      sfProfesor.value = 'Docente de Aula';
+      sfProfesor.value = 'Bonny Cárdenas Palma';
       sfEdad.value = '6';
       sfSaldo.value = '10';
       sfSaldoGroup.style.display = 'block';

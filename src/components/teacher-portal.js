@@ -65,7 +65,7 @@ export class TeacherPortalComponent {
       <div class="course-action-header">
         <div class="course-meta">
           <h3 id="current-course-title">1° Básico</h3>
-          <span class="course-teacher-tag" id="current-course-teacher">Docente de Aula</span>
+          <span class="course-teacher-tag" id="current-course-teacher">Bonny Cárdenas Palma</span>
         </div>
 
         <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
