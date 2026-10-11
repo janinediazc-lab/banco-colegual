@@ -1,6 +1,6 @@
 # 🌐 Guía: Cómo Trabajar con el Banco Colegual como Página Web
 
-> 🌟 **Recurso pedagógico e institucional realizado por la Coordinadora de Vida Escolar Janine Díaz Calixto**  
+> 🌟 **Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar**  
 > *Escuela Rural Colegual (RBD 7967, Llanquihue) — Sistema de Mérito y Convivencia ColegualCoins (CC)*
 
 El **Banco Escolar Colegual** está diseñado para funcionar de manera versátil como una aplicación web moderna (PWA), tanto de manera local en la escuela como publicado en Internet.

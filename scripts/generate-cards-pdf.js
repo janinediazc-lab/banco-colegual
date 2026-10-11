@@ -123,7 +123,7 @@ async function main() {
 
             <!-- Créditos Coordinadora de Vida Escolar -->
             <div class="back-credit-badge">
-              🌟 Recurso institucional por Coordinadora de Vida Escolar Janine Díaz Calixto
+              🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar
             </div>
 
             <!-- Metadatos inferiores -->
@@ -510,7 +510,7 @@ async function main() {
           <div class="sheet-header">
             <h2>ESCUELA RURAL COLEGUAL • BANCO ESCOLAR</h2>
             <p><strong>ANVERSO (FRENTE CON QR)</strong> — ${course.name}${subTitle} • ${chunk.length} Estudiantes</p>
-            <div class="credits-tag">🌟 Recurso institucional por Coordinadora de Vida Escolar Janine Díaz Calixto</div>
+            <div class="credits-tag">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</div>
           </div>
           <div class="sheet-grid">
             ${chunk.map(st => renderCardFront(st)).join('')}
@@ -539,7 +539,7 @@ async function main() {
           <div class="sheet-header" style="border-bottom-color: #1e293b;">
             <h2>ESCUELA RURAL COLEGUAL • BANCO ESCOLAR</h2>
             <p><strong>DORSO (REVERSO PARA DÚPLEX)</strong> — ${course.name}${subTitle} • Alineado para corte y plastificado</p>
-            <div class="credits-tag">🌟 Recurso institucional por Coordinadora de Vida Escolar Janine Díaz Calixto</div>
+            <div class="credits-tag">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</div>
           </div>
           <div class="sheet-grid">
             ${mirroredChunk.map(st => st ? renderCardBack(st) : '<div class="card-container" style="border: none;"></div>').join('')}
@@ -662,7 +662,7 @@ async function main() {
           <div class="sheet-header">
             <h2>ESCUELA RURAL COLEGUAL • BANCO ESCOLAR</h2>
             <p><strong>TARJETAS PLEGABLES (DOBLAR POR LA LÍNEA PUNTEADA)</strong> — ${course.name}${subTitle}</p>
-            <div class="credits-tag">🌟 Recurso institucional por Coordinadora de Vida Escolar Janine Díaz Calixto</div>
+            <div class="credits-tag">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</div>
           </div>
           <div class="foldable-sheet-grid">
             ${chunk.map(st => `

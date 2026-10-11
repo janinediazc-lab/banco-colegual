@@ -914,8 +914,8 @@ async function main() {
           </div>
         </div>
         <div class="footer-credits">
-          <p>🌟 Recurso pedagógico impulsado por la</p>
-          <p><strong>Coordinadora de Vida Escolar: Janine Díaz Calixto</strong></p>
+          <p>🌟 Recurso realizado por</p>
+          <p><strong>Janine Díaz Calixto - Coordinación de la Vida Escolar</strong></p>
           <p>Escuela Rural Colegual • Llanquihue</p>
         </div>
       </div>

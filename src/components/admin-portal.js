@@ -43,7 +43,7 @@ export class AdminPortalComponent {
         <div class="hero-text">
           <h2>📊 Panel General, Gestión Escolar y Auditoría</h2>
           <p>Supervisa ColegualCoins en circulación, gestiona la nómina de estudiantes, promueve cursos cada año y realiza respaldos de datos.</p>
-          <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por la Coordinadora de Vida Escolar Janine Díaz Calixto</div>
+          <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</div>
         </div>
         <div class="hero-stats" id="admin-kpis">
           <!-- KPIs inyectados aquí -->

@@ -46,7 +46,7 @@ export class CardGeneratorComponent {
       <div class="cards-print-header" style="display: none;">
         <h2>ESCUELA RURAL COLEGUAL - BANCO ESCOLAR</h2>
         <p>Nómina de Tarjetas Bancarias Estudiantiles con Código QR de Identificación</p>
-        <p style="font-size: 0.8rem; color: #475569; margin-top: 2px;">Recurso realizado por la Coordinadora de Vida Escolar Janine Díaz Calixto</p>
+        <p style="font-size: 0.82rem; color: #047857; margin-top: 4px; font-weight: 700;">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</p>
       </div>
 
       <div class="cards-gallery-controls">
@@ -188,6 +188,9 @@ export class CardGeneratorComponent {
               <p class="card-terms-text">
                 Tarjeta de ahorro <strong>ColegualCoins</strong> • Escuela Rural Colegual. Reconoce el esfuerzo, la responsabilidad y la buena convivencia escolar. Código SIGE: 7967.
               </p>
+              <div style="font-size: 0.58rem; color: #cbd5e1; margin: 3px 0; font-weight: 600; text-align: center;">
+                🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar
+              </div>
               <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a7f3d0;">
                 <span>Prof. Jefe: ${(student.curso_codigo === '1°' || student.curso_codigo === '2°' || student.curso_codigo === '1' || student.curso_codigo === '2' || (student.profesor_jefe && student.profesor_jefe.includes('Gallardo'))) ? 'Bonny Cárdenas Palma' : student.profesor_jefe}</span>
                 <span>Llanquihue, Los Lagos</span>

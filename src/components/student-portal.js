@@ -23,6 +23,7 @@ export class StudentPortalComponent {
           <p style="font-size: 0.92rem; color: #cbd5e1;">
             Consulta tu saldo de puntos de conducta y revisa tu libreta de ahorro escolar.
           </p>
+          <div style="font-size: 0.8rem; color: #fef08a; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</div>
         </div>
 
         <div id="kiosk-login-area">

@@ -38,7 +38,7 @@ export class TeacherPortalComponent {
         <div class="hero-text">
           <h2>👨‍🏫 Panel de Funcionarios y Recompensas</h2>
           <p>Asigna <strong>ColegualCoins (CC)</strong> a tus estudiantes por buena convivencia, esfuerzo, compañerismo y hábitos positivos.</p>
-          <div style="font-size: 0.8rem; color: #a7f3d0; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por la Coordinadora de Vida Escolar Janine Díaz Calixto</div>
+          <div style="font-size: 0.8rem; color: #a7f3d0; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</div>
         </div>
         <div class="hero-stats">
           <div class="hero-stat-card">

@@ -13,7 +13,7 @@ Minimum version required to store current data is: `+c+`.
         <div class="hero-text">
           <h2>👨‍🏫 Panel de Funcionarios y Recompensas</h2>
           <p>Asigna <strong>ColegualCoins (CC)</strong> a tus estudiantes por buena convivencia, esfuerzo, compañerismo y hábitos positivos.</p>
-          <div style="font-size: 0.8rem; color: #a7f3d0; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por la Coordinadora de Vida Escolar Janine Díaz Calixto</div>
+          <div style="font-size: 0.8rem; color: #a7f3d0; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</div>
         </div>
         <div class="hero-stats">
           <div class="hero-stat-card">
@@ -586,7 +586,7 @@ Minimum version required to store current data is: `+c+`.
       <div class="cards-print-header" style="display: none;">
         <h2>ESCUELA RURAL COLEGUAL - BANCO ESCOLAR</h2>
         <p>Nómina de Tarjetas Bancarias Estudiantiles con Código QR de Identificación</p>
-        <p style="font-size: 0.8rem; color: #475569; margin-top: 2px;">Recurso realizado por la Coordinadora de Vida Escolar Janine Díaz Calixto</p>
+        <p style="font-size: 0.82rem; color: #047857; margin-top: 4px; font-weight: 700;">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</p>
       </div>
 
       <div class="cards-gallery-controls">
@@ -662,6 +662,9 @@ Minimum version required to store current data is: `+c+`.
               <p class="card-terms-text">
                 Tarjeta de ahorro <strong>ColegualCoins</strong> • Escuela Rural Colegual. Reconoce el esfuerzo, la responsabilidad y la buena convivencia escolar. Código SIGE: 7967.
               </p>
+              <div style="font-size: 0.58rem; color: #cbd5e1; margin: 3px 0; font-weight: 600; text-align: center;">
+                🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar
+              </div>
               <div style="display: flex; justify-content: space-between; font-size: 0.6rem; color: #a7f3d0;">
                 <span>Prof. Jefe: ${e.curso_codigo===`1°`||e.curso_codigo===`2°`||e.curso_codigo===`1`||e.curso_codigo===`2`||e.profesor_jefe&&e.profesor_jefe.includes(`Gallardo`)?`Bonny Cárdenas Palma`:e.profesor_jefe}</span>
                 <span>Llanquihue, Los Lagos</span>
@@ -886,6 +889,7 @@ Minimum version required to store current data is: `+c+`.
           <p style="font-size: 0.92rem; color: #cbd5e1;">
             Consulta tu saldo de puntos de conducta y revisa tu libreta de ahorro escolar.
           </p>
+          <div style="font-size: 0.8rem; color: #fef08a; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</div>
         </div>
 
         <div id="kiosk-login-area">
@@ -1027,7 +1031,7 @@ Minimum version required to store current data is: `+c+`.
         <div class="hero-text">
           <h2>📊 Panel General, Gestión Escolar y Auditoría</h2>
           <p>Supervisa ColegualCoins en circulación, gestiona la nómina de estudiantes, promueve cursos cada año y realiza respaldos de datos.</p>
-          <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por la Coordinadora de Vida Escolar Janine Díaz Calixto</div>
+          <div style="font-size: 0.8rem; color: #cbd5e1; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</div>
         </div>
         <div class="hero-stats" id="admin-kpis">
           <!-- KPIs inyectados aquí -->
