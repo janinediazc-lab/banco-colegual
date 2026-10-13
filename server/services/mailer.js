@@ -11,13 +11,65 @@ function getToEmail() {
   return envEmail.trim().replace(/^["']|["']$/g, '');
 }
 
+export function getResolvedGmailPass() {
+  const raw =
+    process.env.GMAIL_APP_PASS ||
+    process.env.GMAIL_APP_PASSWORD ||
+    process.env.GMAIL_PASS ||
+    process.env.GMAIL_PASSWORD ||
+    process.env.SMTP_PASS ||
+    process.env.SMTP_PASSWORD ||
+    process.env.EMAIL_PASS ||
+    process.env.EMAIL_PASSWORD;
+  if (!raw || !raw.trim()) return null;
+  return raw.trim().replace(/^["']|["']$/g, '').replace(/\s+/g, '');
+}
+
+export function getResolvedGmailUser() {
+  const direct =
+    process.env.GMAIL_USER ||
+    process.env.GMAIL_EMAIL ||
+    process.env.GMAIL_ADDRESS ||
+    process.env.GMAIL_CORREO ||
+    process.env.GMAIL;
+  if (direct && direct.trim()) return direct.trim().replace(/^["']|["']$/g, '');
+
+  const smtp =
+    process.env.SMTP_USER ||
+    process.env.EMAIL_USER ||
+    process.env.EMAIL ||
+    process.env.USER_EMAIL ||
+    process.env.CORREO ||
+    process.env.CORREO_USER;
+  if (smtp && smtp.trim()) return smtp.trim().replace(/^["']|["']$/g, '');
+
+  // Si tiene clave de app configurada pero no definió usuario emisor, recurrir a NOTIFICATION_EMAIL
+  const pass = getResolvedGmailPass();
+  if (pass) {
+    const notify = process.env.NOTIFICATION_EMAIL || 'janine.diaz@slepllanquihue.cl';
+    return notify.trim().replace(/^["']|["']$/g, '');
+  }
+
+  return null;
+}
+
+export function getResolvedResendKey() {
+  const raw =
+    process.env.RESEND_API_KEY ||
+    process.env.RESEND_KEY ||
+    process.env.RESEND_APIKEY ||
+    process.env.RESEND_TOKEN;
+  if (!raw || !raw.trim()) return null;
+  return raw.trim().replace(/^["']|["']$/g, '');
+}
+
 function getSmtpTransporter() {
   if (smtpTransporter) return smtpTransporter;
 
   const host = process.env.SMTP_HOST ? process.env.SMTP_HOST.trim() : null;
   const port = parseInt(process.env.SMTP_PORT, 10) || 587;
-  const user = (process.env.SMTP_USER || '').trim().replace(/^["']|["']$/g, '');
-  const pass = (process.env.SMTP_PASS || '').trim().replace(/^["']|["']$/g, '');
+  const user = getResolvedGmailUser();
+  const pass = getResolvedGmailPass();
 
   if (host && user && pass) {
     smtpTransporter = nodemailer.createTransport({
@@ -29,17 +81,11 @@ function getSmtpTransporter() {
     return smtpTransporter;
   }
 
-  // Soporte directo para Gmail si se provee GMAIL_USER y GMAIL_APP_PASS (o SMTP_USER / SMTP_PASS con cuenta gmail)
-  const rawGmailUser = process.env.GMAIL_USER || (user && user.includes('@gmail.com') ? user : null);
-  const rawGmailPass = process.env.GMAIL_APP_PASS || (user && user.includes('@gmail.com') ? pass : null);
-
-  if (rawGmailUser && rawGmailPass) {
-    const gmailUser = rawGmailUser.trim().replace(/^["']|["']$/g, '');
-    // Google muestra contraseñas de app en bloques de 4 con espacios ("abcd efgh ijkl mnop"). Las limpiamos:
-    const gmailPass = rawGmailPass.trim().replace(/^["']|["']$/g, '').replace(/\s+/g, '');
+  // Soporte directo para cuentas de Google (Gmail y Google Workspace como @slepllanquihue.cl)
+  if (user && pass) {
     smtpTransporter = nodemailer.createTransport({
       service: 'gmail',
-      auth: { user: gmailUser, pass: gmailPass }
+      auth: { user, pass }
     });
     return smtpTransporter;
   }
@@ -53,8 +99,7 @@ function getSmtpTransporter() {
  */
 export async function sendEmail({ subject, html, text }) {
   const targetTo = getToEmail();
-  const rawResendKey = process.env.RESEND_API_KEY;
-  const resendApiKey = rawResendKey ? rawResendKey.trim().replace(/^["']|["']$/g, '') : null;
+  const resendApiKey = getResolvedResendKey();
   const transporter = getSmtpTransporter();
 
   // 1. Prioridad: Resend API (HTTP REST, sin puertos SMTP bloqueados)
@@ -93,9 +138,7 @@ export async function sendEmail({ subject, html, text }) {
   // 2. Opción: Servidor SMTP / Gmail mediante Nodemailer
   if (transporter) {
     try {
-      const user = (process.env.SMTP_USER || '').trim().replace(/^["']|["']$/g, '');
-      const rawGmailUser = process.env.GMAIL_USER || (user && user.includes('@gmail.com') ? user : null);
-      const gmailUser = rawGmailUser ? rawGmailUser.trim().replace(/^["']|["']$/g, '') : null;
+      const gmailUser = getResolvedGmailUser();
       const fromHeader = gmailUser ? `"Banco Escolar Colegual" <${gmailUser}>` : FROM_EMAIL;
       const info = await transporter.sendMail({
         from: fromHeader,
@@ -120,23 +163,23 @@ export async function sendEmail({ subject, html, text }) {
 }
 
 export function getMailerStatus() {
-  const rawResendKey = process.env.RESEND_API_KEY;
-  const resendApiKey = rawResendKey ? rawResendKey.trim().replace(/^["']|["']$/g, '') : null;
-  const user = (process.env.SMTP_USER || '').trim().replace(/^["']|["']$/g, '');
-  const rawGmailUser = process.env.GMAIL_USER || (user && user.includes('@gmail.com') ? user : null);
-  const gmailUser = rawGmailUser ? rawGmailUser.trim().replace(/^["']|["']$/g, '') : null;
+  const resendApiKey = getResolvedResendKey();
+  const gmailUser = getResolvedGmailUser();
+  const gmailPass = getResolvedGmailPass();
   const smtpHost = process.env.SMTP_HOST ? process.env.SMTP_HOST.trim() : null;
   const toEmail = getToEmail();
 
-  const isConfigured = !!(resendApiKey || (gmailUser && (process.env.GMAIL_APP_PASS || process.env.SMTP_PASS)) || (smtpHost && user));
+  const isConfigured = !!(resendApiKey || (gmailUser && gmailPass) || (smtpHost && gmailUser && gmailPass));
 
   return {
     configured: isConfigured,
     method: resendApiKey ? 'Resend API' : (gmailUser ? 'Gmail SMTP' : (smtpHost ? 'Custom SMTP' : 'Ninguno (Modo Simulación)')),
     targetEmail: toEmail,
+    senderEmail: gmailUser || null,
     gmailAccount: gmailUser ? `${gmailUser.substring(0, 3)}***@${gmailUser.split('@')[1] || 'gmail.com'}` : null,
     hasResendKey: !!resendApiKey,
-    hasGmailPass: !!(process.env.GMAIL_APP_PASS || process.env.SMTP_PASS)
+    hasGmailPass: !!gmailPass,
+    hasGmailUser: !!(process.env.GMAIL_USER || process.env.SMTP_USER || process.env.EMAIL_USER)
   };
 }
 
