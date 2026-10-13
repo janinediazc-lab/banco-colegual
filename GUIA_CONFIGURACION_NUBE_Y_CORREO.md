@@ -20,7 +20,7 @@ Render en su plan gratuito utiliza discos temporales. Para que las transacciones
 
 ### Paso 2: Crear la tabla de respaldo (1 solo clic)
 1. En el menú lateral izquierdo de tu proyecto en Supabase, ve a **SQL Editor**.
-2. Haz clic en **"New Query"**, pega el siguiente código SQL y presiona el botón verde **"Run"**:
+2. Haz clic en **"New Query"**, borra lo que haya en la pantalla y pega el siguiente código SQL *(asegúrate de copiar solo las líneas desde `create table...`, sin las comillas ni la palabra ```sql)*, luego presiona el botón verde **"Run"**:
 
 ```sql
 create table if not exists banco_colegual_state (
