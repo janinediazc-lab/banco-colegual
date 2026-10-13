@@ -39,46 +39,66 @@ with check (true);
 ```
 
 ### Paso 3: Copiar las credenciales a Render
-1. En Supabase, ve a **Project Settings** (el engranaje abajo a la izquierda) -> **API**.
+1. En Supabase, ve a **Project Settings** (el engranaje abajo a la izquierda) -> **API** o **Data API**.
 2. Copia:
-   * **Project URL**: (Ejemplo: `https://abcdefghijklm.supabase.co`)
-   * **Project API Keys** -> `anon` / `public`: (Una clave larga que empieza con `eyJ...`)
+   * **Project URL**: (Debe ser `https://[referencia].supabase.co`. *Nota:* Si termina en `/rest/v1`, bórralo para que termine solo en `.supabase.co`).
+   * **Project API Keys** -> `anon` / `public`: (Una clave larga que empieza con `eyJ...`).
 3. Entra a tu panel de **Render** ([dashboard.render.com](https://dashboard.render.com)):
    * Selecciona tu servicio web `banco-colegual`.
    * Ve a la pestaña **Environment** (Variables de entorno).
    * Agrega dos variables:
-     * `SUPABASE_URL` = (Pega tu Project URL de Supabase)
+     * `SUPABASE_URL` = `https://[referencia].supabase.co`
      * `SUPABASE_KEY` = (Pega tu clave anon/public de Supabase)
    * Haz clic en **"Save Changes"**.
 
-> ✨ **¡Listo!** A partir de ese momento, cada vez que un profesor abone puntos, se guardará en Supabase al instante. Cuando Render se reinicie, leerá los datos directamente desde Supabase y nada se perderá hasta fin de año.
+> 💡 **Nota sobre el error PGRST125 (404):** Si en Render colocaste la URL con `/rest/v1` al final, el sistema la duplicaba (`/rest/v1/rest/v1/`). Ya dejamos una protección en el código para limpiarla automáticamente, pero asegúrate en Render de que quede limpia como `https://xxxx.supabase.co`.
 
 ---
 
 ## ✉️ PARTE 2: Notificaciones Inmediatas a `janine.diaz@slepllanquihue.cl`
 
-Cada vez que un docente o directivo asigne puntos a un estudiante o canjee un premio, el sistema enviará un correo formal e institucional con todos los detalles.
+> ⚠️ **¿Por qué no llegó el correo de prueba?**
+> En tus registros de Render apareció:
+> `[Mailer Demo] 📬 [SIMULACIÓN] Correo para: janine.diaz@slepllanquihue.cl`
+> `(Para habilitar el envío real en producción, configura RESEND_API_KEY o SMTP_USER/SMTP_PASS en Render)`
+> Esto significa que el sistema **reconoció el correo**, pero al no tener las credenciales guardadas en las variables de entorno de Render, funcionó en **modo simulación (solo imprimiendo en pantalla)** para proteger la aplicación.
 
-### Opción Recomendada: Resend (Gratuito, moderno y confiable)
-1. Ingresa a [https://resend.com](https://resend.com) y crea una cuenta gratuita.
-2. En el panel principal, haz clic en **"API Keys"** -> **"Create API Key"**.
-3. Copia la clave generada (empieza con `re_...`).
-4. En **Render** ([dashboard.render.com](https://dashboard.render.com)) -> Servicio `banco-colegual` -> **Environment**:
-   * Agrega la variable:
-     * `RESEND_API_KEY` = (Pega tu clave `re_...`)
-     * `NOTIFICATION_EMAIL` = `janine.diaz@slepllanquihue.cl`
-   * Guarda los cambios.
+Para que los correos lleguen **realmente a tu bandeja de entrada**, elige una de estas dos opciones y agrégala en **Environment** de Render:
 
-### Opción Alternativa: Enviar mediante cuenta Gmail (SMTP)
-Si prefieres que los correos salgan desde una cuenta Gmail de la escuela:
-1. En tu cuenta de Google, activa la verificación en 2 pasos y genera una **Contraseña de Aplicación** (App Password).
-2. En Render, agrega:
-   * `GMAIL_USER` = `tu.correo.escuela@gmail.com`
-   * `GMAIL_APP_PASS` = `tu_contraseña_de_aplicacion_de_16_letras`
+### Opción 1: Enviar mediante cuenta Gmail (Recomendada si tienes un correo Gmail)
+Google no permite usar la contraseña normal de Gmail por seguridad; exige una **Contraseña de Aplicación de 16 letras**:
+1. Entra a tu cuenta Google y ve directo a: [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
+   *(Debes tener activa la "Verificación en 2 pasos" en tu cuenta)*.
+2. Escribe como nombre "Banco Colegual" y haz clic en **Crear**.
+3. Google te mostrará un código amarillo de 16 letras (ejemplo: `abcd efgh ijkl mnop`). Cópialo.
+4. En **Render** ([dashboard.render.com](https://dashboard.render.com)) -> Servicio `banco-colegual` -> pestaña **Environment**, agrega:
+   * `GMAIL_USER` = `tu.correo@gmail.com` (la cuenta desde donde se enviarán)
+   * `GMAIL_APP_PASS` = `abcdefghijklmnop` (las 16 letras generadas)
    * `NOTIFICATION_EMAIL` = `janine.diaz@slepllanquihue.cl`
+5. Haz clic en **"Save Changes"**.
+
+### Opción 2: Usar Resend (Gratuito y sin configurar Google)
+1. Ingresa a [https://resend.com](https://resend.com) y regístrate gratis.
+2. Ve a **API Keys** -> **Create API Key**.
+3. Copia tu clave (empieza con `re_...`).
+4. En **Render** -> **Environment**, agrega:
+   * `RESEND_API_KEY` = (Pega tu clave `re_...`)
+   * `NOTIFICATION_EMAIL` = `janine.diaz@slepllanquihue.cl`
+5. Haz clic en **"Save Changes"**.
+
+---
+
+## 🧪 Cómo Probar que Todo Está Funcionando
+1. Abre tu web en [https://banco-colegual.onrender.com](https://banco-colegual.onrender.com).
+2. Entra al **Panel de Administración**.
+3. En la nueva sección **"🌐 Infraestructura: Nube Supabase y Notificaciones"**, verás:
+   * Si Supabase está en verde (🟢 Sincronizado).
+   * Si el Correo está en verde (🟢 Activo).
+4. Haz clic en el botón **"📧 Probar Notificación por Correo"**: te avisará de inmediato si el correo salió exitosamente a `janine.diaz@slepllanquihue.cl`.
 
 ---
 
 ## 🛡️ Doble Escudo de Seguridad Ya Activo
-Incluso mientras configuras las variables anteriores, he dejado activado un **Escudo de Auto-Recuperación en el Navegador**:
-* Si Render se reinicia y el servidor se borra temporalmente, el navegador del docente o de la coordinadora que abra la aplicación detectará que su caché local tiene más transacciones y **re-subirá automáticamente los datos al servidor**.
+Incluso mientras configuras las variables anteriores, el **Escudo de Auto-Recuperación en el Navegador** ya está funcionando:
+* En tus registros se confirmó: `[Auto-Restore] 🛡️ Restaurando estado desde el cliente (148 transacciones vs 68 en servidor)...`
+* Si Render se reinicia, el navegador detecta las transacciones y re-sincroniza automáticamente los datos. Con Supabase activo, este respaldo será además eterno en la nube.

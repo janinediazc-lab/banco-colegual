@@ -14,6 +14,23 @@ const STATE_ID = 'colegual_state';
 let lastCloudSyncTime = null;
 let lastCloudError = null;
 
+function getCleanSupabaseUrl() {
+  if (!SUPABASE_URL) return '';
+  let url = SUPABASE_URL.trim().replace(/^["']|["']$/g, '');
+  try {
+    const parsed = new URL(url.startsWith('http') ? url : `https://${url}`);
+    return `${parsed.protocol}//${parsed.host}`;
+  } catch (e) {
+    url = url.replace(/\/rest\/v1.*$/i, '');
+    return url.replace(/\/+$/, '');
+  }
+}
+
+function getCleanSupabaseKey() {
+  if (!SUPABASE_KEY) return '';
+  return SUPABASE_KEY.trim().replace(/^["']|["']$/g, '');
+}
+
 export function isCloudDbConfigured() {
   return !!(SUPABASE_URL && SUPABASE_KEY);
 }
@@ -29,7 +46,8 @@ export async function pullFromCloud() {
   }
 
   try {
-    const cleanUrl = SUPABASE_URL.replace(/\/$/, '');
+    const cleanUrl = getCleanSupabaseUrl();
+    const cleanKey = getCleanSupabaseKey();
     const endpoint = `${cleanUrl}/rest/v1/${TABLE_NAME}?id=eq.${STATE_ID}&select=data,updated_at`;
 
     console.log(`[CloudDB] 🔄 Consultando base de datos permanente en Supabase: ${cleanUrl}...`);
@@ -37,8 +55,8 @@ export async function pullFromCloud() {
     const res = await fetch(endpoint, {
       method: 'GET',
       headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'apikey': cleanKey,
+        'Authorization': `Bearer ${cleanKey}`,
         'Content-Type': 'application/json'
       }
     });
@@ -75,7 +93,8 @@ export async function pushToCloud(dbData) {
   if (!isCloudDbConfigured()) return false;
 
   try {
-    const cleanUrl = SUPABASE_URL.replace(/\/$/, '');
+    const cleanUrl = getCleanSupabaseUrl();
+    const cleanKey = getCleanSupabaseKey();
     const endpoint = `${cleanUrl}/rest/v1/${TABLE_NAME}`;
 
     const payload = {
@@ -87,8 +106,8 @@ export async function pushToCloud(dbData) {
     const res = await fetch(endpoint, {
       method: 'POST',
       headers: {
-        'apikey': SUPABASE_KEY,
-        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'apikey': cleanKey,
+        'Authorization': `Bearer ${cleanKey}`,
         'Content-Type': 'application/json',
         'Prefer': 'resolution=merge-duplicates' // Upsert automático (inserta o actualiza)
       },

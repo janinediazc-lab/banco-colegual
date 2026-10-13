@@ -5,13 +5,19 @@ const FROM_EMAIL = process.env.FROM_EMAIL || 'Banco Escolar Colegual <notificaci
 
 let smtpTransporter = null;
 
+function getToEmail() {
+  const envEmail = process.env.NOTIFICATION_EMAIL;
+  if (!envEmail) return 'janine.diaz@slepllanquihue.cl';
+  return envEmail.trim().replace(/^["']|["']$/g, '');
+}
+
 function getSmtpTransporter() {
   if (smtpTransporter) return smtpTransporter;
 
-  const host = process.env.SMTP_HOST;
+  const host = process.env.SMTP_HOST ? process.env.SMTP_HOST.trim() : null;
   const port = parseInt(process.env.SMTP_PORT, 10) || 587;
-  const user = process.env.SMTP_USER;
-  const pass = process.env.SMTP_PASS;
+  const user = (process.env.SMTP_USER || '').trim().replace(/^["']|["']$/g, '');
+  const pass = (process.env.SMTP_PASS || '').trim().replace(/^["']|["']$/g, '');
 
   if (host && user && pass) {
     smtpTransporter = nodemailer.createTransport({
@@ -23,11 +29,14 @@ function getSmtpTransporter() {
     return smtpTransporter;
   }
 
-  // Soporte directo para Gmail si se provee GMAIL_USER y GMAIL_APP_PASS
-  const gmailUser = process.env.GMAIL_USER || (user && user.includes('@gmail.com') ? user : null);
-  const gmailPass = process.env.GMAIL_APP_PASS || pass;
+  // Soporte directo para Gmail si se provee GMAIL_USER y GMAIL_APP_PASS (o SMTP_USER / SMTP_PASS con cuenta gmail)
+  const rawGmailUser = process.env.GMAIL_USER || (user && user.includes('@gmail.com') ? user : null);
+  const rawGmailPass = process.env.GMAIL_APP_PASS || (user && user.includes('@gmail.com') ? pass : null);
 
-  if (gmailUser && gmailPass) {
+  if (rawGmailUser && rawGmailPass) {
+    const gmailUser = rawGmailUser.trim().replace(/^["']|["']$/g, '');
+    // Google muestra contraseñas de app en bloques de 4 con espacios ("abcd efgh ijkl mnop"). Las limpiamos:
+    const gmailPass = rawGmailPass.trim().replace(/^["']|["']$/g, '').replace(/\s+/g, '');
     smtpTransporter = nodemailer.createTransport({
       service: 'gmail',
       auth: { user: gmailUser, pass: gmailPass }
@@ -43,7 +52,9 @@ function getSmtpTransporter() {
  * Es completamente asíncrono y no bloquea el servidor si el servicio de correo tiene demoras.
  */
 export async function sendEmail({ subject, html, text }) {
-  const resendApiKey = process.env.RESEND_API_KEY;
+  const targetTo = getToEmail();
+  const rawResendKey = process.env.RESEND_API_KEY;
+  const resendApiKey = rawResendKey ? rawResendKey.trim().replace(/^["']|["']$/g, '') : null;
   const transporter = getSmtpTransporter();
 
   // 1. Prioridad: Resend API (HTTP REST, sin puertos SMTP bloqueados)
@@ -57,7 +68,7 @@ export async function sendEmail({ subject, html, text }) {
         },
         body: JSON.stringify({
           from: process.env.RESEND_FROM || 'Banco Escolar Colegual <onboarding@resend.dev>',
-          to: [TO_EMAIL],
+          to: [targetTo],
           subject,
           html,
           text: text || subject
@@ -67,41 +78,99 @@ export async function sendEmail({ subject, html, text }) {
       if (!response.ok) {
         const errData = await response.text();
         console.error('[Mailer Resend] Error en respuesta de Resend:', response.status, errData);
-        return { success: false, error: errData };
+        return { success: false, error: errData, provider: 'Resend' };
       }
 
       const data = await response.json();
-      console.log(`[Mailer Resend] ✉️ Correo enviado exitosamente a ${TO_EMAIL} (ID: ${data.id})`);
-      return { success: true, id: data.id };
+      console.log(`[Mailer Resend] ✉️ Correo enviado exitosamente a ${targetTo} (ID: ${data.id})`);
+      return { success: true, id: data.id, provider: 'Resend' };
     } catch (err) {
       console.error('[Mailer Resend] Error enviando correo:', err.message);
-      return { success: false, error: err.message };
+      return { success: false, error: err.message, provider: 'Resend' };
     }
   }
 
   // 2. Opción: Servidor SMTP / Gmail mediante Nodemailer
   if (transporter) {
     try {
+      const user = (process.env.SMTP_USER || '').trim().replace(/^["']|["']$/g, '');
+      const rawGmailUser = process.env.GMAIL_USER || (user && user.includes('@gmail.com') ? user : null);
+      const gmailUser = rawGmailUser ? rawGmailUser.trim().replace(/^["']|["']$/g, '') : null;
+      const fromHeader = gmailUser ? `"Banco Escolar Colegual" <${gmailUser}>` : FROM_EMAIL;
       const info = await transporter.sendMail({
-        from: FROM_EMAIL,
-        to: TO_EMAIL,
+        from: fromHeader,
+        to: targetTo,
         subject,
         html,
         text: text || subject
       });
-      console.log(`[Mailer SMTP] ✉️ Correo enviado exitosamente a ${TO_EMAIL} (MsgId: ${info.messageId})`);
-      return { success: true, messageId: info.messageId };
+      console.log(`[Mailer SMTP] ✉️ Correo enviado exitosamente a ${targetTo} (MsgId: ${info.messageId})`);
+      return { success: true, messageId: info.messageId, provider: 'SMTP/Gmail' };
     } catch (err) {
       console.error('[Mailer SMTP] Error enviando correo vía SMTP:', err.message);
-      return { success: false, error: err.message };
+      return { success: false, error: err.message, provider: 'SMTP/Gmail' };
     }
   }
 
   // 3. Si no hay credenciales configuradas en Render, registrar en log informativo
-  console.log(`[Mailer Demo] 📬 [SIMULACIÓN] Correo para: ${TO_EMAIL}`);
+  console.log(`[Mailer Demo] 📬 [SIMULACIÓN] Correo para: ${targetTo}`);
   console.log(`              Asunto: ${subject}`);
-  console.log(`              (Para habilitar el envío real en producción, configura RESEND_API_KEY o SMTP_USER/SMTP_PASS en Render)`);
-  return { simulated: true, to: TO_EMAIL, subject };
+  console.log(`              (Para habilitar el envío real en producción, configura RESEND_API_KEY o GMAIL_USER/GMAIL_APP_PASS en Render)`);
+  return { simulated: true, to: targetTo, subject, message: 'Simulado (sin credenciales en Render)' };
+}
+
+export function getMailerStatus() {
+  const rawResendKey = process.env.RESEND_API_KEY;
+  const resendApiKey = rawResendKey ? rawResendKey.trim().replace(/^["']|["']$/g, '') : null;
+  const user = (process.env.SMTP_USER || '').trim().replace(/^["']|["']$/g, '');
+  const rawGmailUser = process.env.GMAIL_USER || (user && user.includes('@gmail.com') ? user : null);
+  const gmailUser = rawGmailUser ? rawGmailUser.trim().replace(/^["']|["']$/g, '') : null;
+  const smtpHost = process.env.SMTP_HOST ? process.env.SMTP_HOST.trim() : null;
+  const toEmail = getToEmail();
+
+  const isConfigured = !!(resendApiKey || (gmailUser && (process.env.GMAIL_APP_PASS || process.env.SMTP_PASS)) || (smtpHost && user));
+
+  return {
+    configured: isConfigured,
+    method: resendApiKey ? 'Resend API' : (gmailUser ? 'Gmail SMTP' : (smtpHost ? 'Custom SMTP' : 'Ninguno (Modo Simulación)')),
+    targetEmail: toEmail,
+    gmailAccount: gmailUser ? `${gmailUser.substring(0, 3)}***@${gmailUser.split('@')[1] || 'gmail.com'}` : null,
+    hasResendKey: !!resendApiKey,
+    hasGmailPass: !!(process.env.GMAIL_APP_PASS || process.env.SMTP_PASS)
+  };
+}
+
+export async function testEmailConnection() {
+  const status = getMailerStatus();
+  if (!status.configured) {
+    return {
+      success: false,
+      status,
+      error: 'No hay credenciales de correo configuradas en Render. Debes agregar GMAIL_USER y GMAIL_APP_PASS (o RESEND_API_KEY).'
+    };
+  }
+
+  const subject = '🔔 Prueba de Notificación - Banco Escolar Colegual';
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #e2e8f0; border-radius: 12px; background: #ffffff;">
+      <h2 style="color: #065f46; margin-top: 0;">🎉 ¡Conexión Exitosa con Banco Colegual!</h2>
+      <p style="color: #334155; font-size: 15px;">Este es un correo de prueba automático para confirmar que el sistema de notificaciones está 100% activo.</p>
+      <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 12px 16px; margin: 16px 0; border-radius: 4px;">
+        <p style="margin: 4px 0;"><strong>Destinatario:</strong> ${status.targetEmail}</p>
+        <p style="margin: 4px 0;"><strong>Método:</strong> ${status.method}</p>
+        <p style="margin: 4px 0;"><strong>Fecha y Hora:</strong> ${new Date().toLocaleString('es-CL')}</p>
+      </div>
+      <p style="color: #64748b; font-size: 13px;">A partir de ahora, cada asignación de puntos o canje de premios te enviará una notificación institucional como esta.</p>
+      <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 20px 0;" />
+      <div style="font-size: 12px; color: #94a3b8; text-align: center;">
+        🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar<br/>
+        Escuela Rural Colegual (RBD 7967, Llanquihue)
+      </div>
+    </div>
+  `;
+
+  const res = await sendEmail({ subject, html, text: 'Prueba de correo Banco Colegual exitosa.' });
+  return { ...res, status };
 }
 
 /**

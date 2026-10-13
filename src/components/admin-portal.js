@@ -77,6 +77,25 @@ export class AdminPortalComponent {
         </div>
       </div>
 
+      <!-- Estado de Infraestructura: Nube Supabase y Notificaciones -->
+      <div class="card" id="cloud-mail-status-card" style="margin-bottom: 1.5rem; background: linear-gradient(135deg, rgba(15, 23, 42, 0.03) 0%, rgba(6, 78, 59, 0.05) 100%); border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 1.1rem 1.4rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h4 style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 700; margin: 0 0 0.25rem 0; display: flex; align-items: center; gap: 0.5rem;">
+              <span>🌐</span> Infraestructura: Nube Supabase y Notificaciones por Correo
+            </h4>
+            <div id="cloud-mail-status-details" style="font-size: 0.85rem; color: var(--text-muted); display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+              <span>⏳ Verificando conexión del servidor...</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button id="btn-test-email" class="btn btn-secondary btn-sm" style="display: flex; align-items: center; gap: 0.4rem; font-weight: 600;">
+              <span>📧</span> Probar Notificación por Correo
+            </button>
+          </div>
+        </div>
+      </div>
+
       <!-- Sección de Gestión de Estudiantes y Matrícula -->
       <div class="student-card" style="margin-bottom: 2rem;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: 1rem;">
@@ -342,6 +361,36 @@ export class AdminPortalComponent {
   }
 
   setupEvents() {
+    // Actualizar estado de infraestructura y correo
+    this.updateCloudStatus();
+
+    // Probar envío de correo
+    const btnTestEmail = this.container.querySelector('#btn-test-email');
+    if (btnTestEmail) {
+      btnTestEmail.addEventListener('click', async () => {
+        btnTestEmail.disabled = true;
+        btnTestEmail.innerHTML = '⏳ Enviando prueba...';
+        try {
+          const res = await fetch('/api/test-email');
+          const data = await res.json();
+          if (data.success) {
+            confetti({ particleCount: 50, spread: 60, origin: { y: 0.6 } });
+            alert(`🎉 ¡Excelente! Correo de prueba enviado con éxito a ${data.status?.targetEmail || 'janine.diaz@slepllanquihue.cl'}.\n\nRevisa tu bandeja de entrada o spam.`);
+          } else if (data.status && !data.status.configured) {
+            alert(`ℹ️ El servidor está en [MODO SIMULACIÓN]:\n\nAún no se han configurado las variables de correo en Render (GMAIL_USER y GMAIL_APP_PASS o RESEND_API_KEY).\n\nPara recibir correos reales en tu casilla institucional (${data.status.targetEmail}), revisa la GUIA_CONFIGURACION_NUBE_Y_CORREO.md.`);
+          } else {
+            alert(`⚠️ Error al enviar correo: ${data.error || 'Respuesta no exitosa'}\n\nVerifica las variables de correo en Render.`);
+          }
+        } catch (err) {
+          alert(`Error al contactar al servidor: ${err.message}`);
+        } finally {
+          btnTestEmail.disabled = false;
+          btnTestEmail.innerHTML = '<span>📧</span> Probar Notificación por Correo';
+          this.updateCloudStatus();
+        }
+      });
+    }
+
     // Exportar Backup JSON
     this.container.querySelector('#btn-export-backup').addEventListener('click', () => {
       const json = storage.exportBackup();
@@ -862,5 +911,40 @@ export class AdminPortalComponent {
         <td style="text-align: right; font-weight: 700;">${t.saldo_resultante} CC</td>
       </tr>
     `).join('');
+  }
+
+  async updateCloudStatus() {
+    const details = this.container.querySelector('#cloud-mail-status-details');
+    if (!details) return;
+    try {
+      const res = await fetch('/api/cloud-status');
+      if (!res.ok) throw new Error('Servidor offline');
+      const data = await res.json();
+      const dbConfigured = data.cloudDb?.configured;
+      const dbError = data.cloudDb?.lastCloudError;
+      const mailer = data.mailer || {};
+
+      let dbBadge = '';
+      if (dbConfigured) {
+        if (dbError) {
+          dbBadge = `<span style="display:inline-flex;align-items:center;gap:0.3rem;color:#ea580c;font-weight:600;">⚠️ Supabase: Error (${dbError.slice(0, 30)})</span>`;
+        } else {
+          dbBadge = `<span style="display:inline-flex;align-items:center;gap:0.3rem;color:#16a34a;font-weight:600;">🟢 Supabase: Sincronizado</span>`;
+        }
+      } else {
+        dbBadge = `<span style="display:inline-flex;align-items:center;gap:0.3rem;color:#64748b;">🟡 Base de Datos: Local (sin Supabase en Render)</span>`;
+      }
+
+      let mailBadge = '';
+      if (mailer.configured) {
+        mailBadge = `<span style="display:inline-flex;align-items:center;gap:0.3rem;color:#16a34a;font-weight:600;">🟢 Correo Activo (${mailer.method} &rarr; ${mailer.targetEmail})</span>`;
+      } else {
+        mailBadge = `<span style="display:inline-flex;align-items:center;gap:0.3rem;color:#ea580c;font-weight:600;">🟡 Correo: Modo Simulación (Faltan variables en Render)</span>`;
+      }
+
+      details.innerHTML = `${dbBadge} <span style="color:#cbd5e1;">&bull;</span> ${mailBadge}`;
+    } catch (e) {
+      details.innerHTML = `<span style="color: var(--text-muted);">Servidor local activo</span>`;
+    }
   }
 }

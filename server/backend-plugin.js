@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import defaultStudents from '../src/data/students.js';
 import defaultStaff from '../src/data/staff.js';
 import defaultRewards from '../src/data/rewards.js';
-import { sendEmail, formatTransactionEmail, formatBatchEmail } from './services/mailer.js';
+import { sendEmail, formatTransactionEmail, formatBatchEmail, getMailerStatus, testEmailConnection } from './services/mailer.js';
 import { isCloudDbConfigured, pullFromCloud, pushToCloud, getCloudStatus } from './services/cloud-db.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -873,12 +873,22 @@ export async function handleApiRequest(req, res) {
           res.setHeader('Content-Type', 'application/json');
           res.end(JSON.stringify({
             cloudDb: getCloudStatus(),
-            mailer: {
-              targetEmail: process.env.NOTIFICATION_EMAIL || 'janine.diaz@slepllanquihue.cl',
-              resendConfigured: !!process.env.RESEND_API_KEY,
-              smtpConfigured: !!(process.env.SMTP_USER || process.env.GMAIL_USER)
-            }
+            mailer: getMailerStatus()
           }));
+          return true;
+        }
+
+        // Endpoint GET /api/test-email (prueba de conexión y envío inmediato a janine.diaz@slepllanquihue.cl)
+        if (req.method === 'GET' && parsedPath === '/api/test-email') {
+          setCorsHeaders(res);
+          res.setHeader('Content-Type', 'application/json');
+          try {
+            const testResult = await testEmailConnection();
+            res.end(JSON.stringify(testResult));
+          } catch (err) {
+            res.statusCode = 500;
+            res.end(JSON.stringify({ success: false, error: err.message }));
+          }
           return true;
         }
 
