@@ -1,5 +1,6 @@
 import { storage } from '../services/storage.js';
 import { generateQrCanvas, QR_PREFIX } from '../services/qr.js';
+import { requestStaffAuthorization } from '../utils/auth-modal.js';
 
 export class CardGeneratorComponent {
   constructor(containerId) {
@@ -90,7 +91,12 @@ export class CardGeneratorComponent {
     });
 
     const printBtn = this.container.querySelector('#btn-print-cards');
-    printBtn.addEventListener('click', () => {
+    printBtn.addEventListener('click', async () => {
+      const authorized = await requestStaffAuthorization({
+        title: '🔒 Autorización para Imprimir',
+        actionLabel: 'imprimir las tarjetas de estudiantes'
+      });
+      if (!authorized) return;
       window.print();
     });
 
@@ -129,8 +135,13 @@ export class CardGeneratorComponent {
 
     // Asignar eventos de imprimir tarjeta individual
     grid.querySelectorAll('.btn-single-print').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         const studentId = e.currentTarget.dataset.id;
+        const authorized = await requestStaffAuthorization({
+          title: '🔒 Autorización para Imprimir',
+          actionLabel: 'imprimir esta tarjeta'
+        });
+        if (!authorized) return;
         this.printSingleCard(studentId);
       });
     });

@@ -1,6 +1,7 @@
 import { storage } from '../services/storage.js';
 import { sound } from '../services/sound.js';
 import confetti from 'canvas-confetti';
+import { requestStaffAuthorization } from '../utils/auth-modal.js';
 
 export class StudentPortalComponent {
   constructor(containerId) {
@@ -177,7 +178,12 @@ export class StudentPortalComponent {
       this.currentStudent = null;
     });
 
-    resultArea.querySelector('#btn-kiosk-print-receipt').addEventListener('click', () => {
+    resultArea.querySelector('#btn-kiosk-print-receipt').addEventListener('click', async () => {
+      const authorized = await requestStaffAuthorization({
+        title: '🔒 Autorización para Imprimir',
+        actionLabel: 'imprimir el comprobante de saldo'
+      });
+      if (!authorized) return;
       this.printReceipt(student);
     });
   }

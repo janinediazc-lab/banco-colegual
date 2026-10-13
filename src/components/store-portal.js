@@ -1,6 +1,7 @@
 import { storage } from '../services/storage.js';
 import { sound } from '../services/sound.js';
 import confetti from 'canvas-confetti';
+import { requestStaffAuthorization } from '../utils/auth-modal.js';
 
 export class StorePortalComponent {
   constructor(containerId) {
@@ -117,7 +118,7 @@ export class StorePortalComponent {
       this.container.querySelector('#modal-create-reward').classList.remove('open');
     });
 
-    this.container.querySelector('#btn-save-new-reward').addEventListener('click', () => {
+    this.container.querySelector('#btn-save-new-reward').addEventListener('click', async () => {
       const name = this.container.querySelector('#new-rew-name').value.trim();
       const points = parseInt(this.container.querySelector('#new-rew-points').value, 10) || 30;
       const icon = this.container.querySelector('#new-rew-icon').value.trim() || '🎁';
@@ -128,6 +129,12 @@ export class StorePortalComponent {
         alert('Por favor ingresa un nombre para la recompensa.');
         return;
       }
+
+      const authorized = await requestStaffAuthorization({
+        title: '🔒 Autorización para Guardar Recompensa',
+        actionLabel: 'guardar esta recompensa en la tienda'
+      });
+      if (!authorized) return;
 
       storage.saveReward({
         nombre: name,
@@ -201,12 +208,16 @@ export class StorePortalComponent {
 
     // Eventos de eliminar
     grid.querySelectorAll('.btn-delete-reward').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+      btn.addEventListener('click', async (e) => {
         const rewId = e.currentTarget.dataset.id;
-        if (confirm('¿Eliminar esta recompensa de la tienda?')) {
-          storage.deleteReward(rewId);
-          this.renderRewardsGrid();
-        }
+        const authorized = await requestStaffAuthorization({
+          title: '🔒 Autorización para Eliminar Recompensa',
+          actionLabel: 'eliminar esta recompensa de la tienda'
+        });
+        if (!authorized) return;
+
+        storage.deleteReward(rewId);
+        this.renderRewardsGrid();
       });
     });
   }

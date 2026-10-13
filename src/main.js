@@ -11,6 +11,7 @@ import { CardGeneratorComponent } from './components/card-generator.js';
 import { StorePortalComponent } from './components/store-portal.js';
 import { StudentPortalComponent } from './components/student-portal.js';
 import { AdminPortalComponent } from './components/admin-portal.js';
+import { requestStaffAuthorization } from './utils/auth-modal.js';
 
 class App {
   constructor() {
@@ -427,4 +428,18 @@ class App {
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
   app.init();
+
+  // Proteger impresión global mediante atajos de teclado (Ctrl+P / Cmd+P)
+  window.addEventListener('keydown', async (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'p') {
+      e.preventDefault();
+      const authorized = await requestStaffAuthorization({
+        title: '🔒 Autorización para Imprimir',
+        actionLabel: 'imprimir documentos o tarjetas'
+      });
+      if (authorized) {
+        window.print();
+      }
+    }
+  });
 });

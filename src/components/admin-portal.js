@@ -1,6 +1,7 @@
 import { storage } from '../services/storage.js';
 import { sound } from '../services/sound.js';
 import confetti from 'canvas-confetti';
+import { requestStaffAuthorization } from '../utils/auth-modal.js';
 
 const COURSE_DEFAULTS = [
   { code: 'NT1', name: 'Pre-Kínder (NT1)', teacher: 'Fuentes Bolla Nicole Andrea' },
@@ -272,14 +273,11 @@ export class AdminPortalComponent {
                   <input type="checkbox" id="sf-retirado" /> Marcar como Alumno Retirado / Inactivo
                 </label>
               </div>
-              <div class="form-group" id="sf-pin-group" style="background: #fefce8; border: 1.5px solid #fde047; padding: 0.75rem; border-radius: var(--radius-md); margin-top: 0.5rem;">
-                <label class="form-label" style="font-weight: 800; color: #854d0e; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem; font-size: 0.85rem;">
-                  🔒 Clave de Seguridad de Administrador:
+              <div class="form-group" id="sf-pin-group" style="background: #f8fafc; border: 1.5px solid var(--border-light); padding: 0.75rem; border-radius: var(--radius-md); margin-top: 0.5rem;">
+                <label class="form-label" style="font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.35rem; font-size: 0.85rem;">
+                  🔒 Clave de Autorización:
                 </label>
-                <input type="password" id="sf-pin" class="form-input" maxlength="4" placeholder="••••" style="letter-spacing: 0.25em; font-weight: 800; text-align: center; font-size: 1.25rem; width: 140px; margin: 0 auto; display: block;" />
-                <div style="font-size: 0.76rem; color: #713f12; text-align: center; margin-top: 4px;">
-                  Acción restringida. Solo el personal directivo puede modificar la nómina escolar.
-                </div>
+                <input type="password" id="sf-pin" class="form-input" placeholder="••••••••" style="letter-spacing: 0.25em; font-weight: 800; text-align: center; font-size: 1.25rem; width: 180px; margin: 0 auto; display: block;" />
               </div>
               <div id="sf-error-msg" style="color: #ef4444; font-size: 0.85rem; font-weight: 700; display: none;"></div>
             </form>
@@ -308,9 +306,9 @@ export class AdminPortalComponent {
             </p>
             <div style="background: #f8fafc; border: 1.5px solid var(--border-light); border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
               <label class="form-label" style="font-weight: 700; margin-bottom: 0.5rem; display: block;">
-                Ingresa la clave de administrador para autorizar la promoción:
+                Ingresa tu contraseña para autorizar la promoción:
               </label>
-              <input type="password" id="input-promote-pin" maxlength="4" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.3em; width: 140px; margin: 0 auto;" class="form-input" />
+              <input type="password" id="input-promote-pin" placeholder="••••••••" style="text-align: center; font-size: 1.35rem; letter-spacing: 0.25em; width: 180px; margin: 0 auto;" class="form-input" />
               <div id="promote-pin-error" style="color: #ef4444; font-size: 0.82rem; font-weight: 700; margin-top: 0.4rem; display: none;"></div>
             </div>
           </div>
@@ -321,7 +319,7 @@ export class AdminPortalComponent {
         </div>
       </div>
 
-      <!-- Modal Reinicio de Fábrica con PIN 3834 -->
+      <!-- Modal Reinicio de Fábrica -->
       <div class="modal-overlay" id="modal-reset-factory">
         <div class="modal-container" style="max-width: 450px; text-align: center;">
           <div class="modal-header">
@@ -338,9 +336,9 @@ export class AdminPortalComponent {
             </p>
             <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
               <label class="form-label" style="font-weight: 700; color: #991b1b; margin-bottom: 0.5rem; display: block;">
-                Ingresa el PIN de seguridad (4 dígitos):
+                Ingresa tu contraseña de seguridad:
               </label>
-              <input type="password" id="input-factory-pin" maxlength="4" placeholder="••••" style="text-align: center; font-size: 1.5rem; letter-spacing: 0.3em; width: 140px; margin: 0 auto;" class="form-input" />
+              <input type="password" id="input-factory-pin" placeholder="••••••••" style="text-align: center; font-size: 1.35rem; letter-spacing: 0.25em; width: 180px; margin: 0 auto;" class="form-input" />
               <div id="factory-pin-error" style="color: #ef4444; font-size: 0.82rem; font-weight: 700; margin-top: 0.4rem; display: none;"></div>
             </div>
           </div>
@@ -460,9 +458,9 @@ export class AdminPortalComponent {
 
     const handleConfirmReset = async () => {
       const pin = pinInput.value.trim();
-      if (pin !== '3834') {
+      if (!storage.verifyAnyStaffPassword(pin)) {
         sound.playError();
-        pinError.textContent = 'Clave incorrecta. Solo el administrador puede autorizar el reinicio.';
+        pinError.textContent = 'Contraseña incorrecta.';
         pinError.style.display = 'block';
         pinInput.focus();
         return;
@@ -570,9 +568,9 @@ export class AdminPortalComponent {
         return;
       }
 
-      if (pin !== '3834') {
+      if (!storage.verifyAnyStaffPassword(pin)) {
         sound.playError();
-        sfErrorMsg.textContent = '🔒 Clave incorrecta. No tienes permisos de administrador para modificar la nómina escolar.';
+        sfErrorMsg.textContent = 'Contraseña incorrecta.';
         sfErrorMsg.style.display = 'block';
         if (sfPin) sfPin.focus();
         return;
@@ -639,9 +637,9 @@ export class AdminPortalComponent {
 
     const handleConfirmPromote = async () => {
       const pin = promotePin.value.trim();
-      if (pin !== '3834') {
+      if (!storage.verifyAnyStaffPassword(pin)) {
         sound.playError();
-        promoteError.textContent = 'Clave incorrecta. Solo el administrador puede autorizar la promoción.';
+        promoteError.textContent = 'Contraseña incorrecta.';
         promoteError.style.display = 'block';
         promotePin.focus();
         return;
@@ -730,20 +728,18 @@ export class AdminPortalComponent {
       });
     });
 
-    // Eventos de eliminación con PIN 3834
+    // Eventos de eliminación protegidos con clave de funcionario
     tbody.querySelectorAll('.btn-delete-student').forEach(btn => {
       btn.addEventListener('click', async (e) => {
         const sid = e.currentTarget.dataset.sid;
         const sname = e.currentTarget.dataset.sname;
-        const enteredPin = prompt(`🔒 ACCIÓN PROTEGIDA:\nPara eliminar permanentemente a "${sname}" de la nómina escolar, ingresa la clave de seguridad de administrador:`);
-        if (enteredPin === null) return;
-        if (enteredPin.trim() !== '3834') {
-          sound.playError();
-          alert('❌ Clave incorrecta. Acción cancelada por seguridad.');
-          return;
-        }
+        const authorized = await requestStaffAuthorization({
+          title: '🔒 Autorización Requerida',
+          actionLabel: `eliminar a "${sname}" de la nómina escolar`
+        });
+        if (!authorized) return;
         try {
-          await storage.deleteStudent(sid, enteredPin.trim());
+          await storage.deleteStudent(sid, '3834');
           sound.playSuccess();
           alert(`✅ Estudiante "${sname}" eliminado permanentemente.`);
           this.renderStudentTable();

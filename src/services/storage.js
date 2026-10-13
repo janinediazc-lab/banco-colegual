@@ -611,6 +611,24 @@ class StorageService {
     return false;
   }
 
+  verifyAnyStaffPassword(inputPwd) {
+    if (!inputPwd) return false;
+    const normalize = (str) => String(str || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    const clean = normalize(inputPwd);
+
+    // Códigos institucionales de administración
+    if (clean === '3834' || clean === '7967') return true;
+
+    // Verificar si coincide con la clave de alguno de los funcionarios
+    const staffList = this.getStaff();
+    for (const staff of staffList) {
+      if (this.verifyStaffPassword(staff, inputPwd)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   isStaffAuthenticated(staffId) {
     const activeStaff = this.getActiveStaff();
     const targetId = staffId || (activeStaff ? activeStaff.id : null);
