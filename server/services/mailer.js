@@ -54,13 +54,32 @@ export function getResolvedGmailUser() {
 }
 
 export function getResolvedResendKey() {
-  const raw =
+  const direct =
     process.env.RESEND_API_KEY ||
     process.env.RESEND_KEY ||
     process.env.RESEND_APIKEY ||
-    process.env.RESEND_TOKEN;
-  if (!raw || !raw.trim()) return null;
-  return raw.trim().replace(/^["']|["']$/g, '');
+    process.env.RESEND_TOKEN ||
+    process.env.RESEND_API ||
+    process.env.RESEND ||
+    process.env.API_KEY;
+  if (direct && direct.trim()) return direct.trim().replace(/^["']|["']$/g, '');
+
+  // Búsqueda inteligente en todo el entorno: cualquier variable que empiece con "re_" o contenga "RESEND"
+  for (const [key, val] of Object.entries(process.env)) {
+    if (typeof val === 'string' && val.trim().startsWith('re_')) {
+      return val.trim().replace(/^["']|["']$/g, '');
+    }
+    const cleanKey = key.trim().toUpperCase();
+    if (cleanKey.includes('RESEND') && typeof val === 'string' && val.trim()) {
+      return val.trim().replace(/^["']|["']$/g, '');
+    }
+    // En caso de que se haya pegado la clave en el nombre de la variable
+    if (typeof key === 'string' && key.trim().startsWith('re_')) {
+      return key.trim();
+    }
+  }
+
+  return null;
 }
 
 function getSmtpTransporter() {
@@ -175,6 +194,11 @@ export function getMailerStatus() {
 
   const isConfigured = !!(resendApiKey || (gmailUser && gmailPass) || (smtpHost && gmailUser && gmailPass));
 
+  const relevantKeys = Object.keys(process.env).filter(k => {
+    const u = k.toUpperCase();
+    return u.includes('RESEND') || u.includes('MAIL') || u.includes('GMAIL') || u.includes('SMTP') || u.includes('SUPABASE');
+  });
+
   return {
     configured: isConfigured,
     method: resendApiKey ? 'Resend API' : (gmailUser ? 'Gmail SMTP' : (smtpHost ? 'Custom SMTP' : 'Ninguno (Modo Simulación)')),
@@ -183,7 +207,8 @@ export function getMailerStatus() {
     gmailAccount: gmailUser ? `${gmailUser.substring(0, 3)}***@${gmailUser.split('@')[1] || 'gmail.com'}` : null,
     hasResendKey: !!resendApiKey,
     hasGmailPass: !!gmailPass,
-    hasGmailUser: !!(process.env.GMAIL_USER || process.env.SMTP_USER || process.env.EMAIL_USER)
+    hasGmailUser: !!(process.env.GMAIL_USER || process.env.SMTP_USER || process.env.EMAIL_USER),
+    presentEnvKeys: relevantKeys
   };
 }
 
