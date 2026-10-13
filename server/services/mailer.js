@@ -142,6 +142,50 @@ export async function sendEmail({ subject, html, text }) {
       if (!response.ok) {
         const errData = await response.text();
         console.error('[Mailer Resend] Error en respuesta de Resend:', response.status, errData);
+        try {
+          const parsedErr = JSON.parse(errData);
+          if (parsedErr.message && parsedErr.message.includes('You can only send testing emails to your own email address')) {
+            const match = parsedErr.message.match(/\(([^)]+)\)/);
+            if (match && match[1] && match[1] !== targetTo) {
+              const fallbackEmail = match[1];
+              console.log(`[Mailer Resend] 🔄 Reintentando envío al correo registrado en Resend: ${fallbackEmail}...`);
+              const retryResponse = await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                  'Authorization': `Bearer ${resendApiKey}`,
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                  from: process.env.RESEND_FROM || 'Banco Escolar Colegual <onboarding@resend.dev>',
+                  to: [fallbackEmail],
+                  subject: `[Para: ${targetTo}] ${subject}`,
+                  html,
+                  text: text || subject
+                })
+              });
+
+              if (retryResponse.ok) {
+                const retryData = await retryResponse.json();
+                console.log(`[Mailer Resend] ✅ Correo entregado con éxito a ${fallbackEmail} (ID: ${retryData.id})`);
+                return {
+                  success: true,
+                  id: retryData.id,
+                  provider: 'Resend',
+                  deliveredTo: fallbackEmail,
+                  note: `Entregado a ${fallbackEmail} (tu cuenta en Resend). Para recibirlo directamente en ${targetTo}, puedes registrarte en Resend con ese correo o cambiar NOTIFICATION_EMAIL en Render.`
+                };
+              }
+            }
+            return {
+              success: false,
+              error: `Resend gratuito solo permite enviar a la cuenta registrada (${match ? match[1] : 'tu correo'}). Cambia NOTIFICATION_EMAIL a esa dirección en Render.`,
+              provider: 'Resend'
+            };
+          }
+          if (parsedErr.message) {
+            return { success: false, error: parsedErr.message, provider: 'Resend' };
+          }
+        } catch (_) {}
         return { success: false, error: errData, provider: 'Resend' };
       }
 
