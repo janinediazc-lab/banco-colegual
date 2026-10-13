@@ -30,10 +30,10 @@ export class StudentPortalComponent {
         <div id="kiosk-login-area">
           <div style="background: rgba(255,255,255,0.08); padding: 1.5rem; border-radius: var(--radius-lg); border: 1px solid rgba(255,255,255,0.15);">
             <label class="form-label" style="color: #f8fafc; font-size: 0.95rem; margin-bottom: 0.5rem; display: block;">
-              Ingresa tu RUN o selecciona tu nombre:
+              Ingresa tu N° de Cuenta o selecciona tu nombre:
             </label>
             <div style="display: flex; gap: 0.5rem; margin-bottom: 1rem;">
-              <input type="text" id="kiosk-run-input" class="form-input" placeholder="Ej: 27200432-3 o solo números..." style="font-size: 1.1rem; padding: 0.75rem 1rem;" />
+              <input type="text" id="kiosk-run-input" class="form-input" placeholder="Ej: CC-001 o selecciona tu nombre..." style="font-size: 1.1rem; padding: 0.75rem 1rem;" />
               <button id="btn-kiosk-lookup" class="btn btn-gold btn-lg">
                 Consultar Saldo
               </button>
@@ -70,7 +70,7 @@ export class StudentPortalComponent {
         this.renderKioskResult(student);
       } else {
         sound.playError();
-        alert('Estudiante no encontrado. Verifica el RUN ingresado.');
+        alert('Estudiante no encontrado. Por favor verifica tu número de cuenta o selecciónate de la lista.');
       }
     };
 
@@ -221,7 +221,6 @@ export class StudentPortalComponent {
         <div class="line"></div>
         <div class="bold">DATOS DEL ESTUDIANTE:</div>
         <div>TITULAR: ${student.nombre_display}</div>
-        <div>RUN: ${student.run}</div>
         <div>CURSO: ${student.curso}</div>
         <div>CUENTA: ${student.nro_cuenta}</div>
         <div class="line"></div>

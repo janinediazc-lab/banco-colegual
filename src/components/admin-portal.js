@@ -122,7 +122,7 @@ export class AdminPortalComponent {
         <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center;">
           <div class="search-input-wrapper" style="flex: 1; min-width: 240px;">
             <span class="search-icon">🔍</span>
-            <input type="text" id="admin-student-search" class="search-input" placeholder="Buscar por nombre, RUN o n° cuenta..." />
+            <input type="text" id="admin-student-search" class="search-input" placeholder="Buscar por nombre o n° cuenta..." />
           </div>
           <select id="admin-student-course-filter" class="form-select" style="width: auto; font-size: 0.85rem;">
             <option value="ALL">Todos los Cursos</option>
@@ -146,7 +146,7 @@ export class AdminPortalComponent {
             <thead>
               <tr>
                 <th style="width: 40px;">N°</th>
-                <th>RUN</th>
+                <th>N° Cuenta</th>
                 <th>Nombre del Estudiante</th>
                 <th>Curso</th>
                 <th>Profesor Jefe</th>
@@ -235,8 +235,8 @@ export class AdminPortalComponent {
           <div class="modal-body">
             <form id="form-student-save" onsubmit="return false;" style="display: flex; flex-direction: column; gap: 0.85rem;">
               <div class="form-group">
-                <label class="form-label">RUN (con guión):</label>
-                <input type="text" id="sf-run" class="form-input" placeholder="Ej: 27200432-3" required />
+                <label class="form-label">Identificador / RUN (Uso interno):</label>
+                <input type="text" id="sf-run" class="form-input" placeholder="Identificador o RUN único..." required />
               </div>
               <div class="form-group">
                 <label class="form-label">Nombre Completo:</label>
@@ -563,7 +563,7 @@ export class AdminPortalComponent {
       const pin = sfPin ? sfPin.value.trim() : '';
 
       if (!run || !nombre) {
-        sfErrorMsg.textContent = 'Por favor completa el RUN y Nombre del estudiante.';
+        sfErrorMsg.textContent = 'Por favor completa el Identificador y Nombre del estudiante.';
         sfErrorMsg.style.display = 'block';
         return;
       }
@@ -694,10 +694,9 @@ export class AdminPortalComponent {
     tbody.innerHTML = students.map((s, idx) => `
       <tr style="${s.retirado ? 'opacity: 0.6; background: #f8fafc;' : ''}">
         <td style="font-size: 0.82rem; color: var(--text-muted); font-weight: 700;">${s.nro_lista || (idx + 1)}</td>
-        <td style="font-family: monospace; font-size: 0.85rem; font-weight: 700;">${s.run}</td>
+        <td style="font-family: monospace; font-size: 0.85rem; font-weight: 700; color: #1e40af;">${s.nro_cuenta}</td>
         <td>
           <div style="font-weight: 800; font-size: 0.92rem; color: var(--text-main);">${s.nombre_display}</div>
-          <div style="font-size: 0.72rem; color: var(--text-muted);">${s.nro_cuenta}</div>
         </td>
         <td><span class="badge-tx" style="background:#e0f2fe; color:#0369a1; font-weight: 700;">${s.curso}</span></td>
         <td style="font-size: 0.8rem; color: var(--text-muted);">${(s.curso_codigo === '1°' || s.curso_codigo === '2°' || s.curso_codigo === '1' || s.curso_codigo === '2' || (s.profesor_jefe && s.profesor_jefe.includes('Gallardo'))) ? 'Bonny Cárdenas Palma' : (s.profesor_jefe || '—')}</td>

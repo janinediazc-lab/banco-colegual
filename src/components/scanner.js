@@ -223,7 +223,7 @@ export class ScannerComponent {
 
     if (!student) {
       sound.playError();
-      alert(`Tarjeta escaneada pero no se encontró al estudiante con RUN/ID: ${cleanRun}`);
+      alert('Tarjeta escaneada pero no se encontró al estudiante en el sistema.');
       return;
     }
 
@@ -261,7 +261,7 @@ export class ScannerComponent {
                 ${student.nombre_display}
               </h3>
               <p style="font-size: 0.82rem; color: ${isAdd ? '#d1fae5' : '#fee2e2'};">
-                ${student.curso} • RUN: ${student.run}
+                ${student.curso} • Cuenta: ${student.nro_cuenta}
               </p>
             </div>
             <div style="text-align: right; background: rgba(255,255,255,0.18); padding: 0.5rem 0.85rem; border-radius: var(--radius-md);">
@@ -493,8 +493,8 @@ export class ScannerComponent {
             <strong style="font-size: 0.95rem; color: ${isAdd ? '#064e3b' : '#7f1d1d'}; text-align: right;">${updatedStudent.nombre_display}</strong>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid ${isAdd ? '#bbf7d0' : '#fee2e2'}; padding-bottom: 0.45rem; margin-bottom: 0.45rem;">
-            <span style="font-size: 0.82rem; color: ${isAdd ? '#166534' : '#991b1b'}; font-weight: 600;">Curso / RUN:</span>
-            <span style="font-size: 0.82rem; color: ${isAdd ? '#064e3b' : '#7f1d1d'}; font-weight: 700;">${updatedStudent.curso} • ${updatedStudent.run}</span>
+            <span style="font-size: 0.82rem; color: ${isAdd ? '#166534' : '#991b1b'}; font-weight: 600;">Curso / Cuenta:</span>
+            <span style="font-size: 0.82rem; color: ${isAdd ? '#064e3b' : '#7f1d1d'}; font-weight: 700;">${updatedStudent.curso} • Cta: ${updatedStudent.nro_cuenta}</span>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid ${isAdd ? '#bbf7d0' : '#fee2e2'}; padding-bottom: 0.45rem; margin-bottom: 0.45rem;">
             <span style="font-size: 0.82rem; color: ${isAdd ? '#166534' : '#991b1b'}; font-weight: 600;">${isAdd ? 'Abono:' : 'Descuento:'}</span>

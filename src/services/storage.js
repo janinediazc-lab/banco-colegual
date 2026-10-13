@@ -351,10 +351,12 @@ class StorageService {
   getStudentByRun(rawRun) {
     if (!rawRun) return null;
     const clean = rawRun.toString().replace(/[^0-9kK]/g, '').toUpperCase();
+    const rawTrimmed = rawRun.toString().trim().toUpperCase();
     const list = this.getStudents();
     return list.find(s => {
-      const sClean = s.run.replace(/[^0-9kK]/g, '').toUpperCase();
-      return sClean === clean || s.nro_cuenta.includes(clean);
+      const sClean = s.run ? s.run.replace(/[^0-9kK]/g, '').toUpperCase() : '';
+      const sCta = (s.nro_cuenta || '').toUpperCase();
+      return (sClean && sClean === clean) || (sCta && sCta.includes(rawTrimmed)) || (sCta && sCta.replace(/[^0-9]/g, '').includes(clean));
     });
   }
 
@@ -764,10 +766,10 @@ class StorageService {
 
   exportCSV() {
     const students = this.getStudents();
-    const headers = ['Nro Lista', 'RUN', 'Nombre Completo', 'Curso', 'Profesor Jefe', 'Saldo ColegualCoins (CC)', 'Total Ganado (CC)', 'Total Canjeado (CC)', 'Estado'];
+    const headers = ['Nro Lista', 'Nro Cuenta', 'Nombre Completo', 'Curso', 'Profesor Jefe', 'Saldo ColegualCoins (CC)', 'Total Ganado (CC)', 'Total Canjeado (CC)', 'Estado'];
     const rows = students.map(s => [
       s.nro_lista,
-      s.run,
+      `"${s.nro_cuenta}"`,
       `"${s.nombre_completo}"`,
       `"${s.curso}"`,
       `"${s.profesor_jefe}"`,

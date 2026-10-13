@@ -180,7 +180,7 @@ export class CardGeneratorComponent {
                   ${student.nombre_display}
                 </div>
                 <div class="card-footer-meta">
-                  <span class="card-run">RUN: ${student.run}</span>
+                  <span class="card-run">N° LISTA: ${student.nro_lista}</span>
                   <span class="card-account-number">CTA: ${student.nro_cuenta}</span>
                 </div>
               </div>
@@ -269,7 +269,7 @@ export class CardGeneratorComponent {
             <div class="card-bottom-row">
               <div class="card-student-name">${student.nombre_display}</div>
               <div class="card-footer-meta">
-                <span class="card-run">RUN: ${student.run}</span>
+                <span class="card-run">N° LISTA: ${student.nro_lista}</span>
                 <span class="card-account-number">CTA: ${student.nro_cuenta}</span>
               </div>
             </div>

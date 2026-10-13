@@ -71,7 +71,7 @@ export class TeacherPortalComponent {
         <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
           <div class="search-input-wrapper">
             <span class="search-icon">🔍</span>
-            <input type="text" id="teacher-student-search" class="search-input" placeholder="Buscar por nombre o RUN..." />
+            <input type="text" id="teacher-student-search" class="search-input" placeholder="Buscar por nombre o n° cuenta..." />
           </div>
 
           <button id="btn-batch-course" class="btn btn-gold">
@@ -216,7 +216,7 @@ export class TeacherPortalComponent {
       list = list.filter(s => 
         s.nombre_completo.toLowerCase().includes(this.searchTerm) ||
         s.nombre_display.toLowerCase().includes(this.searchTerm) ||
-        s.run.toLowerCase().includes(this.searchTerm)
+        (s.nro_cuenta && s.nro_cuenta.toLowerCase().includes(this.searchTerm))
       );
     }
     return list;
@@ -282,7 +282,7 @@ export class TeacherPortalComponent {
             <div class="student-card-details">
               <div class="student-card-name">${student.nombre_display}</div>
               <div class="student-card-meta">
-                <span class="student-badge-run">${student.run}</span>
+                <span class="student-badge-run">Cta: ${student.nro_cuenta}</span>
                 <span>N° ${student.nro_lista}</span>
                 <span>• ${student.curso}</span>
                 ${student.retirado ? '<span style="color:#ef4444; font-weight:700;">(Retirado)</span>' : ''}
@@ -405,7 +405,7 @@ export class TeacherPortalComponent {
           </div>
           <div style="flex: 1;">
             <h4 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800;">${student.nombre_display}</h4>
-            <p style="font-size: 0.8rem; color: var(--text-muted);">${student.curso} • RUN: ${student.run}</p>
+            <p style="font-size: 0.8rem; color: var(--text-muted);">${student.curso} • Cuenta: ${student.nro_cuenta}</p>
           </div>
           <div style="text-align: right;">
             <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">Saldo Actual</span>
@@ -643,8 +643,8 @@ export class TeacherPortalComponent {
             <strong style="font-size: 1rem; color: ${isAdd ? '#064e3b' : '#7f1d1d'}; text-align: right;">${student.nombre_display}</strong>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid ${isAdd ? '#bbf7d0' : '#fee2e2'}; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
-            <span style="font-size: 0.85rem; color: ${isAdd ? '#166534' : '#991b1b'}; font-weight: 600;">Curso / RUN:</span>
-            <span style="font-size: 0.85rem; color: ${isAdd ? '#064e3b' : '#7f1d1d'}; font-weight: 700;">${student.curso} • ${student.run}</span>
+            <span style="font-size: 0.85rem; color: ${isAdd ? '#166534' : '#991b1b'}; font-weight: 600;">Curso / Cuenta:</span>
+            <span style="font-size: 0.85rem; color: ${isAdd ? '#064e3b' : '#7f1d1d'}; font-weight: 700;">${student.curso} • Cta: ${student.nro_cuenta}</span>
           </div>
           <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid ${isAdd ? '#bbf7d0' : '#fee2e2'}; padding-bottom: 0.5rem; margin-bottom: 0.5rem;">
             <span style="font-size: 0.85rem; color: ${isAdd ? '#166534' : '#991b1b'}; font-weight: 600;">${isAdd ? 'Abono:' : 'Descuento:'}</span>
