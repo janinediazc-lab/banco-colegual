@@ -57,34 +57,24 @@ with check (true);
 
 ## ✉️ PARTE 2: Notificaciones Inmediatas a `janine.diaz@slepllanquihue.cl`
 
-> ⚠️ **¿Por qué no llegó el correo de prueba?**
-> En tus registros de Render apareció:
-> `[Mailer Demo] 📬 [SIMULACIÓN] Correo para: janine.diaz@slepllanquihue.cl`
-> `(Para habilitar el envío real en producción, configura RESEND_API_KEY o SMTP_USER/SMTP_PASS en Render)`
-> Esto significa que el sistema **reconoció el correo**, pero al no tener las credenciales guardadas en las variables de entorno de Render, funcionó en **modo simulación (solo imprimiendo en pantalla)** para proteger la aplicación.
+> ⚠️ **¿Por qué sale el error `connect ENETUNREACH ...:465` al probar Gmail?**
+> **Render** (al igual que la gran mayoría de plataformas en la nube gratuitas) **bloquea por firewall las conexiones de correo tradicionales (puertos 25, 465 y 587)** para prevenir spam.
+> Por esa razón, **la única forma 100% garantizada de enviar correos desde Render es a través de una API HTTP como Resend** (opera por el puerto web seguro HTTPS 443, el cual nunca es bloqueado).
 
-Para que los correos lleguen **realmente a tu bandeja de entrada**, elige una de estas dos opciones y agrégala en **Environment** de Render:
+---
 
-### Opción 1: Enviar mediante cuenta Gmail (Recomendada si tienes un correo Gmail)
-Google no permite usar la contraseña normal de Gmail por seguridad; exige una **Contraseña de Aplicación de 16 letras**:
-1. Entra a tu cuenta Google y ve directo a: [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
-   *(Debes tener activa la "Verificación en 2 pasos" en tu cuenta)*.
-2. Escribe como nombre "Banco Colegual" y haz clic en **Crear**.
-3. Google te mostrará un código amarillo de 16 letras (ejemplo: `abcd efgh ijkl mnop`). Cópialo.
-4. En **Render** ([dashboard.render.com](https://dashboard.render.com)) -> Servicio `banco-colegual` -> pestaña **Environment**, agrega:
-   * `GMAIL_USER` = `tu.correo@gmail.com` (la cuenta desde donde se enviarán)
-   * `GMAIL_APP_PASS` = `abcdefghijklmnop` (las 16 letras generadas)
-   * `NOTIFICATION_EMAIL` = `janine.diaz@slepllanquihue.cl`
-5. Haz clic en **"Save Changes"**.
+### 🚀 Solución Definitiva: Activar Resend (Gratis y toma 1 minuto)
 
-### Opción 2: Usar Resend (Gratuito y sin configurar Google)
-1. Ingresa a [https://resend.com](https://resend.com) y regístrate gratis.
-2. Ve a **API Keys** -> **Create API Key**.
-3. Copia tu clave (empieza con `re_...`).
-4. En **Render** -> **Environment**, agrega:
-   * `RESEND_API_KEY` = (Pega tu clave `re_...`)
-   * `NOTIFICATION_EMAIL` = `janine.diaz@slepllanquihue.cl`
-5. Haz clic en **"Save Changes"**.
+1. Ingresa a **[https://resend.com](https://resend.com)** y haz clic en **"Sign Up"** (puedes iniciar sesión con Google o tu correo institucional).
+2. En el menú de la izquierda, entra a **"API Keys"** y haz clic en el botón negro **"Create API Key"**.
+3. Ponle de nombre `Banco Colegual`, deja los permisos completos y pulsa **"Add"**.
+4. Te mostrará tu clave secreta (empieza con `re_...`). **Cópiala**.
+5. Abre tu panel de **Render** ([dashboard.render.com](https://dashboard.render.com)) -> servicio **`banco-colegual`** -> pestaña **Environment**:
+   * Agrega la variable:
+     * **`RESEND_API_KEY`** = `re_xxxxxxxxxxxx` *(tu clave copiada de Resend)*
+     * **`NOTIFICATION_EMAIL`** = `janine.diaz@slepllanquihue.cl`
+   * *(Opcional: puedes borrar `GMAIL_USER` y `GMAIL_APP_PASS` ya que no serán necesarias)*.
+6. Haz clic en **"Save Changes"**. Render reiniciará el servicio con la nueva configuración en unos 60 segundos.
 
 ---
 

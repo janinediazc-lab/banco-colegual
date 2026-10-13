@@ -151,7 +151,11 @@ export async function sendEmail({ subject, html, text }) {
       return { success: true, messageId: info.messageId, provider: 'SMTP/Gmail' };
     } catch (err) {
       console.error('[Mailer SMTP] Error enviando correo vía SMTP:', err.message);
-      return { success: false, error: err.message, provider: 'SMTP/Gmail' };
+      let helpfulMsg = err.message;
+      if (err.message.includes('ENETUNREACH') || err.message.includes('ETIMEDOUT') || err.message.includes('465') || err.message.includes('587')) {
+        helpfulMsg = 'Render bloquea los puertos tradicionales de correo (465/587) para evitar spam. La solución definitiva y gratuita es usar Resend (HTTP vía puerto 443): crea una cuenta en resend.com y agrega RESEND_API_KEY en Render.';
+      }
+      return { success: false, error: helpfulMsg, provider: 'SMTP/Gmail' };
     }
   }
 
