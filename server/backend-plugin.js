@@ -100,17 +100,36 @@ function getInitialDb() {
     return {
       ...s,
       profesor_jefe: profe,
-      saldo: 0,
-      total_ganado: 0,
+      saldo: 10,
+      total_ganado: 10,
       total_canjeado: 0
     };
   });
+
+  const now = new Date();
+  const dateStr = formatDate(now);
+
+  const initialTransactions = initialStudents.map(s => ({
+    id: `tx_init_${s.id}`,
+    timestamp: now.toISOString(),
+    fecha_display: dateStr,
+    estudiante_id: s.id,
+    estudiante_run: s.run,
+    estudiante_nombre: s.nombre_display,
+    curso: s.curso,
+    profesor: 'Banco Escolar Colegual',
+    tipo: 'BONO',
+    monto: 10,
+    motivo: '🎁 Bono de apertura de cuenta Banco Colegual',
+    categoria_id: 'bienvenida',
+    saldo_resultante: 10
+  }));
 
   return {
     students: initialStudents,
     staff: defaultStaff,
     rewards: defaultRewards,
-    transactions: [],
+    transactions: initialTransactions,
     lastUpdated: new Date().toISOString()
   };
 }
@@ -910,45 +929,11 @@ export async function handleApiRequest(req, res) {
           return true;
         }
 
-        // Endpoint POST /api/sync-restore (auto-recuperación de emergencia desde el cliente si Render se reinicia)
+        // Endpoint POST /api/sync-restore (deshabilitado para evitar que clientes antiguos restauren puntos de prueba)
         if (req.method === 'POST' && parsedPath === '/api/sync-restore') {
           setCorsHeaders(res);
-          try {
-            // Si hubo un reinicio voluntario de fábrica en los últimos 15 minutos, rechazar cualquier intento de sobreescribir con datos antiguos
-            if (Date.now() - lastResetTime < 1000 * 60 * 15) {
-              res.setHeader('Content-Type', 'application/json');
-              res.end(JSON.stringify({ success: false, message: 'Reinicio de fábrica reciente activo. Se ignora restauración automática.' }));
-              return true;
-            }
-
-            const body = await parseJsonBody(req);
-            const currentDb = loadDatabase();
-            if (body && Array.isArray(body.students) && Array.isArray(body.transactions)) {
-              const currentTxLen = currentDb.transactions?.length || 0;
-              if (body.transactions.length > currentTxLen) {
-                console.log(`[Auto-Restore] 🛡️ Restaurando estado desde el cliente (${body.transactions.length} transacciones vs ${currentTxLen} en servidor)...`);
-                if (Array.isArray(body.students)) {
-                  body.students.forEach(s => {
-                    if (s.curso_codigo === '1°' || s.curso_codigo === '2°' || s.curso_codigo === '1' || s.curso_codigo === '2' || (s.profesor_jefe && s.profesor_jefe.includes('Gallardo'))) {
-                      s.profesor_jefe = 'Bonny Cárdenas Palma';
-                    }
-                  });
-                }
-                body.lastUpdated = new Date().toISOString();
-                saveDatabase(body);
-                broadcast('DATA_UPDATED', { action: 'DATABASE_RESTORED', lastUpdated: body.lastUpdated });
-                res.setHeader('Content-Type', 'application/json');
-                res.end(JSON.stringify({ success: true, restored: true, txCount: body.transactions.length }));
-                return true;
-              }
-            }
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ success: false, message: 'El servidor ya tiene datos actualizados' }));
-          } catch (err) {
-            res.statusCode = 500;
-            res.setHeader('Content-Type', 'application/json');
-            res.end(JSON.stringify({ error: err.message }));
-          }
+          res.setHeader('Content-Type', 'application/json');
+          res.end(JSON.stringify({ success: false, message: 'Auto-restore deshabilitado. La persistencia oficial reside en Supabase.' }));
           return true;
         }
 

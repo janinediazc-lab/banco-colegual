@@ -212,7 +212,7 @@ class StorageService {
   }
 
   init() {
-    // Inicializar estudiantes si no existen (todos parten en 0 CC)
+    // Inicializar estudiantes si no existen (todos parten con 10 CC de bienvenida)
     if (!localStorage.getItem(STORAGE_KEYS.STUDENTS)) {
       const initialStudents = defaultStudents.map(s => {
         let profe = s.profesor_jefe;
@@ -222,15 +222,30 @@ class StorageService {
         return {
           ...s,
           profesor_jefe: profe,
-          saldo: 0,
-          total_ganado: 0,
+          saldo: 10,
+          total_ganado: 10,
           total_canjeado: 0
         };
       });
       localStorage.setItem(STORAGE_KEYS.STUDENTS, JSON.stringify(initialStudents));
 
-      // Historial de transacciones vacío
-      localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify([]));
+      // Crear transacciones iniciales de bienvenida (+10 CC)
+      const initialTransactions = initialStudents.map(s => ({
+        id: `tx_init_${s.id}`,
+        timestamp: new Date().toISOString(),
+        fecha_display: this.formatDate(new Date()),
+        estudiante_id: s.id,
+        estudiante_run: s.run,
+        estudiante_nombre: s.nombre_display,
+        curso: s.curso,
+        profesor: 'Banco Escolar Colegual',
+        tipo: 'BONO',
+        monto: 10,
+        motivo: '🎁 Bono de apertura de cuenta Banco Colegual',
+        categoria_id: 'bienvenida',
+        saldo_resultante: 10
+      }));
+      localStorage.setItem(STORAGE_KEYS.TRANSACTIONS, JSON.stringify(initialTransactions));
     }
 
     // Inicializar funcionarios (Docentes + Asistentes de la Educación)
