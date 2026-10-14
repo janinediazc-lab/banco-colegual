@@ -92,3 +92,4 @@ with check (true);
 Incluso mientras configuras las variables anteriores, el **Escudo de Auto-Recuperación en el Navegador** ya está funcionando:
 * En tus registros se confirmó: `[Auto-Restore] 🛡️ Restaurando estado desde el cliente (148 transacciones vs 68 en servidor)...`
 * Si Render se reinicia, el navegador detecta las transacciones y re-sincroniza automáticamente los datos. Con Supabase activo, este respaldo será además eterno en la nube.
+

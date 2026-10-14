@@ -469,6 +469,10 @@ export class AdminPortalComponent {
       try {
         await storage.resetToDefault('3834');
         closeResetModal();
+        this.renderStats();
+        this.renderStudentTable();
+        this.renderTransactions();
+        this.renderLeaderboards();
         sound.playSuccess();
         alert('✅ ¡Datos restablecidos con éxito a los valores de fábrica!');
       } catch (err) {

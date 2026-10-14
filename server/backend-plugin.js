@@ -31,6 +31,7 @@ const DB_FILE = path.resolve(__dirname, '../data/banco_colegual_db.json');
 
 // Clientes conectados por SSE (Server-Sent Events)
 const sseClients = new Set();
+let lastResetTime = 0;
 
 function broadcast(eventType, payload) {
   const message = `event: ${eventType}\ndata: ${JSON.stringify(payload)}\n\n`;
@@ -872,7 +873,17 @@ export async function handleApiRequest(req, res) {
             }
 
             const initDb = getInitialDb();
+            lastResetTime = Date.now();
             saveDatabase(initDb);
+
+            if (isCloudDbConfigured()) {
+              try {
+                await pushToCloud(initDb);
+                console.log('[CloudDB] ✅ Reinicio de fábrica persistido en Supabase.');
+              } catch (cloudErr) {
+                console.warn('[CloudDB] Error persistiendo reinicio en Supabase:', cloudErr);
+              }
+            }
 
             broadcast('DATA_UPDATED', { action: 'DATA_RESET', lastUpdated: initDb.lastUpdated });
 
@@ -915,6 +926,13 @@ export async function handleApiRequest(req, res) {
         if (req.method === 'POST' && parsedPath === '/api/sync-restore') {
           setCorsHeaders(res);
           try {
+            // Si hubo un reinicio voluntario de fábrica en los últimos 15 minutos, rechazar cualquier intento de sobreescribir con datos antiguos
+            if (Date.now() - lastResetTime < 1000 * 60 * 15) {
+              res.setHeader('Content-Type', 'application/json');
+              res.end(JSON.stringify({ success: false, message: 'Reinicio de fábrica reciente activo. Se ignora restauración automática.' }));
+              return true;
+            }
+
             const body = await parseJsonBody(req);
             const currentDb = loadDatabase();
             if (body && Array.isArray(body.students) && Array.isArray(body.transactions)) {

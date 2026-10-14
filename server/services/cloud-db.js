@@ -95,7 +95,7 @@ export async function pushToCloud(dbData) {
   try {
     const cleanUrl = getCleanSupabaseUrl();
     const cleanKey = getCleanSupabaseKey();
-    const endpoint = `${cleanUrl}/rest/v1/${TABLE_NAME}`;
+    const endpoint = `${cleanUrl}/rest/v1/${TABLE_NAME}?on_conflict=id`;
 
     const payload = {
       id: STATE_ID,

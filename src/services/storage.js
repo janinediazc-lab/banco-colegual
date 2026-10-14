@@ -101,24 +101,6 @@ class StorageService {
       if (res.ok) {
         const db = await res.json();
         if (db && Array.isArray(db.students)) {
-          // Escudo de auto-recuperación: si el servidor se reinició pero este navegador tiene historial previo más completo, restaurar servidor
-          const localTransactions = this.getTransactions();
-          const serverTxCount = Array.isArray(db.transactions) ? db.transactions.length : 0;
-          if (localTransactions.length > serverTxCount && serverTxCount <= 68) {
-            console.log(`[Auto-Restore] 🛡️ Restaurando servidor desde caché local (${localTransactions.length} vs ${serverTxCount} tx)...`);
-            fetch('/api/sync-restore', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                students: this.getStudents(),
-                transactions: localTransactions,
-                staff: this.getStaff(),
-                rewards: this.getRewards()
-              })
-            }).catch(() => {});
-            return db;
-          }
-
           // Normalizar siempre profesores jefes en los datos recibidos del servidor
           db.students.forEach(s => {
             if (s.curso_codigo === '1°' || s.curso_codigo === '2°' || s.curso_codigo === '1' || s.curso_codigo === '2' || (s.profesor_jefe && s.profesor_jefe.includes('Gallardo'))) {
@@ -162,7 +144,28 @@ class StorageService {
         if (this.eventSource) this.eventSource.close();
         this.eventSource = new EventSource('/api/events');
 
-        const handleUpdate = () => {
+        const handleUpdate = (e) => {
+          try {
+            if (e && e.data) {
+              const data = JSON.parse(e.data);
+              if (data && data.action === 'DATA_RESET') {
+                this.savePendingSyncQueue([]);
+                localStorage.removeItem(STORAGE_KEYS.STUDENTS);
+                localStorage.removeItem(STORAGE_KEYS.STAFF);
+                localStorage.removeItem(STORAGE_KEYS.CATEGORIES);
+                localStorage.removeItem(STORAGE_KEYS.REWARDS);
+                localStorage.removeItem(STORAGE_KEYS.TRANSACTIONS);
+                localStorage.removeItem(STORAGE_KEYS.PENDING_SYNC);
+                this.init();
+                this.fetchAndApplyServerData().then(() => {
+                  this.notify('DATA_RESET', null);
+                  this.notify('STUDENTS_UPDATED', this.getStudents());
+                  this.notify('TRANSACTION_ADDED', null);
+                });
+                return;
+              }
+            }
+          } catch (_) {}
           this.fetchAndApplyServerData();
         };
 
@@ -868,6 +871,14 @@ class StorageService {
   }
 
   async resetToDefault(pin = '3834') {
+    this.savePendingSyncQueue([]);
+    localStorage.removeItem(STORAGE_KEYS.PENDING_SYNC);
+    localStorage.removeItem(STORAGE_KEYS.STUDENTS);
+    localStorage.removeItem(STORAGE_KEYS.STAFF);
+    localStorage.removeItem(STORAGE_KEYS.CATEGORIES);
+    localStorage.removeItem(STORAGE_KEYS.REWARDS);
+    localStorage.removeItem(STORAGE_KEYS.TRANSACTIONS);
+
     if (typeof window !== 'undefined' && window.fetch) {
       const res = await fetch('/api/reset', {
         method: 'POST',
@@ -878,14 +889,11 @@ class StorageService {
       if (!res.ok) throw new Error(result.error || 'Clave de seguridad incorrecta.');
     }
 
-    localStorage.removeItem(STORAGE_KEYS.STUDENTS);
-    localStorage.removeItem(STORAGE_KEYS.STAFF);
-    localStorage.removeItem(STORAGE_KEYS.CATEGORIES);
-    localStorage.removeItem(STORAGE_KEYS.REWARDS);
-    localStorage.removeItem(STORAGE_KEYS.TRANSACTIONS);
     this.init();
     await this.fetchAndApplyServerData();
     this.notify('DATA_RESET', null);
+    this.notify('STUDENTS_UPDATED', this.getStudents());
+    this.notify('TRANSACTION_ADDED', null);
     return { success: true };
   }
 }
