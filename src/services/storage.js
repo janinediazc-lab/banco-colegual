@@ -350,13 +350,21 @@ class StorageService {
 
   getStudentByRun(rawRun) {
     if (!rawRun) return null;
-    const clean = rawRun.toString().replace(/[^0-9kK]/g, '').toUpperCase();
-    const rawTrimmed = rawRun.toString().trim().toUpperCase();
+    let rawStr = rawRun.toString().trim();
+    if (rawStr.startsWith('COLEGUAL:')) {
+      rawStr = rawStr.replace('COLEGUAL:', '').trim();
+    }
+    const clean = rawStr.replace(/[^0-9kK]/g, '').toUpperCase();
+    const rawUpper = rawStr.toUpperCase();
     const list = this.getStudents();
     return list.find(s => {
+      if (s.id && s.id.toLowerCase() === rawStr.toLowerCase()) return true;
       const sClean = s.run ? s.run.replace(/[^0-9kK]/g, '').toUpperCase() : '';
+      if (sClean && clean && sClean === clean) return true;
       const sCta = (s.nro_cuenta || '').toUpperCase();
-      return (sClean && sClean === clean) || (sCta && sCta.includes(rawTrimmed)) || (sCta && sCta.replace(/[^0-9]/g, '').includes(clean));
+      if (sCta && (sCta === rawUpper || sCta.includes(rawUpper))) return true;
+      if (clean && sCta && sCta.replace(/[^0-9]/g, '') === clean) return true;
+      return false;
     });
   }
 

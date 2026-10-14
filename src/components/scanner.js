@@ -4,6 +4,107 @@ import { extractStudentIdentifier } from '../services/qr.js';
 import { sound } from '../services/sound.js';
 import confetti from 'canvas-confetti';
 
+/**
+ * Carga un archivo File/Blob en un objeto Image de forma asíncrona
+ */
+function loadImageFromFile(file) {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve(img);
+    };
+    img.onerror = (err) => {
+      URL.revokeObjectURL(url);
+      reject(err);
+    };
+    img.src = url;
+  });
+}
+
+/**
+ * Decodifica un código QR desde un archivo de imagen (cámara o galería)
+ * usando BarcodeDetector nativo y reescalado multi-ángulo optimizado para móviles (12MP - 48MP)
+ */
+async function decodeImageFile(file, html5QrCodeInstance) {
+  // 1. Intentar BarcodeDetector nativo por hardware (super rápido, sin problemas de rotación)
+  if (typeof window !== 'undefined' && 'BarcodeDetector' in window) {
+    try {
+      const formats = await window.BarcodeDetector.getSupportedFormats();
+      if (formats.includes('qr_code')) {
+        const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
+        const imgBitmap = await createImageBitmap(file);
+        const barcodes = await detector.detect(imgBitmap);
+        if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
+          return barcodes[0].rawValue;
+        }
+      }
+    } catch (e) {
+      console.warn('Fallo BarcodeDetector nativo directo, pasando a método reescalado:', e);
+    }
+  }
+
+  // 2. Reescalar a resolución óptima (~1000px) y probar rotaciones 0°, 90°, 180°, 270°
+  // Resuelve fotos gigantes de celular (4000x3000) que bloquean o confunden al lector
+  const img = await loadImageFromFile(file);
+  const angles = [0, 90, 180, 270];
+
+  for (const angle of angles) {
+    const canvas = document.createElement('canvas');
+    const maxDim = 1000;
+    let { width, height } = img;
+    if (width > maxDim || height > maxDim) {
+      if (width > height) {
+        height = Math.round((height * maxDim) / width);
+        width = maxDim;
+      } else {
+        width = Math.round((width * maxDim) / height);
+        height = maxDim;
+      }
+    }
+
+    if (angle === 90 || angle === 270) {
+      canvas.width = height;
+      canvas.height = width;
+    } else {
+      canvas.width = width;
+      canvas.height = height;
+    }
+
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    ctx.translate(canvas.width / 2, canvas.height / 2);
+    ctx.rotate((angle * Math.PI) / 180);
+    ctx.drawImage(img, -width / 2, -height / 2, width, height);
+
+    // Probar BarcodeDetector sobre el canvas rotado si está disponible
+    if (typeof window !== 'undefined' && 'BarcodeDetector' in window) {
+      try {
+        const detector = new window.BarcodeDetector({ formats: ['qr_code'] });
+        const barcodes = await detector.detect(canvas);
+        if (barcodes && barcodes.length > 0 && barcodes[0].rawValue) {
+          return barcodes[0].rawValue;
+        }
+      } catch (err) {}
+    }
+
+    // Probar ZXing de html5QrCode con el blob optimizado
+    try {
+      const blob = await new Promise(r => canvas.toBlob(r, 'image/jpeg', 0.92));
+      if (blob) {
+        const fileFromBlob = new File([blob], `scan_${angle}.jpg`, { type: 'image/jpeg' });
+        const result = await html5QrCodeInstance.scanFile(fileFromBlob, false);
+        if (result) return result;
+      }
+    } catch (e) {
+      // Probar siguiente rotación
+    }
+  }
+
+  // 3. Fallback final al archivo original
+  return await html5QrCodeInstance.scanFile(file, false);
+}
+
 export class ScannerComponent {
   constructor(containerId) {
     this.container = document.getElementById(containerId);
@@ -13,6 +114,9 @@ export class ScannerComponent {
     this.selectedPoints = 10;
     this.selectedCategory = null;
     this.categories = [];
+    this.cameras = [];
+    this.currentCameraIndex = 0;
+    this.torchEnabled = false;
   }
 
   init() {
@@ -49,22 +153,36 @@ export class ScannerComponent {
           </div>
 
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
-            <!-- Opción 1: Cámara en vivo (ideal para PC / Mac) -->
+            <!-- Opción 1: Cámara en vivo -->
             <button id="btn-toggle-camera" class="btn btn-primary" style="flex: 1; min-width: 140px;">
-              📹 Cámara en Vivo
+              📹 Iniciar Cámara en Vivo
             </button>
 
-            <!-- Opción 2: Cámara directa de celular (funciona en cualquier teléfono por Wi-Fi) -->
-            <label class="btn btn-gold" style="margin: 0; cursor: pointer; flex: 1; min-width: 160px; display: flex; align-items: center; justify-content: center; gap: 0.4rem; text-align: center;">
-              📸 Cámara de Celular
+            <!-- Botón Cambiar Lente (si el celular tiene cámara normal vs angular) -->
+            <button id="btn-switch-camera" class="btn btn-secondary" style="display: none; padding: 0.5rem 0.75rem;" title="Cambiar lente / cámara trasera">
+              🔄 Cambiar Lente
+            </button>
+
+            <!-- Botón Linterna (si el celular la soporta) -->
+            <button id="btn-toggle-torch" class="btn btn-secondary" style="display: none; padding: 0.5rem 0.75rem;" title="Encender / Apagar linterna">
+              🔦 Linterna
+            </button>
+
+            <!-- Opción 2: Foto directa con cámara de celular -->
+            <label class="btn btn-gold" style="margin: 0; cursor: pointer; flex: 1; min-width: 150px; display: flex; align-items: center; justify-content: center; gap: 0.4rem; text-align: center;">
+              📸 Tomar Foto QR
               <input type="file" id="input-phone-camera" accept="image/*" capture="environment" style="display: none;" />
             </label>
 
-            <!-- Opción 3: Subir archivo -->
+            <!-- Opción 3: Galería de imágenes -->
             <label class="btn btn-secondary" style="margin: 0; cursor: pointer;">
-              📁 Archivo
+              📁 Galería
               <input type="file" id="input-qr-file" accept="image/*" style="display: none;" />
             </label>
+          </div>
+
+          <div style="font-size: 0.78rem; color: var(--text-muted); background: rgba(0,0,0,0.03); padding: 0.5rem 0.75rem; border-radius: var(--radius-sm); border: 1px solid var(--border-light); line-height: 1.4;">
+            💡 <strong>Consejos de escaneo en celulares:</strong> Mantén la tarjeta a unos 15 - 20 cm sin moverla. Si tu teléfono tiene varias cámaras y se ve desenfocado, pulsa <strong>🔄 Cambiar Lente</strong>.
           </div>
 
           <!-- Acceso Rápido / Búsqueda para Móviles y Pruebas -->
@@ -92,7 +210,7 @@ export class ScannerComponent {
               Ninguna tarjeta detectada aún
             </h4>
             <p style="font-size: 0.85rem; max-width: 320px;">
-              Inicia la cámara o selecciona un estudiante en el simulador para abonar puntos en segundos.
+              Inicia la cámara o toma una foto a la tarjeta para abonar puntos en segundos.
             </p>
           </div>
 
@@ -113,6 +231,20 @@ export class ScannerComponent {
         this.startCamera();
       }
     });
+
+    const switchCamBtn = this.container.querySelector('#btn-switch-camera');
+    if (switchCamBtn) {
+      switchCamBtn.addEventListener('click', () => {
+        this.switchCamera();
+      });
+    }
+
+    const torchBtn = this.container.querySelector('#btn-toggle-torch');
+    if (torchBtn) {
+      torchBtn.addEventListener('click', () => {
+        this.toggleTorch();
+      });
+    }
 
     const fileInput = this.container.querySelector('#input-qr-file');
     fileInput.addEventListener('change', (e) => {
@@ -139,43 +271,144 @@ export class ScannerComponent {
     });
   }
 
-  async startCamera() {
+  async startCamera(specificDeviceId = null) {
     try {
       const qrReaderElem = document.getElementById('qr-reader');
       if (!qrReaderElem) return;
 
-      this.html5QrCode = new Html5Qrcode('qr-reader');
+      if (this.isScanning) {
+        await this.stopCamera();
+      }
+
+      this.html5QrCode = new Html5Qrcode('qr-reader', {
+        experimentalFeatures: {
+          useBarCodeDetectorIfSupported: true
+        },
+        verbose: false
+      });
+
       const toggleCamBtn = this.container.querySelector('#btn-toggle-camera');
+      const switchCamBtn = this.container.querySelector('#btn-switch-camera');
+      const torchBtn = this.container.querySelector('#btn-toggle-torch');
       const statusDot = this.container.querySelector('#scanner-status-dot');
       const statusText = this.container.querySelector('#scanner-status-text');
       const overlay = this.container.querySelector('#scanner-overlay');
 
+      if (statusText) statusText.textContent = 'Iniciando cámara...';
+      if (statusDot) statusDot.style.background = '#f59e0b';
+
+      // 1. Detectar cámaras si no se han enumerado
+      if (!this.cameras || this.cameras.length === 0) {
+        try {
+          this.cameras = await Html5Qrcode.getCameras();
+        } catch (e) {
+          console.warn('No se pudieron enumerar las cámaras:', e);
+          this.cameras = [];
+        }
+      }
+
+      // 2. Seleccionar cámara adecuada
+      let cameraConfig;
+      if (specificDeviceId) {
+        cameraConfig = { deviceId: { exact: specificDeviceId } };
+      } else if (this.cameras && this.cameras.length > 0) {
+        // Buscar cámara trasera principal
+        const backIdx = this.cameras.findIndex(c => {
+          const l = (c.label || '').toLowerCase();
+          return l.includes('back') || l.includes('trasera') || l.includes('rear') || l.includes('environment');
+        });
+        this.currentCameraIndex = backIdx !== -1 ? backIdx : 0;
+        cameraConfig = { deviceId: { exact: this.cameras[this.currentCameraIndex].id } };
+      } else {
+        cameraConfig = { facingMode: 'environment' };
+      }
+
+      // Si hay más de 1 cámara disponible, mostrar botón de cambio de lente
+      if (this.cameras && this.cameras.length > 1 && switchCamBtn) {
+        switchCamBtn.style.display = 'inline-flex';
+      }
+
+      // Configuración de escaneo responsive y de alto rendimiento
       const config = {
-        fps: 10,
-        qrbox: { width: 220, height: 220 },
-        aspectRatio: 1.333
+        fps: 15,
+        qrbox: (viewfinderWidth, viewfinderHeight) => {
+          const minEdge = Math.min(viewfinderWidth, viewfinderHeight);
+          const size = Math.max(200, Math.floor(minEdge * 0.85));
+          return { width: size, height: size };
+        },
+        disableFlip: true
       };
 
       await this.html5QrCode.start(
-        { facingMode: 'environment' },
+        cameraConfig,
         config,
-        (decodedText) => {
-          this.handleSuccessfulScan(decodedText);
+        async (decodedText) => {
+          if (this.isScanning) {
+            await this.stopCamera();
+            this.handleSuccessfulScan(decodedText);
+          }
         },
-        (errorMessage) => {
-          // Ignorar fallos de cuadro individuales en el stream
-        }
+        () => {}
       );
 
       this.isScanning = true;
-      toggleCamBtn.textContent = '⏹️ Detener Cámara';
-      toggleCamBtn.className = 'btn btn-secondary';
-      statusDot.style.background = '#10b981';
-      statusText.textContent = 'Cámara activa (Buscando QR)';
-      overlay.style.display = 'block';
+      if (toggleCamBtn) {
+        toggleCamBtn.textContent = '⏹️ Detener Cámara';
+        toggleCamBtn.className = 'btn btn-secondary';
+      }
+      if (statusDot) statusDot.style.background = '#10b981';
+      if (statusText) statusText.textContent = 'Cámara activa (Escaneando)';
+      if (overlay) overlay.style.display = 'block';
+
+      // Verificar si la linterna está soportada
+      try {
+        const capabilities = this.html5QrCode.getRunningTrackCameraCapabilities();
+        if (capabilities && capabilities.torchFeature && capabilities.torchFeature().isSupported()) {
+          if (torchBtn) torchBtn.style.display = 'inline-flex';
+        }
+      } catch (e) {}
+
     } catch (err) {
       console.error('Error al encender cámara', err);
-      alert('💡 Consejo para celulares: Al conectarte por Wi-Fi, pulsa el botón dorado "📸 Cámara de Celular" para abrir la cámara de tu teléfono directamente sin restricciones.');
+      const toggleCamBtn = this.container.querySelector('#btn-toggle-camera');
+      const statusDot = this.container.querySelector('#scanner-status-dot');
+      const statusText = this.container.querySelector('#scanner-status-text');
+      if (toggleCamBtn) {
+        toggleCamBtn.textContent = '📹 Iniciar Cámara en Vivo';
+        toggleCamBtn.className = 'btn btn-primary';
+      }
+      if (statusDot) statusDot.style.background = '#ef4444';
+      if (statusText) statusText.textContent = 'Cámara bloqueada o apagada';
+
+      alert(
+        '⚠️ No se pudo iniciar la cámara en vivo:\n\n' +
+        '1. Permite el acceso a la cámara en los ajustes de tu navegador.\n' +
+        '2. O pulsa el botón dorado "📸 Tomar Foto QR" para capturar la tarjeta directamente con tu teléfono.'
+      );
+    }
+  }
+
+  async switchCamera() {
+    if (!this.cameras || this.cameras.length < 2) return;
+    this.currentCameraIndex = (this.currentCameraIndex + 1) % this.cameras.length;
+    const nextCam = this.cameras[this.currentCameraIndex];
+    await this.startCamera(nextCam.id);
+  }
+
+  async toggleTorch() {
+    if (!this.html5QrCode || !this.isScanning) return;
+    const torchBtn = this.container.querySelector('#btn-toggle-torch');
+    try {
+      this.torchEnabled = !this.torchEnabled;
+      await this.html5QrCode.applyVideoConstraints({
+        advanced: [{ torch: this.torchEnabled }]
+      });
+      if (torchBtn) {
+        torchBtn.textContent = this.torchEnabled ? '🔦 Apagar Luz' : '🔦 Linterna';
+        torchBtn.className = this.torchEnabled ? 'btn btn-gold' : 'btn btn-secondary';
+      }
+    } catch (err) {
+      console.warn('Torch no compatible:', err);
     }
   }
 
@@ -183,35 +416,59 @@ export class ScannerComponent {
     if (this.html5QrCode && this.isScanning) {
       try {
         await this.html5QrCode.stop();
-        this.isScanning = false;
-        const toggleCamBtn = this.container.querySelector('#btn-toggle-camera');
-        const statusDot = this.container.querySelector('#scanner-status-dot');
-        const statusText = this.container.querySelector('#scanner-status-text');
-        const overlay = this.container.querySelector('#scanner-overlay');
-
-        if (toggleCamBtn) {
-          toggleCamBtn.textContent = '📹 Iniciar Cámara';
-          toggleCamBtn.className = 'btn btn-primary';
-        }
-        if (statusDot) statusDot.style.background = '#94a3b8';
-        if (statusText) statusText.textContent = 'Cámara apagada';
-        if (overlay) overlay.style.display = 'none';
       } catch (err) {
         console.error('Error al detener cámara', err);
       }
     }
+    this.isScanning = false;
+    this.torchEnabled = false;
+
+    const toggleCamBtn = this.container.querySelector('#btn-toggle-camera');
+    const switchCamBtn = this.container.querySelector('#btn-switch-camera');
+    const torchBtn = this.container.querySelector('#btn-toggle-torch');
+    const statusDot = this.container.querySelector('#scanner-status-dot');
+    const statusText = this.container.querySelector('#scanner-status-text');
+    const overlay = this.container.querySelector('#scanner-overlay');
+
+    if (toggleCamBtn) {
+      toggleCamBtn.textContent = '📹 Iniciar Cámara en Vivo';
+      toggleCamBtn.className = 'btn btn-primary';
+    }
+    if (switchCamBtn) switchCamBtn.style.display = 'none';
+    if (torchBtn) {
+      torchBtn.style.display = 'none';
+      torchBtn.textContent = '🔦 Linterna';
+      torchBtn.className = 'btn btn-secondary';
+    }
+    if (statusDot) statusDot.style.background = '#94a3b8';
+    if (statusText) statusText.textContent = 'Cámara apagada';
+    if (overlay) overlay.style.display = 'none';
   }
 
   async scanFile(file) {
+    const statusText = this.container.querySelector('#scanner-status-text');
+    const statusDot = this.container.querySelector('#scanner-status-dot');
+    if (statusText) statusText.textContent = 'Analizando foto con IA...';
+    if (statusDot) statusDot.style.background = '#f59e0b';
+
     try {
       if (!this.html5QrCode) {
-        this.html5QrCode = new Html5Qrcode('qr-reader');
+        this.html5QrCode = new Html5Qrcode('qr-reader', {
+          experimentalFeatures: { useBarCodeDetectorIfSupported: true },
+          verbose: false
+        });
       }
-      const decodedText = await this.html5QrCode.scanFile(file, true);
+
+      const decodedText = await decodeImageFile(file, this.html5QrCode);
+      if (statusText) statusText.textContent = '¡QR Detectado con éxito!';
+      if (statusDot) statusDot.style.background = '#10b981';
       this.handleSuccessfulScan(decodedText);
     } catch (err) {
+      console.error('Error procesando imagen QR:', err);
       sound.playError();
-      alert('No se detectó un código QR válido en la imagen seleccionada.');
+      if (statusText) statusText.textContent = 'No se detectó QR';
+      if (statusDot) statusDot.style.background = '#ef4444';
+      alert('No se detectó un código QR válido en la foto. Intenta acercarte un poco más, enfocar bien y verificar que haya buena iluminación.');
     }
   }
 

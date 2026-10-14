@@ -8,13 +8,13 @@ export const QR_PREFIX = 'COLEGUAL:';
 
 export async function generateQrCanvas(canvasElement, text, options = {}) {
   const defaultOpts = {
-    width: options.width || 180,
-    margin: options.margin || 1,
+    width: options.width || 300,
+    margin: options.margin !== undefined ? options.margin : 2,
     color: {
       dark: options.darkColor || '#0f172a',
       light: options.lightColor || '#ffffff'
     },
-    errorCorrectionLevel: 'M'
+    errorCorrectionLevel: options.errorCorrectionLevel || 'Q'
   };
 
   try {
@@ -28,13 +28,13 @@ export async function generateQrCanvas(canvasElement, text, options = {}) {
 
 export async function generateQrDataUrl(text, options = {}) {
   const defaultOpts = {
-    width: options.width || 250,
-    margin: options.margin || 1,
+    width: options.width || 320,
+    margin: options.margin !== undefined ? options.margin : 2,
     color: {
       dark: options.darkColor || '#0f172a',
       light: options.lightColor || '#ffffff'
     },
-    errorCorrectionLevel: 'M'
+    errorCorrectionLevel: options.errorCorrectionLevel || 'Q'
   };
 
   try {

@@ -1,5 +1,5 @@
 import { storage } from '../services/storage.js';
-import { generateQrCanvas, QR_PREFIX } from '../services/qr.js';
+import { generateQrCanvas, generateQrDataUrl, QR_PREFIX } from '../services/qr.js';
 import { requestStaffAuthorization } from '../utils/auth-modal.js';
 
 export class CardGeneratorComponent {
@@ -121,14 +121,13 @@ export class CardGeneratorComponent {
 
     grid.innerHTML = filtered.map(student => this.buildCardHtml(student)).join('');
 
-    // Generar códigos QR en cada canvas
+    // Generar códigos QR en cada canvas con alta resolución y corrección de errores
     filtered.forEach(student => {
       if (this.viewMode !== 'back') {
         const canvas = document.getElementById(`qr-canvas-${student.id}`);
         if (canvas) {
-          // El payload incluye el prefijo y el RUN único
           const qrPayload = `${QR_PREFIX}${student.run}`;
-          generateQrCanvas(canvas, qrPayload, { width: 160 });
+          generateQrCanvas(canvas, qrPayload, { width: 300, margin: 2, errorCorrectionLevel: 'Q' });
         }
       }
     });
@@ -222,9 +221,12 @@ export class CardGeneratorComponent {
     `;
   }
 
-  printSingleCard(studentId) {
+  async printSingleCard(studentId) {
     const student = storage.getStudentById(studentId);
     if (!student) return;
+
+    const qrPayload = `${QR_PREFIX}${student.run}`;
+    const qrDataUrl = await generateQrDataUrl(qrPayload, { width: 320, margin: 2, errorCorrectionLevel: 'Q' });
 
     // Crear ventana o vista temporal para imprimir solo esta tarjeta
     const printWindow = window.open('', '_blank', 'width=600,height=500');
@@ -232,8 +234,6 @@ export class CardGeneratorComponent {
       window.print();
       return;
     }
-
-    const qrPayload = `${QR_PREFIX}${student.run}`;
 
     printWindow.document.write(`
       <!DOCTYPE html>
@@ -262,7 +262,7 @@ export class CardGeneratorComponent {
             <div class="card-middle-row">
               <div class="card-chip-sim"></div>
               <div class="card-qr-box">
-                <canvas id="single-qr" class="card-qr-canvas"></canvas>
+                <img src="${qrDataUrl}" class="card-qr-canvas" alt="QR" style="width: 76px; height: 76px; display: block;" />
                 <span class="card-qr-label">ESCANEAR</span>
               </div>
             </div>
@@ -276,11 +276,10 @@ export class CardGeneratorComponent {
           </div>
         </div>
 
-        <script type="module">
-          import QRCode from '/node_modules/qrcode/build/qrcode.js';
-          QRCode.toCanvas(document.getElementById('single-qr'), '${qrPayload}', { width: 160, margin: 1 }, () => {
-            setTimeout(() => { window.print(); }, 500);
-          });
+        <script>
+          window.onload = () => {
+            setTimeout(() => { window.print(); }, 400);
+          };
         </script>
       </body>
       </html>
