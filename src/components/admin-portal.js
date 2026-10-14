@@ -329,10 +329,10 @@ export class AdminPortalComponent {
           <div class="modal-body" style="padding: 1.25rem 1rem;">
             <div style="font-size: 3rem; margin-bottom: 0.5rem;">🚨</div>
             <h4 style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800; color: #dc2626; margin-bottom: 0.5rem;">
-              ¿Estás seguro de restablecer los datos?
+              ¿Estás seguro de restablecer los datos a cero?
             </h4>
             <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.45; margin-bottom: 1.25rem;">
-              Esta acción restablecerá todas las cuentas de los estudiantes a 10 ColegualCoins iniciales y borrará el historial de transacciones en todos los computadores y celulares conectados.
+              Esta acción restablecerá todas las cuentas de los estudiantes a <strong>0 ColegualCoins (volver a cero)</strong> y borrará por completo el historial de transacciones en la nube y en todos los dispositivos conectados.
             </p>
             <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: var(--radius-md); padding: 1rem; margin-bottom: 1rem;">
               <label class="form-label" style="font-weight: 700; color: #991b1b; margin-bottom: 0.5rem; display: block;">
@@ -466,19 +466,28 @@ export class AdminPortalComponent {
         return;
       }
 
+      const confirmBtn = this.container.querySelector('#btn-confirm-reset-factory');
+      const originalText = confirmBtn.innerHTML;
+
       try {
-        await storage.resetToDefault('3834');
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '⏳ Restableciendo a cero...';
+
+        await storage.resetToDefault(pin || '3834');
         closeResetModal();
         this.renderStats();
         this.renderStudentTable();
         this.renderTransactions();
         this.renderLeaderboards();
         sound.playSuccess();
-        alert('✅ ¡Datos restablecidos con éxito a los valores de fábrica!');
+        alert('✅ ¡Datos restablecidos con éxito! Todas las cuentas han vuelto a 0 CC y el historial fue borrado.');
       } catch (err) {
         sound.playError();
         pinError.textContent = err.message || 'Error al restablecer datos.';
         pinError.style.display = 'block';
+      } finally {
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = originalText;
       }
     };
 

@@ -103,7 +103,7 @@ export async function pushToCloud(dbData) {
       updated_at: new Date().toISOString()
     };
 
-    const res = await fetch(endpoint, {
+    let res = await fetch(endpoint, {
       method: 'POST',
       headers: {
         'apikey': cleanKey,
@@ -115,10 +115,27 @@ export async function pushToCloud(dbData) {
     });
 
     if (!res.ok) {
-      const errText = await res.text();
-      console.warn(`[CloudDB] Advertencia al sincronizar en Supabase (${res.status}):`, errText);
-      lastCloudError = `HTTP ${res.status}: ${errText}`;
-      return false;
+      // Reintento con PATCH directo por ID por si el row ya existe
+      const patchEndpoint = `${cleanUrl}/rest/v1/${TABLE_NAME}?id=eq.${STATE_ID}`;
+      const patchRes = await fetch(patchEndpoint, {
+        method: 'PATCH',
+        headers: {
+          'apikey': cleanKey,
+          'Authorization': `Bearer ${cleanKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          data: dbData,
+          updated_at: payload.updated_at
+        })
+      });
+
+      if (!patchRes.ok) {
+        const errText = await patchRes.text();
+        console.warn(`[CloudDB] Advertencia al sincronizar en Supabase (${patchRes.status}):`, errText);
+        lastCloudError = `HTTP ${patchRes.status}: ${errText}`;
+        return false;
+      }
     }
 
     lastCloudSyncTime = payload.updated_at;

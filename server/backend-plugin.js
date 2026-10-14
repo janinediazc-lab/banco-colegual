@@ -92,37 +92,25 @@ function isValidStaffPin(pin) {
 }
 
 function getInitialDb() {
-  const initialStudents = defaultStudents.map(s => ({
-    ...s,
-    saldo: 10,
-    total_ganado: 10,
-    total_canjeado: 0
-  }));
-
-  const now = new Date();
-  const dateStr = formatDate(now);
-
-  const initialTransactions = initialStudents.map(s => ({
-    id: `tx_init_${s.id}`,
-    timestamp: now.toISOString(),
-    fecha_display: dateStr,
-    estudiante_id: s.id,
-    estudiante_run: s.run,
-    estudiante_nombre: s.nombre_display,
-    curso: s.curso,
-    profesor: 'Banco Escolar Colegual',
-    tipo: 'BONO',
-    monto: 10,
-    motivo: '🎁 Bono de apertura de cuenta Banco Colegual',
-    categoria_id: 'bienvenida',
-    saldo_resultante: 10
-  }));
+  const initialStudents = defaultStudents.map(s => {
+    let profe = s.profesor_jefe;
+    if (s.curso_codigo === '1°' || s.curso_codigo === '2°' || s.curso_codigo === '1' || s.curso_codigo === '2' || (profe && profe.includes('Gallardo'))) {
+      profe = 'Bonny Cárdenas Palma';
+    }
+    return {
+      ...s,
+      profesor_jefe: profe,
+      saldo: 0,
+      total_ganado: 0,
+      total_canjeado: 0
+    };
+  });
 
   return {
     students: initialStudents,
     staff: defaultStaff,
     rewards: defaultRewards,
-    transactions: initialTransactions,
+    transactions: [],
     lastUpdated: new Date().toISOString()
   };
 }
