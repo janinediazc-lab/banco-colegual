@@ -42,12 +42,15 @@ export class TeacherPortalComponent {
           <p>Asigna <strong>ColegualCoins (CC)</strong> a tus estudiantes por buena convivencia, esfuerzo, compañerismo y hábitos positivos.</p>
           <div style="font-size: 0.8rem; color: #a7f3d0; margin-top: 0.35rem; font-weight: 600; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
             <span>🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</span>
-            <div style="display: flex; gap: 0.4rem; align-items: center;">
+            <div style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
               <button id="btn-goto-guide-tab" class="btn btn-secondary" style="font-size: 0.76rem; padding: 0.28rem 0.65rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); cursor: pointer;">
                 <span>📘</span> Ver Guía Docente
               </button>
-              <a href="./Guia_Docente_Banco_Colegual.pdf" target="_blank" download="Guia_Docente_Banco_Colegual.pdf" class="btn btn-gold" style="font-size: 0.76rem; text-decoration: none; padding: 0.28rem 0.65rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem;">
-                <span>📥</span> Descargar PDF
+              <a href="./Infografia_Docente_Banco_Colegual.png" target="_blank" download="Infografia_Docente_Banco_Colegual.png" class="btn btn-gold" style="font-size: 0.76rem; text-decoration: none; padding: 0.28rem 0.65rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <span>🖼️</span> Infografía (PNG)
+              </a>
+              <a href="./Guia_Docente_Banco_Colegual.pdf" target="_blank" download="Guia_Docente_Banco_Colegual.pdf" class="btn btn-outline" style="font-size: 0.76rem; text-decoration: none; padding: 0.28rem 0.65rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem; color: #a7f3d0; border-color: rgba(167, 243, 208, 0.4);">
+                <span>📥</span> Guía (PDF)
               </a>
             </div>
           </div>

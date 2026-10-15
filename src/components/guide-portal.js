@@ -64,30 +64,83 @@ export class GuidePortalComponent {
           </div>
 
           <div class="hero-stats" style="display: flex; flex-direction: column; gap: 0.5rem; justify-content: center;">
-            <a href="./Guia_Docente_Banco_Colegual.pdf" target="_blank" download="Guia_Docente_Banco_Colegual.pdf" class="btn btn-gold" style="text-decoration: none; font-size: 0.88rem; font-weight: 800; padding: 0.55rem 1rem; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem; box-shadow: var(--shadow-md);">
-              <span>📥</span> Descargar PDF Oficial (6 Págs)
-            </a>
-            <button id="btn-toggle-guide-view" class="btn btn-secondary" style="font-size: 0.82rem; font-weight: 700; padding: 0.45rem 0.85rem; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; background: rgba(255, 255, 255, 0.2); color: white; border: 1px solid rgba(255, 255, 255, 0.35);">
-              <span>${this.currentView === 'pdf' ? '📖 Cambiar a Lectura Interactiva' : '📑 Ver Documento PDF Integrado'}</span>
-            </button>
-            <a href="./Guia_Docente_Banco_Colegual.pdf" target="_blank" class="btn btn-outline" style="font-size: 0.78rem; text-decoration: none; color: #a7f3d0; border-color: rgba(167, 243, 208, 0.4); text-align: center; padding: 0.3rem 0.6rem; border-radius: 6px;">
-              🖨️ Abrir PDF para Imprimir
-            </a>
+            <div style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+              <button id="btn-view-interactive" class="btn btn-sm ${this.currentView === 'interactive' ? 'btn-gold' : 'btn-secondary'}" style="font-size: 0.78rem; font-weight: 800; padding: 0.4rem 0.65rem;">
+                📖 Guía Interactiva
+              </button>
+              <button id="btn-view-infografia" class="btn btn-sm ${this.currentView === 'infografia' ? 'btn-gold' : 'btn-secondary'}" style="font-size: 0.78rem; font-weight: 800; padding: 0.4rem 0.65rem;">
+                🖼️ Infografía Visual (Póster)
+              </button>
+              <button id="btn-view-pdf" class="btn btn-sm ${this.currentView === 'pdf' ? 'btn-gold' : 'btn-secondary'}" style="font-size: 0.78rem; font-weight: 800; padding: 0.4rem 0.65rem;">
+                📑 Documento PDF
+              </button>
+            </div>
+
+            <div style="display: flex; gap: 0.35rem; flex-wrap: wrap; margin-top: 0.2rem;">
+              <a href="./Infografia_Docente_Banco_Colegual.png" download="Infografia_Docente_Banco_Colegual.png" class="btn btn-gold btn-sm" style="text-decoration: none; font-size: 0.76rem; font-weight: 800; display: inline-flex; align-items: center; gap: 0.3rem;">
+                <span>🖼️</span> Infografía (PNG)
+              </a>
+              <a href="./Infografia_Docente_Banco_Colegual.pdf" download="Infografia_Docente_Banco_Colegual.pdf" class="btn btn-secondary btn-sm" style="text-decoration: none; font-size: 0.76rem; font-weight: 700; background: rgba(255, 255, 255, 0.2); color: white; display: inline-flex; align-items: center; gap: 0.3rem;">
+                <span>📑</span> Infografía (PDF)
+              </a>
+              <a href="./Guia_Docente_Banco_Colegual.pdf" download="Guia_Docente_Banco_Colegual.pdf" class="btn btn-outline btn-sm" style="font-size: 0.76rem; text-decoration: none; color: #a7f3d0; border-color: rgba(167, 243, 208, 0.4); display: inline-flex; align-items: center; gap: 0.3rem;">
+                <span>📥</span> Guía Completa (PDF)
+              </a>
+            </div>
           </div>
         </div>
 
-        ${this.currentView === 'pdf' ? this.renderPdfView() : this.renderInteractiveView()}
+        ${this.currentView === 'pdf' ? this.renderPdfView() : (this.currentView === 'infografia' ? this.renderInfografiaView() : this.renderInteractiveView())}
       </div>
     `;
 
     this.attachEvents();
   }
 
+  renderInfografiaView() {
+    return `
+      <div style="margin-top: 1.25rem;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button id="btn-back-to-interactive" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+              <span>👈</span> Volver a Guía Interactiva
+            </button>
+            <span style="font-size: 0.84rem; color: var(--text-muted); font-weight: 700;">
+              Infografía Práctica para Docentes y Asistentes (Formato Afiche / Póster)
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <a href="./Infografia_Docente_Banco_Colegual.png" download="Infografia_Docente_Banco_Colegual.png" class="btn btn-gold btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 800;">
+              <span>🖼️</span> Descargar Imagen PNG (2560x5500 px)
+            </a>
+            <a href="./Infografia_Docente_Banco_Colegual.pdf" download="Infografia_Docente_Banco_Colegual.pdf" class="btn btn-secondary btn-sm" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; font-weight: 700;">
+              <span>📑</span> Descargar PDF Imprimible
+            </a>
+          </div>
+        </div>
+
+        <div style="background: #022019; border-radius: 16px; border: 1.5px solid rgba(245, 158, 11, 0.4); padding: 1.25rem; text-align: center; box-shadow: var(--shadow-xl);">
+          <div style="color: #cbd5e1; font-size: 0.82rem; margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem;">
+            <span>💡</span> <em>Haz clic sobre la imagen para abrirla en tamaño gigante o descargarla para imprimir o enviar por WhatsApp al equipo docente.</em>
+          </div>
+          <a href="./Infografia_Docente_Banco_Colegual.png" target="_blank" title="Clic para ver en tamaño completo">
+            <img 
+              src="./Infografia_Docente_Banco_Colegual.png" 
+              alt="Infografía Práctica Docente - Banco Escolar Colegual" 
+              style="width: 100%; max-width: 960px; height: auto; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.15); display: inline-block; cursor: zoom-in;" 
+            />
+          </a>
+        </div>
+      </div>
+    `;
+  }
+
   renderPdfView() {
     return `
       <div style="margin-top: 1.25rem;">
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
-          <button id="btn-back-to-interactive" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.35rem;">
+          <button id="btn-back-to-interactive-pdf" class="btn btn-secondary btn-sm" style="display: inline-flex; align-items: center; gap: 0.35rem;">
             <span>👈</span> Volver a Guía Interactiva
           </button>
           <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">
@@ -108,6 +161,27 @@ export class GuidePortalComponent {
 
   renderInteractiveView() {
     return `
+      <!-- Banner Destacado hacia la Infografía Visual -->
+      <div style="background: linear-gradient(135deg, #064e3b 0%, #0f2b48 100%); border-radius: 12px; padding: 1rem 1.25rem; color: white; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; border: 1px solid rgba(245, 158, 11, 0.4); margin-top: 1.25rem; box-shadow: var(--shadow-md);">
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div style="font-size: 2.2rem;">🖼️</div>
+          <div>
+            <strong style="color: #fde68a; font-size: 1.05rem;">¿Prefieres una síntesis visual rápida?</strong>
+            <p style="font-size: 0.85rem; color: #e2e8f0; margin-top: 2px;">
+              Revisa la nueva <strong>Infografía Oficial para Docentes</strong>: resumen visual con las 3 formas de premiar, conductas, claves y decálogo.
+            </p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button id="btn-banner-to-infografia" class="btn btn-gold btn-sm" style="font-weight: 800;">
+            Ver Infografía Completa 👉
+          </button>
+          <a href="./Infografia_Docente_Banco_Colegual.png" download="Infografia_Docente_Banco_Colegual.png" class="btn btn-secondary btn-sm" style="background: rgba(255,255,255,0.2); color: white; text-decoration: none;">
+            📥 Descargar PNG
+          </a>
+        </div>
+      </div>
+
       <!-- Barra de Navegación Rápida e Índice por Capítulos -->
       <div style="background: white; padding: 0.85rem 1rem; border-radius: 12px; border: 1px solid var(--border-light); margin-top: 1.25rem; box-shadow: var(--shadow-sm);">
         <div style="display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem;">
@@ -575,18 +649,34 @@ export class GuidePortalComponent {
   }
 
   attachEvents() {
-    const toggleBtn = document.getElementById('btn-toggle-guide-view');
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', () => {
-        this.toggleView(this.currentView === 'interactive' ? 'pdf' : 'interactive');
-      });
+    const btnInteractive = document.getElementById('btn-view-interactive');
+    if (btnInteractive) {
+      btnInteractive.addEventListener('click', () => this.toggleView('interactive'));
+    }
+
+    const btnInfografia = document.getElementById('btn-view-infografia');
+    if (btnInfografia) {
+      btnInfografia.addEventListener('click', () => this.toggleView('infografia'));
+    }
+
+    const btnPdf = document.getElementById('btn-view-pdf');
+    if (btnPdf) {
+      btnPdf.addEventListener('click', () => this.toggleView('pdf'));
+    }
+
+    const btnBannerInfografia = document.getElementById('btn-banner-to-infografia');
+    if (btnBannerInfografia) {
+      btnBannerInfografia.addEventListener('click', () => this.toggleView('infografia'));
     }
 
     const backBtn = document.getElementById('btn-back-to-interactive');
     if (backBtn) {
-      backBtn.addEventListener('click', () => {
-        this.toggleView('interactive');
-      });
+      backBtn.addEventListener('click', () => this.toggleView('interactive'));
+    }
+
+    const backPdfBtn = document.getElementById('btn-back-to-interactive-pdf');
+    if (backPdfBtn) {
+      backPdfBtn.addEventListener('click', () => this.toggleView('interactive'));
     }
 
     const searchInput = document.getElementById('guide-search-input');

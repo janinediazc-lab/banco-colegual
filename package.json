@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server.js",
-    "generate:guide": "node scripts/generate-docente-guide.js"
+    "generate:guide": "node scripts/generate-docente-guide.js",
+    "generate:infografia": "node scripts/generate-infografia.js"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
