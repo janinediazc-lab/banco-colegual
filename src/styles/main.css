@@ -1664,3 +1664,29 @@ body {
   }
 }
 
+/* Estilos para el Portal de la Guía Docente */
+.guide-nav-pill {
+  border: 1px solid var(--border-light);
+  background: #f8fafc;
+  color: #334155;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  white-space: nowrap;
+}
+
+.guide-nav-pill:hover {
+  background: var(--color-primary-subtle);
+  color: var(--color-primary-dark);
+  border-color: var(--color-primary-light);
+  transform: translateY(-1px);
+}
+
+.guide-chapter-card {
+  transition: box-shadow var(--transition-normal);
+}
+
+

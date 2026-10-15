@@ -12,6 +12,7 @@ import { StorePortalComponent } from './components/store-portal.js';
 import { StudentPortalComponent } from './components/student-portal.js';
 import { AdminPortalComponent } from './components/admin-portal.js';
 import { ReportsPortalComponent } from './components/reports-portal.js';
+import { GuidePortalComponent } from './components/guide-portal.js';
 import { requestStaffAuthorization } from './utils/auth-modal.js';
 
 class App {
@@ -382,6 +383,9 @@ class App {
 
     this.components.reports = new ReportsPortalComponent('tab-reports');
     this.components.reports.init();
+
+    this.components.guide = new GuidePortalComponent('tab-guide');
+    this.components.guide.init();
   }
 
   switchTab(targetTab) {
