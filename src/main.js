@@ -11,6 +11,7 @@ import { CardGeneratorComponent } from './components/card-generator.js';
 import { StorePortalComponent } from './components/store-portal.js';
 import { StudentPortalComponent } from './components/student-portal.js';
 import { AdminPortalComponent } from './components/admin-portal.js';
+import { ReportsPortalComponent } from './components/reports-portal.js';
 import { requestStaffAuthorization } from './utils/auth-modal.js';
 
 class App {
@@ -378,6 +379,9 @@ class App {
 
     this.components.admin = new AdminPortalComponent('tab-admin');
     this.components.admin.init();
+
+    this.components.reports = new ReportsPortalComponent('tab-reports');
+    this.components.reports.init();
   }
 
   switchTab(targetTab) {
@@ -427,6 +431,7 @@ class App {
 // Inicializar al cargar el DOM
 document.addEventListener('DOMContentLoaded', () => {
   const app = new App();
+  window.app = app;
   app.init();
 
   // Proteger impresión global mediante atajos de teclado (Ctrl+P / Cmd+P)

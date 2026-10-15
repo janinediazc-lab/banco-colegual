@@ -9,6 +9,7 @@ export class TeacherPortalComponent {
     this.searchTerm = '';
     this.activeTeacher = null;
     this.selectedStudentForPoints = null;
+    this.showingOnlyInvisibilized = false;
   }
 
   init() {
@@ -26,6 +27,7 @@ export class TeacherPortalComponent {
 
   setCourse(code) {
     this.selectedCourse = code;
+    this.showingOnlyInvisibilized = false;
     this.renderCoursePills();
     this.renderStudents();
     this.updateHeaderStats();
@@ -77,8 +79,15 @@ export class TeacherPortalComponent {
           <button id="btn-batch-course" class="btn btn-gold">
             ⭐ Bono Grupal (+10 ColegualCoins)
           </button>
+
+          <button id="btn-course-cartolas" class="btn btn-secondary" title="Imprimir Cartolas de Libreta de Todo el Curso">
+            📋 Cartolas del Curso
+          </button>
         </div>
       </div>
+
+      <!-- Banner Alerta de Invisibilizados -->
+      <div id="teacher-inclusion-banner-slot"></div>
 
       <!-- Grilla de Estudiantes -->
       <div class="students-grid" id="teacher-students-grid">
@@ -183,9 +192,25 @@ export class TeacherPortalComponent {
 
     // Bono curso completo
     const batchBtn = this.container.querySelector('#btn-batch-course');
-    batchBtn.addEventListener('click', () => {
-      this.openBatchCourseModal();
-    });
+    if (batchBtn) {
+      batchBtn.addEventListener('click', () => {
+        this.openBatchCourseModal();
+      });
+    }
+
+    // Cartolas del curso
+    const courseCartolasBtn = this.container.querySelector('#btn-course-cartolas');
+    if (courseCartolasBtn) {
+      courseCartolasBtn.addEventListener('click', () => {
+        if (window.app) {
+          window.location.hash = 'reports';
+          window.app.switchTab('reports');
+          if (window.app.components.reports) {
+            window.app.components.reports.setCartolaCourse(this.selectedCourse === 'ALL' ? '1°' : this.selectedCourse);
+          }
+        }
+      });
+    }
 
     // Cierre de modales
     this.container.querySelector('#btn-close-deposit').addEventListener('click', () => this.closeDepositModal());
@@ -211,6 +236,10 @@ export class TeacherPortalComponent {
     let list = storage.getStudents();
     if (this.selectedCourse !== 'ALL') {
       list = list.filter(s => s.curso_codigo === this.selectedCourse);
+    }
+    if (this.showingOnlyInvisibilized) {
+      const invisIds = new Set(storage.getInvisibilizedStudents(this.selectedCourse, 7).map(s => s.id));
+      list = list.filter(s => invisIds.has(s.id));
     }
     if (this.searchTerm) {
       list = list.filter(s => 
@@ -244,6 +273,7 @@ export class TeacherPortalComponent {
     if (this.selectedCourse === 'ALL') {
       if (titleEl) titleEl.textContent = 'Todos los Cursos';
       if (profEl) profEl.textContent = 'Toda la Escuela Colegual';
+    } else {
       const firstStudent = filtered[0];
       if (titleEl) titleEl.textContent = firstStudent ? firstStudent.curso : `${this.selectedCourse} Básico`;
       let profName = firstStudent ? firstStudent.profesor_jefe : 'Docente';
@@ -256,6 +286,62 @@ export class TeacherPortalComponent {
 
   renderStudents() {
     const grid = this.container.querySelector('#teacher-students-grid');
+    const bannerSlot = this.container.querySelector('#teacher-inclusion-banner-slot');
+    const invis = storage.getInvisibilizedStudents(this.selectedCourse, 7);
+    const invisMap = new Map(invis.map(i => [i.id, i]));
+
+    if (bannerSlot) {
+      if (invis.length > 0) {
+        bannerSlot.innerHTML = `
+          <div class="inclusion-banner" style="margin-bottom: 1.25rem; background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1.5px solid #fde68a; border-radius: var(--radius-md); padding: 0.85rem 1.15rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+            <div style="display: flex; align-items: center; gap: 0.75rem;">
+              <span style="font-size: 1.8rem;">🔔</span>
+              <div>
+                <div style="font-weight: 800; font-size: 0.95rem; color: #92400e;">
+                  Alerta de Inclusión: ${invis.length} estudiante(s) sin refuerzo reciente (>7 días)
+                </div>
+                <div style="font-size: 0.8rem; color: #78350f;">
+                  Valoremos a los estudiantes de perfil tímido o reflexivo para mantener alta su motivación y pertenencia escolar.
+                </div>
+              </div>
+            </div>
+            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+              <button id="btn-toggle-invis-filter" class="btn btn-sm ${this.showingOnlyInvisibilized ? 'btn-secondary' : 'btn-gold'}" style="font-weight: 800;">
+                ${this.showingOnlyInvisibilized ? '👁️ Ver Todo el Curso' : `🔔 Filtrar Desapercibidos (${invis.length})`}
+              </button>
+              <button id="btn-go-to-inclusion-monitor" class="btn btn-sm" style="font-weight: 700; background: white; border: 1px solid #d97706; color: #92400e;">
+                📋 Monitor Completo
+              </button>
+            </div>
+          </div>
+        `;
+
+        const toggleBtn = bannerSlot.querySelector('#btn-toggle-invis-filter');
+        if (toggleBtn) {
+          toggleBtn.onclick = () => {
+            this.showingOnlyInvisibilized = !this.showingOnlyInvisibilized;
+            this.renderStudents();
+            this.updateHeaderStats();
+          };
+        }
+
+        const monitorBtn = bannerSlot.querySelector('#btn-go-to-inclusion-monitor');
+        if (monitorBtn) {
+          monitorBtn.onclick = () => {
+            if (window.app) {
+              window.location.hash = 'reports';
+              window.app.switchTab('reports');
+              if (window.app.components.reports) {
+                window.app.components.reports.switchSubTab('invisibilizados');
+              }
+            }
+          };
+        }
+      } else {
+        bannerSlot.innerHTML = '';
+      }
+    }
+
     const students = this.getFilteredStudents();
 
     if (students.length === 0) {
@@ -263,7 +349,7 @@ export class TeacherPortalComponent {
         <div style="grid-column: 1/-1; text-align: center; padding: 3rem 1rem; color: var(--text-muted);">
           <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🔍</div>
           <p style="font-weight: 700; font-size: 1.1rem;">No se encontraron estudiantes</p>
-          <p style="font-size: 0.9rem;">Prueba cambiando el curso o el término de búsqueda.</p>
+          <p style="font-size: 0.9rem;">Prueba cambiando el curso o desactivando el filtro de desapercibidos.</p>
         </div>
       `;
       return;
@@ -272,9 +358,10 @@ export class TeacherPortalComponent {
     grid.innerHTML = students.map(student => {
       const rank = this.getRank(student.saldo);
       const initials = student.nombre_display.split(' ').map(w => w[0]).slice(0, 2).join('');
+      const invisData = invisMap.get(student.id);
 
       return `
-        <div class="student-card ${student.retirado ? 'retirado' : ''}" id="student-card-${student.id}">
+        <div class="student-card ${student.retirado ? 'retirado' : ''}" id="student-card-${student.id}" style="${invisData ? 'border: 1.5px solid #fcd34d;' : ''}">
           <div class="student-card-top">
             <div class="student-avatar" style="background: linear-gradient(135deg, ${rank.color}, #064e3b);">
               ${initials}
@@ -287,6 +374,13 @@ export class TeacherPortalComponent {
                 <span>• ${student.curso}</span>
                 ${student.retirado ? '<span style="color:#ef4444; font-weight:700;">(Retirado)</span>' : ''}
               </div>
+              ${invisData ? `
+                <div style="margin-top: 4px;">
+                  <span class="badge-invisibilizado" style="font-size: 0.7rem; font-weight: 800; color: #92400e; background: #fef3c7; border: 1px solid #fde68a; padding: 2px 7px; border-radius: 99px; display: inline-flex; align-items: center; gap: 3px;">
+                    🔔 Sin refuerzo hace ${invisData.diasSinRefuerzo}d
+                  </span>
+                </div>
+              ` : ''}
             </div>
           </div>
 
@@ -304,15 +398,21 @@ export class TeacherPortalComponent {
             </div>
           </div>
 
-          <div class="student-card-actions">
-            <button class="btn btn-primary btn-sm btn-action-deposit" data-id="${student.id}" title="Abonar ColegualCoins">
+          <div class="student-card-actions" style="display: flex; gap: 0.35rem; flex-wrap: wrap;">
+            <button class="btn btn-primary btn-sm btn-action-deposit" data-id="${student.id}" style="flex: 1.2;" title="Abonar ColegualCoins">
               ➕ Abonar CC
             </button>
-            <button class="btn btn-danger-soft btn-sm btn-action-deduct" data-id="${student.id}" title="Quitar o Descontar ColegualCoins">
+            <button class="btn btn-danger-soft btn-sm btn-action-deduct" data-id="${student.id}" style="flex: 1;" title="Quitar o Descontar ColegualCoins">
               ➖ Quitar CC
             </button>
-            <button class="btn btn-secondary btn-sm btn-action-passbook" data-id="${student.id}" title="Ver Cartola Bancaria">
-              📜 Historial
+            <button class="btn btn-gold btn-sm btn-action-diploma" data-id="${student.id}" style="flex: 1;" title="Generar Diploma de Honor">
+              🎓 Diploma
+            </button>
+            <button class="btn btn-secondary btn-sm btn-action-cartola" data-id="${student.id}" style="flex: 1;" title="Ver Cartola para Libreta">
+              📋 Cartola
+            </button>
+            <button class="btn btn-secondary btn-sm btn-action-passbook" data-id="${student.id}" style="padding: 0 0.5rem;" title="Historial Completo">
+              📜
             </button>
           </div>
         </div>
@@ -331,6 +431,32 @@ export class TeacherPortalComponent {
       btn.addEventListener('click', (e) => {
         const stId = e.currentTarget.dataset.id;
         this.openDepositModal(stId, 'DEDUCT');
+      });
+    });
+
+    grid.querySelectorAll('.btn-action-diploma').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const stId = e.currentTarget.dataset.id;
+        if (window.app) {
+          window.location.hash = 'reports';
+          window.app.switchTab('reports');
+          if (window.app.components.reports) {
+            window.app.components.reports.setDiplomaStudent(stId);
+          }
+        }
+      });
+    });
+
+    grid.querySelectorAll('.btn-action-cartola').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const stId = e.currentTarget.dataset.id;
+        if (window.app) {
+          window.location.hash = 'reports';
+          window.app.switchTab('reports');
+          if (window.app.components.reports) {
+            window.app.components.reports.setCartolaStudent(stId);
+          }
+        }
       });
     });
 

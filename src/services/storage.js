@@ -560,6 +560,65 @@ class StorageService {
     }
   }
 
+  // --- ANÁLISIS DE INCLUSIÓN Y ESTUDIANTES INVISIBILIZADOS ---
+  getLastPositiveTransaction(studentId) {
+    const txs = this.getTransactions({ estudiante_id: studentId });
+    const positiveTxs = txs.filter(t => Number(t.monto) > 0 && t.categoria_id !== 'bienvenida');
+    if (positiveTxs.length === 0) return null;
+    positiveTxs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    return positiveTxs[0];
+  }
+
+  getInvisibilizedStudents(courseCode = 'ALL', daysThreshold = 7) {
+    const students = this.getStudents();
+    const transactions = this.getTransactions();
+    const now = Date.now();
+
+    const filteredStudents = courseCode === 'ALL'
+      ? students
+      : students.filter(s => s.curso_codigo === courseCode);
+
+    const invisibilized = [];
+
+    filteredStudents.forEach(student => {
+      if (student.retirado) return;
+
+      const positiveTxs = transactions.filter(t =>
+        t.estudiante_id === student.id &&
+        Number(t.monto) > 0 &&
+        t.categoria_id !== 'bienvenida'
+      );
+
+      let lastDate = null;
+      let daysWithoutReinforcement = 999;
+      let hasReceivedPositive = positiveTxs.length > 0;
+
+      if (hasReceivedPositive) {
+        positiveTxs.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        lastDate = positiveTxs[0].timestamp;
+        const diffMs = now - new Date(lastDate).getTime();
+        daysWithoutReinforcement = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      } else {
+        // Alumno que NUNCA ha recibido un refuerzo docente (solo tiene el bono inicial de bienvenida)
+        // Se considera de máxima prioridad para inclusión
+        const welcomeTx = transactions.find(t => t.estudiante_id === student.id && t.categoria_id === 'bienvenida');
+        lastDate = welcomeTx ? welcomeTx.timestamp : null;
+        daysWithoutReinforcement = 14;
+      }
+
+      if (daysWithoutReinforcement >= daysThreshold) {
+        invisibilized.push({
+          ...student,
+          diasSinRefuerzo: daysWithoutReinforcement,
+          ultimaFecha: lastDate ? this.formatDate(lastDate) : 'Sin refuerzos',
+          hasReceivedPositive
+        });
+      }
+    });
+
+    return invisibilized.sort((a, b) => b.diasSinRefuerzo - a.diasSinRefuerzo);
+  }
+
   // --- FUNCIONARIOS (DOCENTES Y ASISTENTES DE LA EDUCACIÓN) ---
   getStaff() {
     const removedIds = ['func_78009268', 'func_173016948', 'func_187555523'];

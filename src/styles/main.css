@@ -1229,3 +1229,438 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* =========================================================================
+   ESTILOS PARA DIPLOMAS, REPORTES Y ALERTAS DE INCLUSIÓN (PANTALLA)
+   ========================================================================= */
+
+.print-container {
+  display: none;
+}
+
+/* Sub-pestañas */
+.subtabs-bar {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 2px solid var(--border-light);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.15rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: var(--transition-normal);
+}
+
+.subtab-btn:hover {
+  background: var(--bg-card-subtle);
+  color: var(--text-main);
+  border-color: #cbd5e1;
+}
+
+.subtab-btn.active {
+  background: linear-gradient(135deg, var(--color-primary-dark), var(--color-primary));
+  color: white;
+  border-color: var(--color-primary-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.subtab-badge {
+  background: #f59e0b;
+  color: #78350f;
+  font-size: 0.72rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 99px;
+}
+
+.subtab-btn.active .subtab-badge {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+/* Marco de Previsualización de Diploma en pantalla */
+.diploma-frame {
+  background: #ffffff;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  padding: 1.25rem;
+}
+
+.diploma-sheet {
+  background: #fffdfa;
+  border-radius: var(--radius-sm);
+}
+
+.diploma-border-outer {
+  border: 4.5px solid #064e3b;
+  padding: 8px;
+  border-radius: 8px;
+}
+
+.diploma-border-inner {
+  border: 2px solid #d97706;
+  padding: 18px 24px;
+  text-align: center;
+  background: radial-gradient(circle at center, #ffffff 40%, #faf8f5 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.diploma-republic {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #064e3b;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.diploma-brand-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.diploma-logo-left {
+  height: 52px;
+  object-fit: contain;
+}
+
+.diploma-logo-right {
+  height: 48px;
+  object-fit: contain;
+}
+
+.diploma-titles {
+  flex: 1;
+}
+
+.diploma-school-name {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #064e3b;
+  letter-spacing: 0.06em;
+}
+
+.diploma-program-sub {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.diploma-main-title {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: #d97706;
+  letter-spacing: 0.08em;
+  margin-top: 4px;
+  text-shadow: 0 1px 2px rgba(217, 119, 6, 0.2);
+}
+
+.diploma-conferral {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.diploma-student-name {
+  font-size: 1.65rem;
+  font-weight: 900;
+  color: #064e3b;
+  text-decoration: underline;
+  text-decoration-color: #d97706;
+  text-underline-offset: 6px;
+  letter-spacing: 0.02em;
+}
+
+.diploma-student-course {
+  font-size: 0.88rem;
+  color: #334155;
+}
+
+.diploma-merit-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  padding: 4px 14px;
+  border-radius: 99px;
+  margin: 0 auto;
+}
+
+.diploma-merit-icon {
+  font-size: 1rem;
+}
+
+.diploma-merit-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #92400e;
+}
+
+.diploma-reason-text {
+  font-size: 0.85rem;
+  color: #1e293b;
+  line-height: 1.45;
+  max-width: 85%;
+  margin: 0 auto;
+  font-style: italic;
+}
+
+.diploma-date {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.diploma-signatures-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding: 0 1.5rem;
+}
+
+.diploma-sig-box {
+  width: 170px;
+  text-align: center;
+}
+
+.diploma-sig-line {
+  border-bottom: 1.5px solid #334155;
+  margin-bottom: 4px;
+  height: 24px;
+}
+
+.diploma-sig-name {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.diploma-sig-cargo {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.diploma-seal-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.diploma-gold-seal {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 2px dashed #d97706;
+  background: radial-gradient(circle, #fef3c7 0%, #fde68a 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.25);
+}
+
+.seal-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.55rem;
+  color: #92400e;
+  line-height: 1.1;
+  font-weight: 800;
+}
+
+.seal-inner span {
+  font-size: 0.95rem;
+}
+
+/* Cartola de Libreta en Pantalla */
+.cartola-sheet-unit {
+  background: #ffffff;
+  border: 1.5px solid #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-md);
+  margin-bottom: 1.25rem;
+}
+
+.cartola-header-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-bottom: 2px solid #064e3b;
+  padding-bottom: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.cartola-header-table td {
+  border: none;
+  padding: 0;
+}
+
+.cartola-school-name {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #064e3b;
+  letter-spacing: 0.05em;
+}
+
+.cartola-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f172a;
+  line-height: 1.2;
+}
+
+.cartola-subtitle {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.cartola-student-info {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  margin-bottom: 0.85rem;
+}
+
+.cartola-balance-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.85rem;
+}
+
+.cartola-balance-box {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem;
+  text-align: center;
+}
+
+.cartola-balance-box .lbl {
+  display: block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.cartola-balance-box .val-gold {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #b45309;
+}
+
+.cartola-balance-box .val-green {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #059669;
+}
+
+.cartola-balance-box .val-blue {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+.cartola-balance-box .val-rank {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: #064e3b;
+}
+
+.cartola-tx-section {
+  margin-bottom: 0.85rem;
+}
+
+.cartola-tx-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #064e3b;
+  margin-bottom: 0.35rem;
+}
+
+.cartola-tx-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.cartola-tx-table th {
+  background: #0f172a;
+  color: #ffffff;
+  padding: 0.4rem 0.6rem;
+  text-align: left;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
+.cartola-tx-table td {
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.cartola-family-msg {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 0.85rem;
+  font-size: 0.78rem;
+  color: #065f46;
+  line-height: 1.4;
+  margin-bottom: 0.85rem;
+}
+
+.cartola-cut-line {
+  border-top: 1.5px dashed #94a3b8;
+  text-align: center;
+  position: relative;
+  margin: 1.25rem 0 1rem 0;
+}
+
+.cartola-cut-line span {
+  position: relative;
+  top: -10px;
+  background: #ffffff;
+  padding: 0 0.75rem;
+  font-size: 0.72rem;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.cartola-talon {
+  background: #fffdf5;
+  border: 1px solid #fef08a;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+}
+
+@media (max-width: 900px) {
+  .diploma-editor-layout {
+    grid-template-columns: 1fr !important;
+  }
+}
+
