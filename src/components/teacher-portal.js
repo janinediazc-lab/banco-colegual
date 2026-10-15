@@ -40,7 +40,12 @@ export class TeacherPortalComponent {
         <div class="hero-text">
           <h2>👨‍🏫 Panel de Funcionarios y Recompensas</h2>
           <p>Asigna <strong>ColegualCoins (CC)</strong> a tus estudiantes por buena convivencia, esfuerzo, compañerismo y hábitos positivos.</p>
-          <div style="font-size: 0.8rem; color: #a7f3d0; margin-top: 0.35rem; font-weight: 600;">🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</div>
+          <div style="font-size: 0.8rem; color: #a7f3d0; margin-top: 0.35rem; font-weight: 600; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;">
+            <span>🌟 Recurso realizado por Janine Díaz Calixto - Coordinación de la Vida Escolar</span>
+            <a href="./Guia_Docente_Banco_Colegual.pdf" target="_blank" download="Guia_Docente_Banco_Colegual.pdf" class="btn btn-gold" style="font-size: 0.76rem; text-decoration: none; padding: 0.28rem 0.65rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem;">
+              <span>📘</span> Descargar Guía Docente (PDF)
+            </a>
+          </div>
         </div>
         <div class="hero-stats">
           <div class="hero-stat-card">

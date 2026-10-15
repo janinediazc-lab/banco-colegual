@@ -7,7 +7,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.resolve(__dirname, '..');
 
-const LOGO_PATH = path.join(ROOT_DIR, 'public/Logo Colegual.png');
+const LOGO_PATH = path.join(ROOT_DIR, 'public/Logo Colegual_dark.png');
 const EMBLEM_PATH = path.join(ROOT_DIR, 'public/emblema_colegual_circular.png');
 
 const OUTPUT_PDF = path.join(ROOT_DIR, 'Guia_Docente_Banco_Colegual.pdf');
@@ -284,11 +284,11 @@ async function generateGuide() {
   <div class="page">
     <div class="cover-box">
       <div class="cover-header">
-        🇨🇱 SERVICIO LOCAL DE EDUCACIÓN PÚBLICA LLANQUIHUE &bull; RBD 7967 &bull; LLANQUIHUE
+        ESCUELA RURAL COLEGUAL
       </div>
 
-      <div style="margin: 15px 0;">
-        <img src="${logoBase64}" style="height: 72px; object-fit: contain;" alt="Logo Escuela Rural Colegual" />
+      <div style="margin: 18px 0 12px 0;">
+        <img src="${logoBase64}" style="height: 82px; max-width: 290px; object-fit: contain;" alt="Logo Escuela Rural Colegual" />
       </div>
 
       <h1 class="cover-title">
@@ -365,31 +365,28 @@ async function generateGuide() {
 
     <table class="layout-table">
       <tr>
-        <td style="width: 33.3%;">
-          <div class="card card-blue" style="min-height: 110px;">
-            <div style="font-size: 1.4rem; margin-bottom: 2px;">💻</div>
-            <strong style="font-size: 8.5pt; color: #1e40af;">1. Computador de Aula</strong>
-            <p style="font-size: 7.8pt; color: #475569; margin-top: 3px;">
-              Haz doble clic en <strong>"Abrir Banco Colegual"</strong> en el escritorio. Se abrirá de inmediato en tu navegador habitual listo para usar.
+        <td style="width: 50%;">
+          <div class="card card-accent" style="min-height: 105px; padding: 11px 13px;">
+            <div style="font-size: 1.5rem; margin-bottom: 2px;">🌐</div>
+            <strong style="font-size: 9pt; color: #065f46;">1. Web Oficial en la Nube</strong>
+            <p style="font-size: 8pt; color: #475569; margin-top: 4px; line-height: 1.4;">
+              Ingresa desde cualquier computador o notebook en tu navegador a:<br>
+              <code style="font-size: 8pt; background:#e2e8f0; color:#0f2b48; padding:2px 6px; border-radius:4px; font-weight:700;">banco-colegual.onrender.com</code>
+            </p>
+            <p style="font-size: 7.5pt; color: #64748b; margin-top: 4px;">
+              Acceso universal permanente con sincronización inmediata en la nube.
             </p>
           </div>
         </td>
-        <td style="width: 33.3%;">
-          <div class="card card-accent" style="min-height: 110px;">
-            <div style="font-size: 1.4rem; margin-bottom: 2px;">🌐</div>
-            <strong style="font-size: 8.5pt; color: #065f46;">2. Web Oficial (Nube)</strong>
-            <p style="font-size: 7.8pt; color: #475569; margin-top: 3px;">
-              Ingresa desde cualquier computador o celular a:<br>
-              <code style="font-size: 7.2pt; background:#e2e8f0; padding:1px 3px; border-radius:3px; font-weight:700;">banco-colegual.onrender.com</code>
+        <td style="width: 50%;">
+          <div class="card card-gold" style="min-height: 105px; padding: 11px 13px;">
+            <div style="font-size: 1.5rem; margin-bottom: 2px;">📱</div>
+            <strong style="font-size: 9pt; color: #b45309;">2. Teléfono Celular (App Móvil)</strong>
+            <p style="font-size: 8pt; color: #475569; margin-top: 4px; line-height: 1.4;">
+              Abre el enlace en tu teléfono y toca <em>"Agregar a pantalla de inicio"</em> para instalar la App directa con ícono institucional.
             </p>
-          </div>
-        </td>
-        <td style="width: 33.3%;">
-          <div class="card card-gold" style="min-height: 110px;">
-            <div style="font-size: 1.4rem; margin-bottom: 2px;">📱</div>
-            <strong style="font-size: 8.5pt; color: #b45309;">3. Teléfono Celular (App)</strong>
-            <p style="font-size: 7.8pt; color: #475569; margin-top: 3px;">
-              Ábrelo en tu teléfono y toca <em>"Agregar a pantalla de inicio"</em> para instalar la App oficial con icono directo para patios y recreos.
+            <p style="font-size: 7.5pt; color: #78350f; margin-top: 4px;">
+              Ideal para docentes y asistentes en patios, pasillos, recreos y salidas a terreno.
             </p>
           </div>
         </td>
@@ -768,7 +765,7 @@ async function generateGuide() {
     </table>
   </div>
 
-  <!-- ==================== PÁGINA 6: DECÁLOGO Y FAQ ==================== -->
+  <!-- ==================== PÁGINA 6: DECÁLOGO Y COORDINACIÓN ==================== -->
   <div class="page">
     <table class="header-table">
       <tr>
@@ -776,82 +773,56 @@ async function generateGuide() {
           <img src="${logoBase64}" style="height: 24px; vertical-align: middle; margin-right: 8px;" alt="Logo" />
           <span class="inst-tag">Escuela Rural Colegual</span>
         </td>
-        <td style="width: 50%;" class="doc-tag">Módulo 5: Decálogo Docente, Preguntas Frecuentes y Contacto</td>
+        <td style="width: 50%;" class="doc-tag">Módulo 5: Decálogo Docente y Red de Acompañamiento</td>
       </tr>
     </table>
 
     <h2 class="section-title">10. Decálogo del Docente Banco Colegual</h2>
-    <p class="section-subtitle">Diez pautas esenciales para maximizar el impacto formativo del programa.</p>
+    <p class="section-subtitle">Diez pautas formativas esenciales para potenciar el refuerzo positivo en nuestros estudiantes.</p>
 
-    <table class="layout-table" style="font-size: 7.6pt; color: #334155; line-height: 1.35;">
+    <table class="layout-table" style="font-size: 8.1pt; color: #334155; line-height: 1.45; margin-bottom: 12px;">
       <tr>
         <td style="width: 50%;">
-          <div class="card" style="border-left: 3px solid #059669;">
-            <p><strong>1. Refuerzo Inmediato:</strong> Reconoce la buena acción en el momento, cuando el impacto emocional es máximo.</p>
-            <p style="margin-top: 3px;"><strong>2. Sé Concreto y Específico:</strong> Explica claramente qué actitud meritoria motivó las ColegualCoins.</p>
-            <p style="margin-top: 3px;"><strong>3. Premia la Superación:</strong> Valora el esfuerzo y el progreso individual tanto como la excelencia.</p>
-            <p style="margin-top: 3px;"><strong>4. Promueve la Cohesión Grupal:</strong> Utiliza los Bonos de Curso para premiar el trabajo en equipo y el orden.</p>
-            <p style="margin-top: 3px;"><strong>5. Equidad e Inclusión:</strong> Asegúrate de que todos los estudiantes reciban reconocimientos periódicos.</p>
+          <div class="card" style="border-left: 3.5px solid #059669; padding: 11px 13px;">
+            <p><strong>1. ⚡ Refuerzo Oportuno:</strong> Reconoce la buena acción en el momento preciso; el impacto emocional formativo es inmediato y duradero.</p>
+            <p style="margin-top: 8px;"><strong>2. 🎯 Sé Concreto y Específico:</strong> Explica con claridad qué actitud o conducta meritoria motivó las ColegualCoins otorgadas.</p>
+            <p style="margin-top: 8px;"><strong>3. 🌱 Premia la Superación Personal:</strong> Valora el esfuerzo continuo, la perseverancia y el progreso individual con el mismo entusiasmo que la excelencia.</p>
+            <p style="margin-top: 8px;"><strong>4. 🤝 Cohesión Grupal y Bonos de Curso:</strong> Utiliza los reconocimientos colectivos para premiar la colaboración, el cuidado de la sala y el compañerismo.</p>
+            <p style="margin-top: 8px;"><strong>5. 🌈 Equidad y Foco Inclusivo:</strong> Asegúrate de que todos los niños del curso reciban reconocimientos periódicos, visibilizando sus talentos particulares.</p>
           </div>
         </td>
         <td style="width: 50%;">
-          <div class="card" style="border-left: 3px solid #0f2b48;">
-            <p><strong>6. Carácter Reparatorio:</strong> Si descuentas puntos, que sea formativo y reflexivo, nunca punitivo ni humillante.</p>
-            <p style="margin-top: 3px;"><strong>7. Resguardo de Contraseñas:</strong> No delegues el ingreso de tu contraseña en estudiantes.</p>
-            <p style="margin-top: 3px;"><strong>8. Comunidad Educativa Activa:</strong> Docentes y asistentes tienen la misma facultad de premiar en patio y pasillos.</p>
-            <p style="margin-top: 3px;"><strong>9. Alianza con la Familia:</strong> Comparte periódicamente las cartolas de mérito en las reuniones de apoderados.</p>
-            <p style="margin-top: 3px;"><strong>10. Clima de Alegría:</strong> El Banco Colegual es un juego formativo para construir una escuela más feliz y unida.</p>
+          <div class="card" style="border-left: 3.5px solid #0f2b48; padding: 11px 13px;">
+            <p><strong>6. 🕊️ Carácter Reparatorio y Reflexivo:</strong> Si excepcionalmente descuentas puntos, que sea una instancia reflexiva y formativa, nunca punitiva ni humillante.</p>
+            <p style="margin-top: 8px;"><strong>7. 🔐 Resguardo de Contraseñas:</strong> Protege tu clave personal de funcionario; jamás delegues en estudiantes la administración de cuentas escolares.</p>
+            <p style="margin-top: 8px;"><strong>8. 🏫 Comunidad Educativa Activa:</strong> Docentes y asistentes comparten la misma facultad formativa para felicitar tanto en el aula como en los recreos y patios.</p>
+            <p style="margin-top: 8px;"><strong>9. 🏡 Alianza con las Familias:</strong> Comparte las cartolas de mérito en las reuniones de apoderados como puente de orgullo y motivación en el hogar.</p>
+            <p style="margin-top: 8px;"><strong>10. ☀️ Clima Escolar Cálido y Feliz:</strong> El Banco Colegual es un juego formativo para construir una escuela rural protectora, acogedora y alegre.</p>
           </div>
         </td>
       </tr>
     </table>
 
-    <h2 class="section-title">11. Preguntas Frecuentes (FAQ)</h2>
+    <div class="card card-accent" style="padding: 12px 16px; margin-bottom: 14px; background: #f0fdf4; border-color: #86efac;">
+      <h3 style="color: #065f46; font-size: 9.2pt; margin-bottom: 4px;">🌿 Compromiso de Nuestra Comunidad Educativa</h3>
+      <p style="font-size: 8.1pt; color: #166534; line-height: 1.48;">
+        Cada ColegualCoin otorgada representa una palabra de aliento, una oportunidad pedagógica y una señal clara de que en la <strong>Escuela Rural Colegual</strong> cada niña y niño es valorado, escuchado y estimulado a ser su mejor versión cada día.
+      </p>
+    </div>
 
-    <table class="layout-table" style="font-size: 7.6pt; line-height: 1.35;">
-      <tr>
-        <td style="width: 50%;">
-          <div class="card card-blue" style="min-height: 70px;">
-            <strong style="color: #1e40af;">¿Qué hacer si un alumno perdió su carnet físico?</strong>
-            <p style="margin-top: 2px;">Puedes asignarle puntos buscándolo por su nombre en la lista del computador o celular. La tarjeta se puede reimprimir en cualquier momento.</p>
-          </div>
-        </td>
-        <td style="width: 50%;">
-          <div class="card card-accent" style="min-height: 70px;">
-            <strong style="color: #065f46;">¿Funciona si se cae la conexión a Internet?</strong>
-            <p style="margin-top: 2px;">Sí. El sistema guarda las transacciones en la memoria interna de tu dispositivo y las sincroniza automáticamente con la nube cuando vuelve la red.</p>
-          </div>
-        </td>
-      </tr>
-      <tr>
-        <td style="width: 50%;">
-          <div class="card card-gold" style="min-height: 70px;">
-            <strong style="color: #b45309;">¿Cómo se corrige un abono o descuento erróneo?</strong>
-            <p style="margin-top: 2px;">Puedes hacer una operación inversa seleccionando el motivo <em>"Corrección administrativa"</em> o solicitar apoyo al administrador del sistema.</p>
-          </div>
-        </td>
-        <td style="width: 50%;">
-          <div class="card card-accent" style="min-height: 70px;">
-            <strong style="color: #065f46;">¿Los puntos se vencen a fin de mes?</strong>
-            <p style="margin-top: 2px;">No. Las ColegualCoins son acumulativas durante todo el año escolar, fomentando la cultura del ahorro y la planificación de metas personales.</p>
-          </div>
-        </td>
-      </tr>
-    </table>
-
-    <div style="background: linear-gradient(135deg, #0f2b48 0%, #1e3a8a 100%); color: #ffffff; padding: 10px 14px; border-radius: 8px; margin-top: 6px;">
+    <div style="background: linear-gradient(135deg, #0f2b48 0%, #1e3a8a 100%); color: #ffffff; padding: 14px 18px; border-radius: 8px; margin-top: 6px;">
       <table style="width: 100%; border-collapse: collapse;">
         <tr>
           <td style="vertical-align: middle; border: none;">
-            <strong style="color: #38bdf8; font-size: 9.5pt;">Coordinación y Soporte de Convivencia Escolar</strong>
-            <p style="font-size: 7.9pt; color: #e2e8f0; line-height: 1.35; margin-top: 2px;">
-              Para dudas pedagógicas, sugerencias de nuevas recompensas o reimpresión de carnets:<br>
+            <strong style="color: #38bdf8; font-size: 10pt; letter-spacing: 0.02em;">Coordinación y Soporte de Convivencia Escolar</strong>
+            <p style="font-size: 8.2pt; color: #e2e8f0; line-height: 1.45; margin-top: 4px;">
+              Para dudas pedagógicas, inducción a nuevos funcionarios o reimpresión de carnets institucionales:<br>
               <strong>Janine Díaz Calixto</strong> — Coordinación de la Vida Escolar<br>
-              📧 <em>janine.diaz@slepllanquihue.cl</em> &bull; 🏫 Escuela Rural Colegual (RBD 7967, SLEP Llanquihue)
+              📧 <em>janine.diaz@slepllanquihue.cl</em> &bull; 🏫 Escuela Rural Colegual (RBD 7967, Comuna de Llanquihue)
             </p>
           </td>
-          <td style="width: 60px; text-align: center; vertical-align: middle; border: none;">
-            <img src="${emblemBase64}" style="height: 48px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));" alt="Emblema Colegual">
+          <td style="width: 65px; text-align: center; vertical-align: middle; border: none;">
+            <img src="${emblemBase64}" style="height: 52px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));" alt="Emblema Colegual">
           </td>
         </tr>
       </table>
@@ -884,13 +855,15 @@ async function generateGuide() {
   fs.writeFileSync(tempHtmlPath2, part2Html, 'utf-8');
 
   console.log('🖨️ Compilando Bloque 1 (Páginas 1 a 4) con Google Chrome...');
+  const profileDir1 = `/tmp/chrome-guide-p1-${Date.now()}`;
   const url1 = pathToFileURL(tempHtmlPath1).href;
-  const cmd1 = `"${CHROME_BIN}" --headless --disable-gpu --no-sandbox --user-data-dir="/tmp/chrome-guide-p1" --no-pdf-header-footer --print-to-pdf="${tempPdf1}" "${url1}"`;
+  const cmd1 = `"${CHROME_BIN}" --headless=new --disable-gpu --no-pdf-header-footer --user-data-dir="${profileDir1}" --crash-dumps-dir="/tmp" --print-to-pdf="${tempPdf1}" "${url1}"`;
   execSync(cmd1, { stdio: 'pipe' });
 
   console.log('🖨️ Compilando Bloque 2 (Páginas 5 y 6) con Google Chrome...');
+  const profileDir2 = `/tmp/chrome-guide-p2-${Date.now()}`;
   const url2 = pathToFileURL(tempHtmlPath2).href;
-  const cmd2 = `"${CHROME_BIN}" --headless --disable-gpu --no-sandbox --user-data-dir="/tmp/chrome-guide-p2" --no-pdf-header-footer --print-to-pdf="${tempPdf2}" "${url2}"`;
+  const cmd2 = `"${CHROME_BIN}" --headless=new --disable-gpu --no-pdf-header-footer --user-data-dir="${profileDir2}" --crash-dumps-dir="/tmp" --print-to-pdf="${tempPdf2}" "${url2}"`;
   execSync(cmd2, { stdio: 'pipe' });
 
   console.log('📑 Ensamblando y unificando PDF final de 6 páginas...');
@@ -917,6 +890,8 @@ print(f"Total páginas ensambladas: {len(reader.pages)}")
     fs.unlinkSync(tempPdf1);
     fs.unlinkSync(tempPdf2);
     fs.unlinkSync(mergeScriptPath);
+    fs.rmSync(profileDir1, { recursive: true, force: true });
+    fs.rmSync(profileDir2, { recursive: true, force: true });
   } catch {}
 
   if (fs.existsSync(OUTPUT_PDF)) {
