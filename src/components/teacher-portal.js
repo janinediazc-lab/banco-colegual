@@ -46,11 +46,8 @@ export class TeacherPortalComponent {
               <button id="btn-goto-guide-tab" class="btn btn-secondary" style="font-size: 0.76rem; padding: 0.28rem 0.65rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem; background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); cursor: pointer;">
                 <span>📘</span> Ver Guía Docente
               </button>
-              <a href="./Infografia_Docente_Banco_Colegual.png" target="_blank" download="Infografia_Docente_Banco_Colegual.png" class="btn btn-gold" style="font-size: 0.76rem; text-decoration: none; padding: 0.28rem 0.65rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem;">
-                <span>🖼️</span> Infografía (PNG)
-              </a>
-              <a href="./Guia_Docente_Banco_Colegual.pdf" target="_blank" download="Guia_Docente_Banco_Colegual.pdf" class="btn btn-outline" style="font-size: 0.76rem; text-decoration: none; padding: 0.28rem 0.65rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem; color: #a7f3d0; border-color: rgba(167, 243, 208, 0.4);">
-                <span>📥</span> Guía (PDF)
+              <a href="./Guia_Docente_Banco_Colegual.pdf" target="_blank" download="Guia_Docente_Banco_Colegual.pdf" class="btn btn-gold" style="font-size: 0.76rem; text-decoration: none; padding: 0.28rem 0.65rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.35rem;">
+                <span>📥</span> Descargar Guía (PDF)
               </a>
             </div>
           </div>

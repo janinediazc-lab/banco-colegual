@@ -800,22 +800,10 @@ async function main() {
   const screenshotCmd = `"${CHROME_BIN}" --headless=new --disable-gpu --hide-scrollbars --user-data-dir="${profileDir}" --crash-dumps-dir="/tmp" --window-size=1280,2750 --force-device-scale-factor=2 --screenshot="${OUTPUT_PNG}" "file://${tempHtmlPath}"`;
   execSync(screenshotCmd, { stdio: 'pipe' });
 
-  // Copiar PNG a public y dist
-  fs.copyFileSync(OUTPUT_PNG, OUTPUT_PUBLIC_PNG);
-  if (fs.existsSync(path.dirname(OUTPUT_DIST_PNG))) {
-    fs.copyFileSync(OUTPUT_PNG, OUTPUT_DIST_PNG);
-  }
-
   console.log('🖨️ Compilando PDF Oficial de la Infografía para Imprimir...');
   // Generar PDF usando Chrome headless
   const pdfCmd = `"${CHROME_BIN}" --headless=new --disable-gpu --no-pdf-header-footer --user-data-dir="${profileDir}" --crash-dumps-dir="/tmp" --print-to-pdf="${OUTPUT_PDF}" "file://${tempHtmlPath}"`;
   execSync(pdfCmd, { stdio: 'pipe' });
-
-  // Copiar PDF a public y dist
-  fs.copyFileSync(OUTPUT_PDF, OUTPUT_PUBLIC_PDF);
-  if (fs.existsSync(path.dirname(OUTPUT_DIST_PDF))) {
-    fs.copyFileSync(OUTPUT_PDF, OUTPUT_DIST_PDF);
-  }
 
   try {
     fs.rmSync(profileDir, { recursive: true, force: true });
